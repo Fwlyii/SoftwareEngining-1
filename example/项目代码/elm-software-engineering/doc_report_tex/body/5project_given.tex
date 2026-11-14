@@ -1,0 +1,450 @@
+\chapter{项目交付}
+
+
+\section{项目测试文档}
+
+\begin{levellist}
+    \item \textbf{前端测试} \\
+    测试人员：前端测试的主要执行人员为：杨晓越。
+
+    \begin{levellist}
+        \item \textbf{测试目标}
+        \begin{levellist}
+            \item 功能正确性：验证所有前端交互功能均按照需求规格正常实现
+            \item 用户体验：确保界面美观、操作流畅、符合设计规范
+            \item 兼容性与响应式：保证应用在主流的浏览器、操作系统和设备上表现一致
+            \item 前端性能：保障页面加载速度与交互响应时间满足用户体验要求
+        \end{levellist}
+
+        \item \textbf{测试范围}
+        \begin{levellist}
+            \item 本次测试将覆盖以下前端模块/功能
+            \begin{levellist}
+                \item 用户认证模块：用户登录、注册
+                \item 主数据展示页面：商家列表、收藏列表、管理端数据展示页面
+                \item 核心交互流程：商品搜索、筛选、加入购物车、下单
+                \item 用户个人中心：信息修改、头像上传、收货地址管理
+                \item 管理后台功能：数据的增、删、改操作
+            \end{levellist}
+            \item 排除范围
+            \item 后端API接口的内部逻辑（由后端单元测试覆盖）
+            \item 第三方服务（如支付、短信）的端到端连通性测试
+        \end{levellist}
+
+        \item \textbf{测试方法}
+        \begin{levellist}
+            \item 系统的功能测试选用了手工测试，运用黑盒测试中的等价类划分、边界值分析、错误推断、因果图法。
+            \item UI方面的测试包括：易用性测试、规范性测试、 帮助设施测试、合理性测试、美观与协调性测试、独特性测试、快捷方法组合组合测试。
+        \end{levellist}
+
+    \end{levellist}
+
+    \item \textbf{后端测试}
+    测试人员：前端测试的主要执行人员为：戴茗静。
+    \begin{levellist}
+        \item \textbf{Apifox接口测试}
+        \begin{levellist}
+            \item 编写测试用例
+            \item 单个接口测试：针对新增/ 修改接口，先单独执行验证基础功能
+            \item 接口场景测试：按“用户下单→商家接单→顾客查订单” 等业务流程，在 Apifox 中创建 “场景用例”，批量执行并校验流程完整性
+            \item WebSocket 联动测试：执行 “顾客下单” 接口后，通过 Apifox 的“WebSocket 调试”功能，监听对应商家的连接，验证推送消息是否实时且正确。
+        \end{levellist}
+
+        \item \textbf{基于 Mybatis-Springboot-starter-test 的后端单元测试}
+        \begin{levellist}
+            \item 测试依赖配置 \\
+            在项目pom.xml中引入 Mybatis-Springboot-starter-test 及相关配套依赖，确保单元测试可直接操作MyBatis 映射接口、集成 Spring 容器环境，同时避免污染生产数据库。
+            \item 测试环境准备
+            \begin{levellist}
+                \item H2 内存数据库配置：在 src/test/resources 下创建 application-test.yml，配置测试环境数据库（使用 H2 内存库，每次测试后自动清空，避免数据残留）
+                \item 测试SQL 文件准备：在 src/test/resources/sql 下创建 schema-test.sql（订单表结构，和 MySQL订单表结构相同）和 data-test.sql（测试数据）
+            \end{levellist}
+            \item 测试范围与核心测试对象 \\
+            本次单元测试聚焦MyBatis 数据访问层（Mapper 接口）和业务逻辑层（Service），覆盖项目核心业务模块。
+        \end{levellist}
+    \end{levellist}
+
+
+    \item \textbf{前后端联调测试} \\
+    测试人员：前端测试的主要执行人员为：任晓华。\\
+    前后端联合测试聚焦“前端操作→接口调用→后端处理→前端渲染” 全链路验证，确保前后端数据交互一致性、业务逻辑完整性。
+
+\end{levellist}
+
+
+\subsection{测试报告}
+
+\begin{levellist}
+    \item \textbf{前端测试}
+
+    \begin{levellist}
+        \item \textbf{功能测试} \\
+        方法：黑盒测试，综合运用等价类划分、边界值分析、错误推断法。\\
+        测试重点：
+        \begin{itemize}
+            \item 表单交互：输入校验、提交、重置、错误提示
+            \item 页面导航：路由跳转正确性、面包屑、链接有效性
+            \item 动态功能：数据加载、排序、筛选、分页、模态框等
+            \item 业务逻辑：前端控制的业务规则
+        \end{itemize}
+
+        \item \textbf{UI/UX 测试} \\
+        方法：手工测试、视觉对比。\\
+        测试重点：
+        \begin{itemize}
+            \item 视觉一致性：与UI设计稿（原型图）在布局、颜色等方面保持一致
+            \item  交互反馈：鼠标悬停、点击、禁用等状态的样式变化
+            \item  易用性：界面布局合理，信息层级清晰，用户操作路径明确
+        \end{itemize}
+
+        \item \textbf{兼容性测试} \\
+        方法：手工测试。\\
+        测试重点：
+        \begin{itemize}
+            \item  跨浏览器测试：在不同品牌和版本的浏览器上验证功能和样式
+            \item  响应式布局：在不同屏幕尺寸和设备上，布局是否正常，功能是否可用
+        \end{itemize}
+        测试内容:
+        \begin{levellist}
+            \item 功能测试 \\
+            验证系统功能是否符合其需求规格说明书，核实系统功能上是否完整，没有冗余和遗漏功能。详细介绍如下表。
+
+            \begin{longtable}{>{\centering\arraybackslash}m{2.5cm} >{\centering\arraybackslash}m{12cm}}
+
+                \caption{功能测试介绍} \label{tab:training}            \\
+
+                \toprule
+                \textbf{说明} & \textbf{描述}                        \\
+                \midrule
+                \endfirsthead
+
+                \multicolumn{2}{c}{{\tablename\ \thetable{} 续表}} \\
+                \toprule
+                \textbf{说明} & \textbf{描述}                        \\
+                \midrule
+                \endhead
+
+                \bottomrule
+                \endfoot
+
+
+                测试范围        & 验证数据精确度、数据类型、业务功能等相关方面的正确性         \\
+                测试目标        & 核实所有功能均已正常实现、即是否与需求一致              \\
+                技术          & 黑盒测试（边界值分析、等价类划分）                  \\
+                工具与方法       & 手工测试                               \\
+                开始标准        & 开发阶段对应的功能完成并且测试用例设计完成              \\
+                完成标准        & 测试用例全部执行通过，高优先级缺陷已解决               \\
+            \end{longtable}
+
+
+            具体测试用例示例：
+            \begin{levellist}
+                \item 点击“注册”按钮，成功跳转至注册页面
+                \item 提交表单时，前端正确校验手机号格式与密码格式
+                \item 添加商品至购物车后，购物车图标数量实时更新
+                \item 页面跳转、按钮交互、动态内容加载（如菜品列表）等功能正常
+            \end{levellist}
+
+
+            \item 用户界面测试 \\
+            测试用户界面是否具有导航性、美观性、规范性、是否满足设计中客户要求的执行功能、详细介绍如下表 UI测试。
+
+
+            \begin{longtable}{>{\centering\arraybackslash}m{2.5cm} >{\centering\arraybackslash}m{12cm}}
+
+                \caption{用户界面测试介绍} \label{tab:training}                 \\
+
+                \toprule
+                \textbf{说明} & \textbf{描述}                               \\
+                \midrule
+                \endfirsthead
+
+                \multicolumn{2}{c}{{\tablename\ \thetable{} 续表}}        \\
+                \toprule
+                \textbf{说明} & \textbf{描述}                               \\
+                \midrule
+                \endhead
+
+                \bottomrule
+                \endfoot
+
+
+                测试范围        & 保证窗口运行、提示信息、页面跳转、易于使用等方面的正确性              \\
+                测试目标        & 核实各个窗口的风格（包括颜色、字体、提示信息、图标、title等）均与需求保持一致 \\
+                技术          & Web 测试通用方法                                \\
+                工具与方法       & 手工测试、目测                                   \\
+                开始标准        & 界面开发完成                                    \\
+                完成标准        & UI 符合可接受标准，能保证用户界面的友好性，易操作性，而且符合用户操作习惯    \\
+            \end{longtable}
+
+
+            测试重点：
+            \begin{levellist}
+                \item 易用性：界面布局合理，用户能轻松找到所需功能
+                \item 规范性：同类按钮、提示信息风格统一
+                \item 美观与协调性：字体、颜色、间距等符合设计稿
+                \item 响应式布局：在不同屏幕尺寸下布局正常（与兼容性测试协同）
+            \end{levellist}
+
+            \item 回归测试  \\
+            说明：在代码修改后，验证原有功能未被破坏。
+
+            \begin{longtable}{>{\centering\arraybackslash}m{2.5cm} >{\centering\arraybackslash}m{12cm}}
+
+                \caption{回归测试介绍} \label{tab:training}            \\
+
+                \toprule
+                \textbf{说明} & \textbf{描述}                        \\
+                \midrule
+                \endfirsthead
+
+                \multicolumn{2}{c}{{\tablename\ \thetable{} 续表}} \\
+                \toprule
+                \textbf{说明} & \textbf{描述}                        \\
+                \midrule
+                \endhead
+
+                \bottomrule
+                \endfoot
+
+
+                测试范围        & 所有功能、用户界面、兼容性等测试类型                 \\
+                测试目标        & 核实代码修改后，现有功能、性能等均未引入新的缺陷           \\
+                技术          & 黑盒测试                               \\
+                工具与方法       & 手工测试（针对关键路径）                       \\
+                开始标准        & 被测试的软件或其环境发生变更时                    \\
+                完成标准        & 核心功能测试用例全部通过                       \\
+            \end{longtable}
+
+
+            近期回归测试案例：
+            \begin{levellist}
+                \item 修复“注册时头像上传失败”问题后，验证整个注册流程及头像上传功能
+                \item 修改“首页搜索框提示文字”后，验证首页显示及搜索功能正常
+                \item 更新“重复申请商家权限的提示信息”后，验证提示能正确显示后端返回的Message
+            \end{levellist}
+
+        \end{levellist}
+
+        \item \textbf{测试结果}
+        \begin{levellist}
+            \item 缺陷修复情况：测试过程中发现的主要问题，如“AI咨询功能前端无返回结果”、“修改头像数据传递不稳定”等，均已由开发团队修复。
+            \item 回归测试结果：针对上述修复进行的回归测试结果通过，确认问题已解决且未引入新的缺陷。
+            \item \textbf{总体评价：} 当前版本的前端功能实现完整，业务流程畅通，UI界面符合设计规范，兼容性与性能满足基本要求，已达到可发布标准。
+        \end{levellist}
+
+    \end{levellist}
+
+
+    \item \textbf{后端测试}
+    \begin{levellist}
+        \item \textbf{Apifox接口测试}
+        \begin{levellist}
+            \item 结果记录
+            \begin{levellist}
+                \item 正常用例：标记“通过”，记录响应耗时（要求核心接口≤500ms）
+                \item 异常用例：标记“失败”，截图保存响应信息、数据库数据，并标注 “接口名称 + 用例 ID + 异常描述”
+                \item 遗留问题：若存在“非阻塞性问题”(如响应耗时略超阈值)，记录为“待优化”，跟踪后续版本修复。
+            \end{levellist}
+
+            \item 测试完成标准
+            \begin{levellist}
+                \item 覆盖接口文档中100% 的接口，无遗漏核心业务接口
+                \item 每个接口的正向用例、关键异常用例（参数缺省、权限错误、数据非法）通过率100%
+                \item WebSocket 推送功能验证通过：顾客下单后，商家端 1 秒内接收新订单消息，无延迟或丢失
+                \item 接口响应耗时：核心接口（下单、接单、查询）平均耗时≤500ms，峰值≤1000ms
+                \item 输出《Apifox 接口测试报告》，包含用例执行统计、缺陷清单、优化建议。
+            \end{levellist}
+
+        \end{levellist}
+
+        \item \textbf{基于 Mybatis-Springboot-starter-test 的后端单元测试}
+        \begin{levellist}
+            \item 部分测试对象 \\
+            如下表：
+
+            \begin{longtable}{>{\centering\arraybackslash}m{2cm} >{\centering\arraybackslash}m{3cm} >{\centering\arraybackslash}m{9cm}}
+
+                \caption{测试对象示例} \label{tab:training}                                                      \\
+
+                \toprule
+                \textbf{测试层级} & \textbf{测试对象}                                            & \textbf{核心测试场景} \\
+                \midrule
+                \endfirsthead
+
+                \multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}                                           \\
+                \toprule
+                \textbf{测试层级} & \textbf{测试对象}                                            & \textbf{核心测试场景} \\
+                \midrule
+                \endhead
+
+                \bottomrule
+                \endfoot
+
+
+                Mapper 层      & BusinessMapper \newline
+                （商家映射接口）      & 1.按ID 查商家信息(getBusinessById/selectBusinessById) \newline
+                2. 按用户ID 查商家列表(selectByUserIdAndStatus) \newline
+                3. 新增商家(insertBusiness/applyForAddBusiness) \newline
+                逻辑删除商家(deleteBusiness) \newline
+                4.搜索商家(searchBusinesses/searchByKeyword)                                                   \\
+                Service 层     & BusinessService \newline
+                （商家业务逻辑）      & 1.商家信息更新(updateBusiness/patchBusiness，含权限校验) \newline
+                2.商家删除(deleteBusiness，含所属权校验) \newline
+                3.申请新增商家(applyForAddBusiness，区分商家 / 管理员权限) \newline
+                4.商家搜索排序(getBusinessesBySearch，按评分 / 销量排序) \newline
+                5. 轮播商家查询(getBusinessesInCarousel，取 Top3 高评分高销量)                                           \\
+            \end{longtable}
+
+            \item 执行方式
+            \begin{levellist}
+                \item 单个测试类/ 方法：在 IDE中右键点击测试类 / 方法，选择 “Run Test”，直接执行并查看结果
+                \item 批量执行：通过Maven 命令mvn test执行所有测试用例，或在 IDE 中执行src/test/java下所有测试类；
+                \item 测试报告：集成surefire-report插件，执行mvn surefire-report:report生成 HTML 格式测试报告，包含用例执行数、通过率、失败原因等。
+            \end{levellist}
+
+            \item 结果验证标准
+            \begin{levellist}
+                \item 权限逻辑正确性：商家用户仅能操作自己的商家，管理员可操作所有商家，异常场景（如越权操作）需抛出指定APIException（含正确错误码）
+                \item 状态流转正确性：商家申请新增时，管理员创建直接激活（status=1），普通商家创建需待审核（status=0）；逻辑删除后 is\_deleted=1，且无法被正常查询
+                \item 排序逻辑正确性：getBusinessesBySearch 按“评分 / 销量” 排序时，结果需与预期顺序一致（如销量降序时高销量商家在前）
+                \item 依赖调用准确性：通过 Mockito.verify 确认 BusinessMapper 的patchBusiness/insertBusiness 等方法仅在权限通过时执行，越权场景下不执行。
+            \end{levellist}
+
+            \item 缺陷处理 \\
+            若出现“商家越权更新成功”、“状态流转错误” 等问题，优先排查BusinessService 中的权限判断逻辑(如 isIdPresent 方法的空值处理)、SecurityContext 初始化是否正确；若搜索排序异常，检查 Comparator 排序规则是否与业务需求一致。
+        \end{levellist}
+
+        \item \textbf{测试结果} \\
+        测试过程中大部分接口能够正确处理正常的用例流程，并在错误情况下返回异常；经过多轮测试迭代，所有接口在已知情况下能够正常工作。同时通过单元测试调整了业务逻辑中存在的缺陷。\\
+        \textbf{总体评价：} 后端已具备完整业务逻辑的正确流程处理能力，且程序具有较强的鲁棒性。
+
+    \end{levellist}
+
+
+
+    \item \textbf{前后端联调测试}
+    \begin{levellist}
+        \item \textbf{测试范围与核心场景}
+
+        \begin{longtable}{>{\centering\arraybackslash}m{1cm} >{\centering\arraybackslash}m{5cm} >{\centering\arraybackslash}m{2cm} >{\centering\arraybackslash}m{2.5cm} >{\centering\arraybackslash}m{2cm}}
+
+            \caption{核心场景} \label{tab:training}                                                                                                                                                                                                \\
+
+            \toprule
+            \textbf{测试场景分类} & \textbf{具体场景描述}                                                                       & \textbf{涉及前端模块}            & \textbf{涉及后端核心接口}                                                   & \textbf{测试重点}         \\
+            \midrule
+            \endfirsthead
+
+            \multicolumn{5}{c}{{\tablename\ \thetable{} 续表}}                                                                                                                                                                                   \\
+            \toprule
+            \textbf{测试场景分类} & \textbf{具体场景描述}                                                                       & \textbf{涉及前端模块}            & \textbf{涉及后端核心接口}                                                   & \textbf{测试重点}         \\
+            \midrule
+            \endhead
+
+            \bottomrule
+            \endfoot
+
+
+            实时订单交互          & 1. 顾客下单→商家端待接单列表实时出现订单；2. 商家接单→顾客端订单状态同步更新；3. 商家拒单→顾客端订单状态同步更新；4.顾客取消订单→商家端订单状态同步更新   & 顾客下单页、商家订单页、顾客订单页          & /api/orders \newline -/status、/api/orders/submit、/api/orders/detail & WebSocket 实时性、状态同步准确性 \\
+            商家管理闭环          & 1. 商家申请新增店铺→管理员审核→商家端店铺列表更新；2. 商家更新店铺信息→前端实时渲染；3. 商家删除店铺→前端列表移除                       & 管理员审核页、商家店铺管理页             & /api/permission\newline -/apply-shop、/api/permission/audit          & 业务流程完整性、数据一致性         \\
+            搜索与筛选           & 1. 顾客按关键词搜索商家→前端展示匹配结果；2. 顾客按 “评分 / 销量” 排序→前端按规则展示；3. 顾客筛选 “免配送费、起送费在某个区间” 的商家→结果精准过滤 & 顾客首页                       & /api/businesses\newline -/search                                    & 搜索匹配准确性、排序逻辑正确性、筛选有效性 \\
+            其他              & 1.顾客对地址的增删改查→前端正常渲染；2.商家对商品的增删改查→前端正常渲染；3.顾客点赞、收藏商铺→前端正确显示商铺点赞数与收藏数，正确显示收藏列表          & 地址管理页、顾客端我的页、商铺详情页、商家端我的页面 & /api/addresses、/api/foods/status                                    & 正确完成业务流程              \\
+        \end{longtable}
+
+        \item \textbf{关键问题排查与验证方法} \\
+        在联合测试中，针对“前后端数据不一致”“实时推送延迟” 等常见问题，采用以下排查方法：
+        \begin{levellist}
+            \item 数据交互一致性验证 \\
+            前端操作后，通过浏览器开发者工具的“Network” 面板查看接口请求参数，同时查看接口是否正确返回数据。
+            \item WebSocket 实时性验证 \\
+            打开浏览器开发者工具的“Network→WS” 面板，找到 ws://test-api.xxx.com/merchant-ws连接，点击 “Frames” 查看推送消息；顾客下单后，观察 “Frames” 面板是否在 1 秒内收到type=order\_pending的消息，消息是否含orderId、merchantId等关键信息；若未收到推送，先检查后端WebSocketServer日志（是否成功找到商家连接），再检查前端 WebSocket 初始化代码（是否正确携带 merchantId 参数）。
+            \item 权限拦截一致性验证 \\
+            使用普通用户账号，手动在地址栏输入管理端页面URL。
+            \item 预期 \\
+            后端接口若被调用，应返回code=403（权限拒绝），避免前端拦截失效导致越权访问。
+        \end{levellist}
+
+        \item \textbf{测试结果} \\
+        关键规则设置(如鉴权、消息推送、业务流程)均运行正常，接口均被正确使用，请求处理正常，前端用户友好，联合响应较快。\\
+        \textbf{总体评价：} 前后端联调正常，可继续推进部署计划。
+    \end{levellist}
+
+\end{levellist}
+
+
+\section{项目部署文档}
+
+\subsection{部署计划}
+主要使用Docker容器化部署，方便环境隔离与日志管理。
+\begin{enumerate}
+    \item \textbf{服务器配置}
+          \begin{itemize}
+              \item 购买服务器
+              \item 服务器安装 Docker
+              \item 准备基础镜像(mysql、nginx等)
+              \item 配置管理
+          \end{itemize}
+
+    \item \textbf{正式数据库部署}
+          \begin{itemize}
+              \item 配置MySQL数据库容器并进行配置、启动
+              \item 将项目数据库部署
+          \end{itemize}
+
+    \item \textbf{后端部署}
+          \begin{itemize}
+              \item 使用maven打包后端代码，并与基础镜像构建项目镜像
+              \item 将镜像上传至服务器，构建后端项目运行容器并启动
+          \end{itemize}
+
+    \item \textbf{前端部署}
+          \begin{itemize}
+              \item 配置nginx运行容器并启动
+              \item 打包前端项目上传至服务器，挂载至nginx中启动运行
+          \end{itemize}
+
+\end{enumerate}
+
+
+\subsection{部署信息}
+\begin{enumerate}
+    \item \textbf{后端部署}
+          \begin{itemize}
+              \item 服务器来源：腾讯云
+              \item 操作系统：Linux (Ubuntu 22.04)
+          \end{itemize}
+
+    \item[]
+
+    \item \textbf{Docker镜像配置如下表}
+
+          \begin{longtable}{>{\centering\arraybackslash}m{1.8cm} >{\centering\arraybackslash}m{4.7cm} >{\centering\arraybackslash}m{1.8cm} >{\centering\arraybackslash}m{1.8cm} >{\centering\arraybackslash}m{2.5cm}}
+
+              \caption{Docker镜像配置} \label{tab:training}                                                                      \\
+
+              \toprule
+              \textbf{部署目标} & \textbf{基础镜像}                                  & \textbf{容器名} & \textbf{开放端口} & \textbf{配置管理}  \\
+              \midrule
+              \endfirsthead
+
+              \multicolumn{5}{c}{{\tablename\ \thetable{} 续表}}                                                               \\
+              \toprule
+              \textbf{部署目标} & \textbf{基础镜像}                                  & \textbf{容器名} & \textbf{开放端口} & \textbf{配置管理}  \\
+              \midrule
+              \endhead
+
+              \bottomrule
+              \endfoot
+
+
+              数据库           & mysql:8.0                                      & mysql-server & 3306          & 数据挂载备份         \\
+              后端            & eclipse-temurin:17-jdk-jammy (elm-backend:1.0) & elm-app      & 8080          & 配置文件外置挂载，方便热更新 \\
+              前端            & nginx:stable-alpine3.21-perl                   & elm-vue-app  & 8081          & ~              \\
+          \end{longtable}
+    
+    \item \textbf{访问方式} \footnote{项目仓库: \href{https://gitee.com/dai-mingjing/elm-software-engineering.git}{https://gitee.com/dai-mingjing/elm-software-engineering.git}} \par
+    请访问成品网站 \href{http://bobchasm.cn:8081/}{http://bobchasm.cn:8081/}。\\
+    特别提供管理端账号：用户名 admin，密码 Admin123 。
+
+\end{enumerate}

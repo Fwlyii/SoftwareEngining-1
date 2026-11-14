@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: elm
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://101.42.109.48:3306/elm_v2
+    username: root
+    password: 123456
+
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+
+mybatis:
+  configuration:
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+  # 指定XML映射文件位置
+  mapper-locations: classpath:com/tju/elm_bk/mapper/*.xml
+
+
+jwt:
+  secret: abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz123456
+  token-validity-in-seconds: 86400
+  token-validity-in-seconds-for-remember-me: 108000
+
+# swagger
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui
+
+# DeepSeek AI配置
+deepseek:
+  api-key: sk-a6ee7f3dbfa941f7a1c7ddd44a234554
+  base-url: https://api.deepseek.com
+  chat-endpoint: /chat/completions
+  model: deepseek-chat
+  max-tokens: 1024
+  temperature: 0.7
+  top-p: 0.9
+  timeout-seconds: 30
+  max-retries: 3
