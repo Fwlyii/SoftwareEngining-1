@@ -7,6 +7,7 @@
 ```text
 report/
   tjumain.tex                 # 报告主入口文件
+  tjumain.pdf                 # 编译后的报告（保留待补截图占位符）
   setup/                      # 封面、页眉页脚、宏包与自定义命令配置
   body/
     ch1_team.tex              # 第1章 团队建立（角色、任务分配、培训大纲）
@@ -25,6 +26,17 @@ report/
 ```
 
 ## 本地编译方式
+
+无需 Docker 或管理员权限，也可以把 Tectonic 独立编译器下载到用户目录或项目外的工具目录，再使用其完整路径执行编译。编译器首次运行会联网下载所需宏包与 Fandol 中文字体，并自动重复编译以更新目录和交叉引用：
+
+```bash
+cd report
+/path/to/tectonic --keep-logs tjumain.tex
+```
+
+在本服务器上，编译器放置于 `/home/wenli/.local/share/course-report-tools/tectonic/tectonic`。工具链与下载缓存不提交到仓库，生成的 `tjumain.pdf` 提交到本目录；中间文件由 `.gitignore` 排除。
+
+如果已有完整的 XeLaTeX 工具链，也可以使用以下方式：
 
 请在安装了 TeX Live / MacTeX / MiKTeX（含 XeLaTeX 与中文支持包）的环境中，将工作目录切换到 `report/` 后执行两遍编译以生成目录与交叉引用：
 

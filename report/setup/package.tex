@@ -20,13 +20,15 @@
 \usepackage{float}
 \usepackage{ifthen}
 \usepackage{url}
+\usepackage{etoolbox}
 
 \newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
 \newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
 \newcolumntype{C}[1]{>{\PreserveBackslash\centering}p{#1}}
 \newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
 \newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{2.5pt}
+\AtBeginEnvironment{longtable}{\small}
 
 \usepackage{hyperref}
 \hypersetup{

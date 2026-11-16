@@ -10,6 +10,7 @@
 
 \begin{figure}[H]
   \centering
+  \resizebox{\linewidth}{!}{%
   \begin{tikzpicture}[
     root/.style={rectangle,rounded corners=4pt,draw=tjublue,fill=tjublue,text=white,font=\small\bfseries,minimum height=0.85cm,text width=4.6cm,align=center},
     lvl1/.style={rectangle,rounded corners=3pt,draw=tjublue,fill=lightblue,font=\scriptsize\bfseries,minimum height=0.75cm,text width=2.2cm,align=center},
@@ -36,6 +37,7 @@
     \draw[edge] (b3) -- (l3);
     \draw[edge] (b4) -- (l4);
   \end{tikzpicture}
+  }
   \caption{项目三层工作分解结构（WBS）示意图}\label{fig:mgmt-wbs}
 \end{figure}
 
@@ -117,9 +119,9 @@ T307--308 & TDD 导航修复与全链路交叉验收 & 15 & 20 & 25 & 20.0 & 21.
     \fill[blue!4] (0.5,0.5) rectangle (7.5,12.5);
     \fill[orange!4] (7.5,0.5) rectangle (12.5,12.5);
     \fill[green!4] (12.5,0.5) rectangle (19.5,12.5);
-    \node[font=\scriptsize\bfseries,tjublue] at (4.0,13.3) {Sprint 1};
-    \node[font=\scriptsize\bfseries,accentorange] at (10.0,13.3) {Sprint 2};
-    \node[font=\scriptsize\bfseries,accentgreen] at (16.0,13.3) {Sprint 3};
+    \node[font=\scriptsize\bfseries,tjublue] at (4.0,14.0) {Sprint 1};
+    \node[font=\scriptsize\bfseries,accentorange] at (10.0,14.0) {Sprint 2};
+    \node[font=\scriptsize\bfseries,accentgreen] at (16.0,14.0) {Sprint 3};
 
     % 任务条
     \node[left,font=\scriptsize] at (0.3,11.8) {SRS 建模与表结构};

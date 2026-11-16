@@ -203,13 +203,13 @@ Sprint~1 旨在完成产品 SRS 建模、数据库基线搭建，并打通“用
 \bottomrule
 \endfoot
 T101 & SRS 初版编写与 UML 建模图绘制 & 全部 & 赵紫怡 & 10 & 无 & 已完成 \\
-T102 & \code{elm_v2.sql} 基线及 \code{001}–\code{003} 迁移脚本 & US001/004/006 & 赵紫怡 & 8 & T101 & 已完成 \\
+T102 & \code{elm_v2.sql} 基线及 \code{001}–\code{003} 迁移脚本 & \code{US001/004/006} & 赵紫怡 & 8 & T101 & 已完成 \\
 T103 & 注册/登录接口、Spring Security 与 JWT 鉴权 & US001 & 李承文 & 8 & T102 & 已完成 \\
-T104 & 店铺分类检索、商品详情与购物车 CRUD 接口 & US003/005 & 李承文 & 10 & T102 & 已完成 \\
-T105 & 订单提交事务、库存条件扣减与取消回退 & US006/007 & 李承文 & 12 & T104 & 已完成 \\
+T104 & 店铺分类检索、商品详情与购物车 CRUD 接口 & \code{US003/005} & 李承文 & 10 & T102 & 已完成 \\
+T105 & 订单提交事务、库存条件扣减与取消回退 & \code{US006/007} & 李承文 & 12 & T104 & 已完成 \\
 T106 & 首页 \code{Index.vue}、分类商家与详情页开发 & US003 & 范文丽 & 12 & T104 & 已完成 \\
-T107 & 登录/注册页、个人地址页与购物车结算页 & US001/004/005 & 范文丽 & 12 & T103/104 & 已完成 \\
-T108 & 认证权限与下单主流程接口测试用例设计 & US001/006/007 & 仲禹潼 & 8 & T103/105 & 已完成 \\
+T107 & 登录/注册页、个人地址页与购物车结算页 & \code{US001/004/005} & 范文丽 & 12 & T103/104 & 已完成 \\
+T108 & 认证权限与下单主流程接口测试用例设计 & \code{US001/006/007} & 仲禹潼 & 8 & T103/105 & 已完成 \\
 \end{longtable}
 
 \subsubsection{每日工作日志与问题解决过程}
@@ -255,13 +255,13 @@ Sprint~2 聚焦打通“商家接单备餐 $\rightarrow$ 骑手抢单配送 $\ri
 \endhead
 \bottomrule
 \endfoot
-T201 & 商家入驻审核、店铺营业配置与菜品库存接口 & US011/012 & 李承文 & 8 & Sprint 1 & 已完成 \\
-T202 & 商家接单/出餐与骑手抢单/到店/取餐/送达状态机 & US013/015/016 & 李承文 & 12 & T201 & 已完成 \\
+T201 & 商家入驻审核、店铺营业配置与菜品库存接口 & \code{US011/012} & 李承文 & 8 & Sprint 1 & 已完成 \\
+T202 & 商家接单/出餐与骑手抢单/到店/取餐/送达状态机 & \code{US013/015/016} & 李承文 & 12 & T201 & 已完成 \\
 T203 & 钱包、积分、优惠券、会员与资产流水服务 & US009 & 李承文 & 10 & Sprint 1 & 已完成 \\
-T204 & 商家工作台、商品管理、订单与评价回复页面 & US011--014 & 范文丽 & 12 & T201/202 & 已完成 \\
-T205 & 骑手申请与工作台 \code{RiderDashboard.vue} 开发 & US015/016 & 仲禹潼/范文丽 & 10 & T202 & 已完成 \\
-T206 & 购物车备注迁移 \code{005}、评价与通知表接口 & US005/008 & 赵紫怡 & 8 & Sprint 1 & 已完成 \\
-T207 & 首次集中联调、WPS 缺陷表建立与边界测试 & US008--016 & 仲禹潼 & 8 & T202--205 & 已完成 \\
+T204 & 商家工作台、商品管理、订单与评价回复页面 & \code{US011--014} & 范文丽 & 12 & T201/202 & 已完成 \\
+T205 & 骑手申请与工作台 \code{RiderDashboard.vue} 开发 & \code{US015/016} & 仲禹潼/范文丽 & 10 & T202 & 已完成 \\
+T206 & 购物车备注迁移 \code{005}、评价与通知表接口 & \code{US005/008} & 赵紫怡 & 8 & Sprint 1 & 已完成 \\
+T207 & 首次集中联调、WPS 缺陷表建立与边界测试 & \code{US008--016} & 仲禹潼 & 8 & T202--205 & 已完成 \\
 \end{longtable}
 
 \subsubsection{每日工作日志与问题解决过程}
@@ -293,7 +293,7 @@ Sprint~2 完成了四端主体中的“顾客--商家--骑手”闭环与资产�
   \centering
   \begin{minipage}[t]{.48\linewidth}
     \centering
-    \begin{tikzpicture}[scale=0.82]
+    \begin{tikzpicture}[scale=0.76]
       \draw[->,thick] (0,0) -- (6.8,0) node[right,font=\scriptsize]{天数};
       \draw[->,thick] (0,0) -- (0,4.2) node[above,font=\scriptsize]{剩余工时(h)};
       \foreach \x/\d in {0/D0,0.9/D1,1.8/D2,2.7/D3,3.6/D4,4.5/D5,5.4/D6,6.3/D7}
@@ -309,7 +309,7 @@ Sprint~2 完成了四端主体中的“顾客--商家--骑手”闭环与资产�
   \end{minipage}\hfill
   \begin{minipage}[t]{.48\linewidth}
     \centering
-    \begin{tikzpicture}[scale=0.82]
+    \begin{tikzpicture}[scale=0.76]
       \draw[->,thick] (0,0) -- (6.0,0) node[right,font=\scriptsize]{天数};
       \draw[->,thick] (0,0) -- (0,4.2) node[above,font=\scriptsize]{剩余工时(h)};
       \foreach \x/\d in {0/D0,1.1/D1,2.2/D2,3.3/D3,4.4/D4,5.5/D5}
@@ -344,13 +344,13 @@ Sprint~3 完成管理员端审核治理与异常仲裁、数据看板与 4 套�
 \endhead
 \bottomrule
 \endfoot
-T301 & 管理员账号启停、异常处置与统计看板后端 & US017/018 & 李承文 & 8 & Sprint 2 & 已完成 \\
+T301 & 管理员账号启停、异常处置与统计看板后端 & \code{US017/018} & 李承文 & 8 & Sprint 2 & 已完成 \\
 T302 & \code{AiChatServiceImpl} 与结构化助手意图分流 & US019 & 赵紫怡 & 10 & Sprint 2 & 已完成 \\
 T303 & 菜品图片识别、语音订单草稿与熔断降级适配器 & US019 & 赵紫怡 & 10 & T302 & 已完成 \\
 T304 & 高德地图代理搜索、\code{006} 坐标迁移与直线距离计算 & US020 & 仲禹潼/李承文 & 10 & Sprint 2 & 已完成 \\
-T305 & \code{AiChat.vue}、分类商家重设计、主题偏好与微动效 & US010/019 & 范文丽 & 14 & T302/303 & 已完成 \\
-T306 & 管理员看板前端 \code{AdminHome.vue} 等 5 个管理页 & US017/018 & 范文丽 & 10 & T301 & 已完成 \\
-T307 & TDD 修复返回死循环、窄屏表单溢出与连续切页空白 & US001/003 & 李承文/范文丽 & 8 & T305 & 已完成 \\
+T305 & \code{AiChat.vue}、分类商家重设计、主题偏好与微动效 & \code{US010/019} & 范文丽 & 14 & T302/303 & 已完成 \\
+T306 & 管理员看板前端 \code{AdminHome.vue} 等 5 个管理页 & \code{US017/018} & 范文丽 & 10 & T301 & 已完成 \\
+T307 & TDD 修复返回死循环、窄屏表单溢出与连续切页空白 & \code{US001/003} & 李承文/范文丽 & 8 & T305 & 已完成 \\
 T308 & 跨组交叉验收、全量单测回归与问题修复闭环 & 全部 & 仲禹潼/全体 & 12 & T301--307 & 已完成 \\
 \end{longtable}
 
@@ -383,7 +383,7 @@ Sprint~3 成功将所有功能分支合入 \code{main}，实现四端、AI、地
   \centering
   \begin{minipage}[t]{.48\linewidth}
     \centering
-    \begin{tikzpicture}[scale=0.82]
+    \begin{tikzpicture}[scale=0.76]
       \draw[->,thick] (0,0) -- (6.8,0) node[right,font=\scriptsize]{天数};
       \draw[->,thick] (0,0) -- (0,4.2) node[above,font=\scriptsize]{剩余工时(h)};
       \foreach \x/\d in {0/D0,0.9/D1,1.8/D2,2.7/D3,3.6/D4,4.5/D5,5.4/D6,6.3/D7}
