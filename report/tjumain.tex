@@ -1,0 +1,58 @@
+\def\usewhat{xelatex}
+\documentclass[12pt,openany,oneside,fontset=none]{ctexbook}
+\IfFontExistsTF{STHeiti}{
+  \setCJKmainfont[BoldFont=STHeiti]{STSong}
+  \setCJKsansfont[AutoFakeBold=2.5]{STHeiti}
+  \setCJKmonofont{STFangsong}
+  \setCJKfamilyfont{zhsong}[BoldFont=STHeiti]{STSong}
+  \setCJKfamilyfont{zhhei}[AutoFakeBold=2.5]{STHeiti}
+  \setCJKfamilyfont{zhkai}{STKaiti}
+  \setCJKfamilyfont{zhfs}{STFangsong}
+}{
+  \setCJKmainfont[BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
+  \setCJKsansfont[BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
+  \setCJKmonofont{FandolFang-Regular.otf}
+  \setCJKfamilyfont{zhsong}[BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
+  \setCJKfamilyfont{zhhei}[BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
+  \setCJKfamilyfont{zhkai}{FandolKai-Regular.otf}
+  \setCJKfamilyfont{zhfs}{FandolFang-Regular.otf}
+}
+\input{setup/package}
+\input{setup/commands}
+\graphicspath{{figures/}{figures/srs/}{figures/report/}{figures/cross/}{figures/screenshots/}}
+
+\begin{document}
+  \input{setup/format}
+  \input{setup/info}
+  \frontmatter
+  \hypersetup{pageanchor=false}
+  \fancypagestyle{plain}{
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \fancyfoot[C]{\song\xiaowu~\thepage~}
+  }
+
+  \makecover
+  \input{setup/toc}
+
+  \mainmatter\hypersetup{pageanchor=true}\defaultfont\sloppy\raggedbottom
+  \makeatletter
+  \fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyhead[C]{\song\wuhao \@cheading}
+    \fancyfoot[C]{\song\xiaowu ~\thepage~}
+    \renewcommand{\headrulewidth}{0.5pt}
+    \renewcommand{\footrulewidth}{0pt}
+  }
+  \makeatother
+  \setcounter{page}{1}
+  \titleformat{\chapter}{\centering\xiaosan\hei}{\chaptername}{2em}{}
+
+  \input{body/ch1_team}
+  \input{body/ch2_definition}
+  \input{body/ch3_process}
+  \input{body/ch4_management}
+  \input{body/ch5_delivery}
+  \input{body/ch6_ai_empowerment}
+  \input{body/ch7_retrospective}
+\end{document}

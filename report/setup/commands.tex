@@ -1,0 +1,60 @@
+\usepackage{listings,tikz,needspace}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,backgrounds}
+\definecolor{tjublue}{HTML}{00558C}
+\definecolor{lightblue}{HTML}{F1F5F8}
+\definecolor{accentorange}{HTML}{D97706}
+\definecolor{accentgreen}{HTML}{15803D}
+\definecolor{accentred}{HTML}{B91C1C}
+\definecolor{mutedgray}{HTML}{64748B}
+
+\newcommand{\code}[1]{{\small\def\UrlBreaks{\do a\do b\do c\do d\do e\do f\do g\do h\do i\do j\do k\do l\do m\do n\do o\do p\do q\do r\do s\do t\do u\do v\do w\do x\do y\do z\do A\do B\do C\do D\do E\do F\do G\do H\do I\do J\do K\do L\do M\do N\do O\do P\do Q\do R\do S\do T\do U\do V\do W\do X\do Y\do Z\do 0\do 1\do 2\do 3\do 4\do 5\do 6\do 7\do 8\do 9\do\/\do\.\do\-\do\_\do\:\do\{\do\}}\nolinkurl{#1}}}
+\newcommand{\note}[1]{\begin{quote}\wuhao #1\end{quote}}
+\newcommand{\fullfig}[3]{\begin{figure}[H]\centering\includegraphics[width=\linewidth,height=.54\textheight,keepaspectratio]{figures/srs/#1}\caption{#2}\label{#3}\end{figure}}
+
+% 通用插图命令（带缺失回退提示）
+\newcommand{\reportfig}[4][0.88\linewidth]{%
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{#2}{%
+      \includegraphics[width=#1,height=0.56\textheight,keepaspectratio]{#2}%
+    }{%
+      \fbox{\parbox[c][3.6cm][c]{0.86\linewidth}{%
+        \centering\hei【待补充截图】#3\\[0.5em]
+        \song\small 保存路径：\texttt{#2}%
+      }}%
+    }
+    \caption{#3}
+    \label{#4}
+  \end{figure}%
+}
+
+% 本地待补截图占位符（带操作路径与画面内容说明）
+\newcommand{\placeholderfig}[5][0.84\linewidth]{%
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{#2}{%
+      \includegraphics[width=#1,height=0.56\textheight,keepaspectratio]{#2}%
+    }{%
+      \fcolorbox{tjublue}{lightblue}{%
+        \parbox[c][4.2cm][c]{0.88\linewidth}{%
+          \centering\hei\color{tjublue}【本地浏览器截图占位符】#3\\[0.7em]
+          \song\small\color{black}\textbf{建议截图内容与操作步骤：}#4\\[0.5em]
+          \texttt{预期放置路径：#2}%
+        }%
+      }%
+    }
+    \caption{#3}
+    \label{#5}
+  \end{figure}%
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black!20},
+  backgroundcolor=\color{lightblue},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false
+}

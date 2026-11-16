@@ -1,0 +1,131 @@
+\chapter{AI 赋能专题}
+
+响应《软件工程 1》课程对“人工智能技术深度融入软件工程实践”的明确要求，本项目从\textbf{研发过程 AI 赋能}与\textbf{产品运行时 AI 赋能}两个维度系统化推进 AI 落地：前者将大语言模型与代码智能体嵌入需求分析、编码重构、测试生成与过程文档核查等软件生命周期环节，显著提升 4 人小团队的工程产出效率；后者在平台业务中引入多模态大模型与本地规则分流架构，实现受控、可降级的智能点餐体验。
+
+\section{AI 赋能全景架构}
+
+图~\ref{fig:ai-dual-arch} 展示了本项目“研发过程提效”与“运行时业务智能”双维协同的 AI 赋能总体架构。研发侧强调“人主决策、AI 辅助、测试兜底”，运行时侧强调“本地优先、权限隔离、事务解耦、熔断降级”。
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    node distance=0.55cm and 0.9cm,
+    panel/.style={rectangle,rounded corners=5pt,draw=tjublue,fill=lightblue,thick,inner sep=8pt},
+    item/.style={rectangle,rounded corners=3pt,draw=tjublue!70,fill=white,align=center,font=\scriptsize,text width=2.9cm,minimum height=0.9cm},
+    item2/.style={rectangle,rounded corners=3pt,draw=accentgreen!80,fill=white,align=center,font=\scriptsize,text width=2.9cm,minimum height=0.9cm},
+    arrow/.style={-{Stealth[length=2mm]},thick,tjublue}
+  ]
+    \node[item] (r1) {\textbf{需求与建模}\\SRS 异常流补全\\draw.io 图示校验};
+    \node[item,below=0.35cm of r1] (r2) {\textbf{编码与重构}\\分层骨架与条件 SQL\\CSS 主题与组件封装};
+    \node[item,below=0.35cm of r2] (r3) {\textbf{测试与排障}\\TDD 边界断言生成\\异步竞态与路由定位};
+    \node[item,below=0.35cm of r3] (r4) {\textbf{文档与审计}\\Git/代码事实核对\\CMM3 差异清单汇编};
+
+    \node[item2,right=2.6cm of r1] (s1) {\textbf{本地意图分流}\\规则咨询/本人订单/推荐\\优先本地业务逻辑响应};
+    \node[item2,below=0.35cm of s1] (s2) {\textbf{DeepSeek 文本对话}\\\code{deepseek-chat}\\结合真实菜单生成候选};
+    \node[item2,below=0.35cm of s2] (s3) {\textbf{DashScope 多模态}\\\code{qwen-vl-plus} 识菜\\\code{qwen3-asr-flash} 语音};
+    \node[item2,below=0.35cm of s3] (s4) {\textbf{安全与熔断边界}\\JWT 身份上下文过滤\\超时熔断 + 本地帮助兜底};
+
+    \begin{scope}[on background layer]
+      \node[panel,fit=(r1)(r4),label={[font=\small\bfseries,tjublue]above:维度一：软件研发全生命周期 AI 赋能}] (p1) {};
+      \node[panel,draw=accentgreen,fill=green!4,fit=(s1)(s4),label={[font=\small\bfseries,accentgreen]above:维度二：平台运行时多模态 AI 赋能}] (p2) {};
+    \end{scope}
+
+    \draw[arrow] (r1) -- (r2);
+    \draw[arrow] (r2) -- (r3);
+    \draw[arrow] (r3) -- (r4);
+    \draw[arrow,accentgreen] (s1) -- (s2);
+    \draw[arrow,accentgreen] (s2) -- (s3);
+    \draw[arrow,accentgreen] (s3) -- (s4);
+    \draw[dashed,thick,accentorange] (p1.east) -- (p2.west) node[midway,above,font=\scriptsize,color=accentorange,align=center]{工程质量\\双向反馈};
+  \end{tikzpicture}
+  \caption{项目研发过程与系统运行时双维 AI 赋能全景架构图}\label{fig:ai-dual-arch}
+\end{figure}
+
+\section{研发过程全流程 AI 赋能实践}
+
+\subsection{各工程阶段的 AI 协同应用}
+
+在项目开发与过程规范化期间，团队合理借助 AI 编程助手（如 Codex 等代码与文档智能工具）辅助四大核心环节，具体场景与产出如下：
+
+\begin{longtable}{L{.17\linewidth}L{.28\linewidth}L{.46\linewidth}}
+\caption{软件生命周期各阶段 AI 赋能场景与人工核查机制}\label{tab:dev-ai-usage}\\
+\toprule
+\textbf{工程阶段} & \textbf{AI 辅助输入与任务} & \textbf{产出价值与人工核查把关} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{工程阶段} & \textbf{AI 辅助输入与任务} & \textbf{产出价值与人工核查把关} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+需求分析与建模 & 输入四端业务背景，辅助梳理异常流、边界条件与 Mermaid/draw.io 建模布局。 & 补齐“自取免配送费”“取消恢复库存”“未登录访问隔离”等异常流；所有需求编号由 PO 逐条审核定稿。 \\
+架构与编码实现 & 辅助生成 Controller/Service 样板、MyBatis 条件更新 SQL、4 套 CSS 变量主题及前端组件拆分建议。 & 加快多端接口与壳层样式落地；涉及事务边界、\code{BigDecimal} 算价与条件锁 SQL 均由后端主责逐行审查。 \\
+测试与缺陷排查 & 辅助编写前端 \code{.test.mjs} 契约断言与 JUnit/MockMvc 异常分支测试，快速定位复杂报错栈。 & 在返回循环缺陷修复中辅助设计 RED 阶段用例；所有测试预期均以真实业务规则为唯一裁决依据。 \\
+过程审计与报告 & 检索仓库源码、数据库迁移与 220+ 条 Git 提交记录，自动核查 SRS 与源码实现差异并辅助 LaTeX 排版。 & 快速定位“订单阶段命名”“计价顺序”等文档与代码偏差；报告内容与成员分工由全体成员核对确认。 \\
+\end{longtable}
+
+\subsection{人机协同工作闭环}
+
+团队在研发实践中摸索出了一套可复用的“四步人机协同规范”，确保成员始终掌握系统架构与核心代码的主导权：
+\begin{enumerate}
+  \item \textbf{人工定义约束（Prompt Engineering）：} 成员先写明业务前置条件、表字段约束、接口契约与安全红线（例如“禁止信任前端传入 \code{customerId}”“外部 HTTP 调用不得包含在数据库事务内”），再向 AI 发起辅助请求。
+  \item \textbf{AI 生成候选方案：} AI 根据仓库上下文输出候选代码 Diff、测试样例或文档草稿。
+  \item \textbf{人工 Diff 审查与测试验证：} 成员逐行阅读变更差异，重点核查是否存在“幽灵字段”“吞异常”“放宽权限”等问题，并在本地运行 \code{npm test} 与 \code{./mvnw test} 验证。
+  \item \textbf{人工决策与记录归档：} 由责任人决定采纳、改写或拒绝方案，并在提交说明及开发记录中留存核查依据。
+\end{enumerate}
+
+\section{系统运行时 AI 业务能力设计与落地}
+
+\subsection{多模态 AI 服务矩阵}
+
+根据仓库 \code{elm_bk/src/main/resources/application.yml} 及适配器实现，平台面向顾客端集成了文字对话、结构化推荐、图片识菜与语音点餐四类智能化入口，形成表~\ref{tab:runtime-ai-matrix} 所示的多模型与规则混合服务矩阵。
+
+\begin{longtable}{L{.24\linewidth}L{.20\linewidth}L{.47\linewidth}}
+\caption{系统运行时 AI 服务能力与配置依据表}\label{tab:runtime-ai-matrix}\\
+\toprule
+\textbf{AI 服务 / 模型} & \textbf{使用场合} & \textbf{核心机制与配置依据} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{AI 服务 / 模型} & \textbf{使用场合} & \textbf{核心机制与配置依据} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+本地意图分流与规则引擎 & 平台规则咨询、本人订单查询与失败兜底 & \code{StructuredAssistantServiceImpl} 先在本地分类意图；规则咨询与简单推荐直接读取服务端真实数据响应，零外部模型消耗。 \\
+DeepSeek / \code{deepseek-chat} & 文字智能客服与上下文点餐建议 & 在 \code{AiChatServiceImpl} 校验用户权限后注入筛选过的菜单与本人订单数据，结合总超时与重试上限返回结构化推荐。 \\
+DashScope / \code{qwen-vl-plus} & 拍照/传图菜品识别（\code{/api/v1/dish-recognitions}） & 上传图片经大小与格式校验后交视觉模型识别菜名特征，再在平台真实在售菜单中匹配可下单商品候选。 \\
+DashScope / \code{qwen3-asr-flash} & 语音点餐草稿（\code{/api/v1/voice-order-drafts}） & 音频流识别转为点餐意图文本并解析生成可编辑草稿；关闭抽屉或迟到授权时自动释放浏览器麦克风。 \\
+\end{longtable}
+
+\subsection{意图分流、安全隔离与熔断降级设计}
+
+为防止外部大模型引入越权泄露、幻觉加购或数据库长事务锁死，团队在工程实现中设置了四重护栏：
+\begin{enumerate}
+  \item \textbf{结构化候选与权威加购：} 助手返回结果被规范为“答复文本 + 结构化商品候选数组 + 是否需确认标识”，候选商品 ID 与价格严格来自服务端菜单查询；顾客点击确认加购时仍走标准购物车与库存限购校验。
+  \item \textbf{最小权限数据注入：} \code{AiChatServiceImpl} 从认证上下文获取当前登录用户 ID，仅允许检索本人名下订单，并将查询到的数据库内容明确标记为非指令数据，降低提示词注入风险；日志输出隐藏用户对话正文。
+  \item \textbf{事务解耦设计：} 外部模型网络调用完全置于数据库事务之外，待调用完成并获得响应后再开启短事务持久化 \code{ai_chat_history}，防止慢响应耗尽连接池。
+  \item \textbf{超时熔断与本地兜底：} 配置总超时期限、错误重试上限（默认 3 次，受总超时约束）与 \code{AiCircuitBreaker} 工具；当未配置 API 密钥或外部服务异常时，自动切换至本地帮助与规则推荐，绝不阻断基础点餐链路。
+\end{enumerate}
+
+\placeholderfig{figures/screenshots/ui-ai-assistant.png}{AI 智能客服与多模态点餐（文字推荐 / 图片识菜 / 语音入口）界面}{请在本地启动项目后，使用 \texttt{demo\_user} 登录并点击首页右下角“AI 点餐”悬浮球进入 \texttt{/ai-chat}，演示输入一次点餐咨询（展示返回的可点击商品候选卡片）或切换识菜/语音入口，截取页面保存至此路径。}{fig:ai-runtime-placeholder}
+
+\section{AI 赋能成效评估与核查反思}
+
+\subsection{工程成效评估}
+
+\begin{enumerate}
+  \item \textbf{研发效率显著提升：} 面对涵盖四端 33 个页面、22 张数据表、22 个后端 Controller 的庞大工程体量，借助 AI 辅助生成基础样板、SQL 迁移与回归测试用例，4 人团队在不足三周的高强度周期内高质量完成了 575 项自动化测试与全部核心及扩展模块交付。
+  \item \textbf{文档与代码一致性增强：} 通过 AI 跨文件检索代码与 Git 历史，团队快速发现了“订单阶段命名与枚举不一致”“计价顺序未写入 SRS”等 8 项隐性差异，沉淀为清晰的改进清单。
+\end{enumerate}
+
+\subsection{核查暴露的问题与改进方向}
+
+在人工复审 AI 辅助产物与系统运行链路过程中，团队也清醒认识到以下限制与改进方向：
+\begin{enumerate}
+  \item \textbf{警惕 AI 辅助编码中的“隐式漂移”：} 早前辅助生成的个别前端接口调用与后端字段命名存在细微差异，或出现默认放行兜底；为此团队确立了“测试预期与安全边界必须由成员亲手确认，禁止盲目信任生成结果”的铁律。
+  \item \textbf{深化运行时调用成本与限流治理：} 代码级已实现意图分流、总超时与熔断器，但在高并发场景下针对单用户的 Token 预算控制、按路由级调用次数监控与全链路压测报告仍待后续课程演进中进一步补齐运行数据。
+\end{enumerate}
