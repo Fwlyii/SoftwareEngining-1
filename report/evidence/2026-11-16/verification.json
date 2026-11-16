@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-16",
+  "timezone": "Asia/Shanghai",
+  "source_repository": "Fwlyii/lightweight-takeout-platform",
+  "source_commit": "6ddb21994aabad4578b3d2afe3c7ce1cf735e590",
+  "runtime": {
+    "node": "22.16.0",
+    "java": "OpenJDK 17.0.21",
+    "maven": "3.9.9",
+    "browser_database": "MySQL 8.0.46",
+    "backend_test_database": "H2"
+  },
+  "commands": [
+    "npm --prefix elmclient test",
+    "cd elm_bk && ./mvnw test"
+  ],
+  "tests": {
+    "frontend": {
+      "tests": 235,
+      "passed": 235,
+      "failed": 0,
+      "skipped": 0
+    },
+    "backend": {
+      "tests": 340,
+      "passed": 340,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "screenshots": {
+    "ui-assets-preferences.png": "Two actual authenticated browser captures joined side by side; demo database, mint theme selected.",
+    "ui-amap-picker.png": "Actual map selection dialog with missing-configuration message. No successful external map call.",
+    "ui-ai-assistant.png": "Actual local inventory recommendation for chicken rice with budget 30; no external model call.",
+    "ui-ai-media-unconfigured.png": "Actual disabled image recognition state without DashScope configuration.",
+    "test-terminal-results.png": "Browser render of actual test log excerpts in test-results.html, not a terminal emulator capture."
+  },
+  "external_services": {
+    "amap": "not configured; successful path not verified",
+    "deepseek": "not configured",
+    "dashscope": "not configured"
+  },
+  "browser_page_errors": []
+}

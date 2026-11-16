@@ -1,0 +1,1522 @@
+
+> elmclient@0.1.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: account API preserves query and status endpoints after extraction
+ok 1 - account API preserves query and status endpoints after extraction
+  ---
+  duration_ms: 1.43704
+  type: 'test'
+  ...
+# Subtest: account business failures remain failures
+ok 2 - account business failures remain failures
+  ---
+  duration_ms: 0.575757
+  type: 'test'
+  ...
+# (node:2107345) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/services/adminAccountApi.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: latest search wins when older requests complete later
+ok 3 - latest search wins when older requests complete later
+  ---
+  duration_ms: 5.6272
+  type: 'test'
+  ...
+# Subtest: status update is single-flight and failure does not flip the displayed account
+ok 4 - status update is single-flight and failure does not flip the displayed account
+  ---
+  duration_ms: 1.273859
+  type: 'test'
+  ...
+# Subtest: successful status change refreshes the current server-side filter
+ok 5 - successful status change refreshes the current server-side filter
+  ---
+  duration_ms: 0.652003
+  type: 'test'
+  ...
+# (node:2107346) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/composables/useAdminAccounts.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: production source cannot call retired write-via-GET or nonexistent cancel endpoints
+ok 6 - production source cannot call retired write-via-GET or nonexistent cancel endpoints
+  ---
+  duration_ms: 74.349078
+  type: 'test'
+  ...
+# Subtest: merchant catalog mutations use PATCH and DELETE with failure handling
+ok 7 - merchant catalog mutations use PATCH and DELETE with failure handling
+  ---
+  duration_ms: 2.007518
+  type: 'test'
+  ...
+# Subtest: order list reads the shared response envelope, not an extra data wrapper
+ok 8 - order list reads the shared response envelope, not an extra data wrapper
+  ---
+  duration_ms: 1.211259
+  type: 'test'
+  ...
+# (node:2107353) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/assistantBusinessData.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: breakfast recommendations join the real shop address, score and homepage distance
+ok 9 - breakfast recommendations join the real shop address, score and homepage distance
+  ---
+  duration_ms: 2.245291
+  type: 'test'
+  ...
+# Subtest: AI campus recommendations reuse the per-shop points rather than the shared campus center
+ok 10 - AI campus recommendations reuse the per-shop points rather than the shared campus center
+  ---
+  duration_ms: 0.377279
+  type: 'test'
+  ...
+# Subtest: reopening AI after changing provinces clears both stale values
+ok 11 - reopening AI after changing provinces clears both stale values
+  ---
+  duration_ms: 0.360488
+  type: 'test'
+  ...
+# Subtest: metadata requests are single-flight and recover after failure
+ok 12 - metadata requests are single-flight and recover after failure
+  ---
+  duration_ms: 0.471138
+  type: 'test'
+  ...
+# Subtest: disposing ignores late metadata, unknown shops do not borrow another shop coordinates
+ok 13 - disposing ignores late metadata, unknown shops do not borrow another shop coordinates
+  ---
+  duration_ms: 0.489584
+  type: 'test'
+  ...
+# (node:2107354) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/businessPresentation.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: closing and reopening ignores an old chat result and does not unlock a newer request
+ok 14 - closing and reopening ignores an old chat result and does not unlock a newer request
+  ---
+  duration_ms: 3.906949
+  type: 'test'
+  ...
+# Subtest: failed chat is shown as an error and does not silently request recommendations
+ok 15 - failed chat is shown as an error and does not silently request recommendations
+  ---
+  duration_ms: 1.260243
+  type: 'test'
+  ...
+# Subtest: rapid quick-chip clicks are single-flight and malformed candidates cannot crash rendering
+ok 16 - rapid quick-chip clicks are single-flight and malformed candidates cannot crash rendering
+  ---
+  duration_ms: 1.262377
+  type: 'test'
+  ...
+# Subtest: recorder startup failure releases acquired microphone tracks
+ok 17 - recorder startup failure releases acquired microphone tracks
+  ---
+  duration_ms: 1.246958
+  type: 'test'
+  ...
+# Subtest: Chinese composition Enter never submits the drawer draft
+ok 18 - Chinese composition Enter never submits the drawer draft
+  ---
+  duration_ms: 0.300143
+  type: 'test'
+  ...
+# Subtest: recommendation cards remain renderable without distance data
+ok 19 - recommendation cards remain renderable without distance data
+  ---
+  duration_ms: 0.370987
+  type: 'test'
+  ...
+# Subtest: known distances keep their value and unit, including zero and legacy distance fields
+ok 20 - known distances keep their value and unit, including zero and legacy distance fields
+  ---
+  duration_ms: 0.340048
+  type: 'test'
+  ...
+# Subtest: drawer releases a late microphone permission after close
+ok 21 - drawer releases a late microphone permission after close
+  ---
+  duration_ms: 0.343926
+  type: 'test'
+  ...
+# Subtest: drawer releases a late microphone permission after unmount
+ok 22 - drawer releases a late microphone permission after unmount
+  ---
+  duration_ms: 0.605695
+  type: 'test'
+  ...
+# Subtest: AI launcher stays inset from the shared page edge at every breakpoint
+ok 23 - AI launcher stays inset from the shared page edge at every breakpoint
+  ---
+  duration_ms: 22.55221
+  type: 'test'
+  ...
+# (node:2107361) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/assistantData.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: clearing a pending chat prevents a late reply from resurrecting it
+ok 24 - clearing a pending chat prevents a late reply from resurrecting it
+  ---
+  duration_ms: 4.149863
+  type: 'test'
+  ...
+# Subtest: candidate add-to-cart is single-flight per food and releases the button on failure
+ok 25 - candidate add-to-cart is single-flight per food and releases the button on failure
+  ---
+  duration_ms: 1.831562
+  type: 'test'
+  ...
+# Subtest: history endpoint failures are visible instead of appearing as an empty history
+ok 26 - history endpoint failures are visible instead of appearing as an empty history
+  ---
+  duration_ms: 0.483462
+  type: 'test'
+  ...
+# Subtest: only the last clicked history session can replace the conversation
+ok 27 - only the last clicked history session can replace the conversation
+  ---
+  duration_ms: 0.497719
+  type: 'test'
+  ...
+# Subtest: invalid budgets never send recommendation requests and are visible on tool pages
+ok 28 - invalid budgets never send recommendation requests and are visible on tool pages
+  ---
+  duration_ms: 0.619842
+  type: 'test'
+  ...
+# Subtest: recommendation payloads tolerate null candidate entries
+ok 29 - recommendation payloads tolerate null candidate entries
+  ---
+  duration_ms: 0.417196
+  type: 'test'
+  ...
+# Subtest: Chinese composition Enter never sends the full-page draft
+ok 30 - Chinese composition Enter never sends the full-page draft
+  ---
+  duration_ms: 0.358183
+  type: 'test'
+  ...
+# Subtest: voice rematching includes the edited quantity in the total budget query
+ok 31 - voice rematching includes the edited quantity in the total budget query
+  ---
+  duration_ms: 0.398901
+  type: 'test'
+  ...
+# Subtest: invalid cart quantity is rejected without a request: 1.5
+ok 32 - invalid cart quantity is rejected without a request: 1.5
+  ---
+  duration_ms: 0.616044
+  type: 'test'
+  ...
+# Subtest: invalid cart quantity is rejected without a request: 0
+ok 33 - invalid cart quantity is rejected without a request: 0
+  ---
+  duration_ms: 0.709413
+  type: 'test'
+  ...
+# Subtest: invalid cart quantity is rejected without a request: -1
+ok 34 - invalid cart quantity is rejected without a request: -1
+  ---
+  duration_ms: 0.357141
+  type: 'test'
+  ...
+# Subtest: invalid cart quantity is rejected without a request: 100
+ok 35 - invalid cart quantity is rejected without a request: 100
+  ---
+  duration_ms: 0.258543
+  type: 'test'
+  ...
+# Subtest: invalid cart quantity is rejected without a request: NaN
+ok 36 - invalid cart quantity is rejected without a request: NaN
+  ---
+  duration_ms: 0.190934
+  type: 'test'
+  ...
+# Subtest: leaving while recording releases the microphone without uploading audio
+ok 37 - leaving while recording releases the microphone without uploading audio
+  ---
+  duration_ms: 7.918427
+  type: 'test'
+  ...
+# Subtest: a microphone permission result arriving after unmount is immediately released
+ok 38 - a microphone permission result arriving after unmount is immediately released
+  ---
+  duration_ms: 0.346802
+  type: 'test'
+  ...
+# Subtest: explicit stop still submits the recording once
+ok 39 - explicit stop still submits the recording once
+  ---
+  duration_ms: 19.342039
+  type: 'test'
+  ...
+# (node:2107367) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/businessPresentation.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: merchant order responses cannot cross shop switches
+ok 40 - merchant order responses cannot cross shop switches
+  ---
+  duration_ms: 48.535471
+  type: 'test'
+  ...
+# Subtest: a failed shop switch never displays previous shop orders
+ok 41 - a failed shop switch never displays previous shop orders
+  ---
+  duration_ms: 2.395217
+  type: 'test'
+  ...
+# Subtest: merchant can load reviews of the second owned shop
+ok 42 - merchant can load reviews of the second owned shop
+  ---
+  duration_ms: 7.859456
+  type: 'test'
+  ...
+# Subtest: missing or invalid distance and ETA remain unknown, while zero distance is valid
+ok 43 - missing or invalid distance and ETA remain unknown, while zero distance is valid
+  ---
+  duration_ms: 0.190713
+  type: 'test'
+  ...
+# Subtest: catalog pages label unavailable distance and delivery estimates honestly
+ok 44 - catalog pages label unavailable distance and delivery estimates honestly
+  ---
+  duration_ms: 1.009715
+  type: 'test'
+  ...
+# Subtest: successful login stores the verified profile and selected portal together
+ok 45 - successful login stores the verified profile and selected portal together
+  ---
+  duration_ms: 1.863393
+  type: 'test'
+  ...
+# Subtest: failed profile request cannot leave a partial session
+ok 46 - failed profile request cannot leave a partial session
+  ---
+  duration_ms: 0.522857
+  type: 'test'
+  ...
+# Subtest: server role must match the submitted role
+ok 47 - server role must match the submitted role
+  ---
+  duration_ms: 0.227854
+  type: 'test'
+  ...
+# Subtest: role changed between login and profile retrieval asks for a new login
+ok 48 - role changed between login and profile retrieval asks for a new login
+  ---
+  duration_ms: 0.200903
+  type: 'test'
+  ...
+# Subtest: customer can retain an applicant session but cannot turn it into approved rider access
+ok 49 - customer can retain an applicant session but cannot turn it into approved rider access
+  ---
+  duration_ms: 0.267069
+  type: 'test'
+  ...
+# Subtest: missing signed token is a failed login
+ok 50 - missing signed token is a failed login
+  ---
+  duration_ms: 0.176987
+  type: 'test'
+  ...
+# Subtest: valid customer redirect is retained
+ok 51 - valid customer redirect is retained
+  ---
+  duration_ms: 0.218727
+  type: 'test'
+  ...
+# Subtest: login returns to home instead of automatically opening AiChat
+ok 52 - login returns to home instead of automatically opening AiChat
+  ---
+  duration_ms: 0.170945
+  type: 'test'
+  ...
+# Subtest: login returns to home instead of automatically opening AiRecommend
+ok 53 - login returns to home instead of automatically opening AiRecommend
+  ---
+  duration_ms: 0.316874
+  type: 'test'
+  ...
+# Subtest: login returns to home instead of automatically opening AiVoiceOrder
+ok 54 - login returns to home instead of automatically opening AiVoiceOrder
+  ---
+  duration_ms: 0.369946
+  type: 'test'
+  ...
+# Subtest: login returns to home instead of automatically opening AiDishRecognition
+ok 55 - login returns to home instead of automatically opening AiDishRecognition
+  ---
+  duration_ms: 0.81822
+  type: 'test'
+  ...
+# Subtest: unsafe or unavailable redirect is rejected: //evil.test
+ok 56 - unsafe or unavailable redirect is rejected: //evil.test
+  ---
+  duration_ms: 0.10503
+  type: 'test'
+  ...
+# Subtest: unsafe or unavailable redirect is rejected: /\\evil.test
+ok 57 - unsafe or unavailable redirect is rejected: /\\evil.test
+  ---
+  duration_ms: 0.064854
+  type: 'test'
+  ...
+# Subtest: unsafe or unavailable redirect is rejected: https://evil.test
+ok 58 - unsafe or unavailable redirect is rejected: https://evil.test
+  ---
+  duration_ms: 0.057048
+  type: 'test'
+  ...
+# Subtest: unsafe or unavailable redirect is rejected: /admin/user
+ok 59 - unsafe or unavailable redirect is rejected: /admin/user
+  ---
+  duration_ms: 0.063341
+  type: 'test'
+  ...
+# Subtest: unsafe or unavailable redirect is rejected: /missing
+ok 60 - unsafe or unavailable redirect is rejected: /missing
+  ---
+  duration_ms: 0.060446
+  type: 'test'
+  ...
+# Subtest: unsafe or unavailable redirect is rejected: /login
+ok 61 - unsafe or unavailable redirect is rejected: /login
+  ---
+  duration_ms: 0.05767
+  type: 'test'
+  ...
+# Subtest: applicants always go to their application route
+ok 62 - applicants always go to their application route
+  ---
+  duration_ms: 0.088298
+  type: 'test'
+  ...
+# Subtest: approved operational account goes to its own workspace
+ok 63 - approved operational account goes to its own workspace
+  ---
+  duration_ms: 0.076896
+  type: 'test'
+  ...
+# (node:2107378) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/authenticationClient.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:2107384) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/profileDefaults.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: role pages import an existing shared avatar default
+ok 64 - role pages import an existing shared avatar default
+  ---
+  duration_ms: 3.783604
+  type: 'test'
+  ...
+# Subtest: all ten category icons referenced by the home page are shipped as PNG files
+ok 65 - all ten category icons referenced by the home page are shipped as PNG files
+  ---
+  duration_ms: 3.146359
+  type: 'test'
+  ...
+# Subtest: the rider dashboard template contains compilable JavaScript expressions
+ok 66 - the rider dashboard template contains compilable JavaScript expressions
+  ---
+  duration_ms: 89.068834
+  type: 'test'
+  ...
+# Subtest: distance follows selected coordinates instead of a district or shop ID
+ok 67 - distance follows selected coordinates instead of a district or shop ID
+  ---
+  duration_ms: 1.114525
+  type: 'test'
+  ...
+# Subtest: legacy demo identities and region strings never fabricate coordinates
+ok 68 - legacy demo identities and region strings never fabricate coordinates
+  ---
+  duration_ms: 0.166598
+  type: 'test'
+  ...
+# Subtest: unknown coordinates clear stale distance and ETA instead of showing zero
+ok 69 - unknown coordinates clear stale distance and ETA instead of showing zero
+  ---
+  duration_ms: 0.174102
+  type: 'test'
+  ...
+# Subtest: invalid coordinates are rejected
+ok 70 - invalid coordinates are rejected
+  ---
+  duration_ms: 0.199982
+  type: 'test'
+  ...
+# Subtest: distance sorting matches display and unknowns remain last
+ok 71 - distance sorting matches display and unknowns remain last
+  ---
+  duration_ms: 0.838729
+  type: 'test'
+  ...
+# Subtest: ETA remains a monotonic estimate and never clamps long trips
+ok 72 - ETA remains a monotonic estimate and never clamps long trips
+  ---
+  duration_ms: 0.237282
+  type: 'test'
+  ...
+# (node:2107394) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/businessDistance.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:2107402) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/checkout.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: checkout awaits an in-flight blur save before navigating
+ok 73 - checkout awaits an in-flight blur save before navigating
+  ---
+  duration_ms: 3.081896
+  type: 'test'
+  ...
+# Subtest: failed remark save retains the draft and blocks checkout
+ok 74 - failed remark save retains the draft and blocks checkout
+  ---
+  duration_ms: 1.175271
+  type: 'test'
+  ...
+# (node:2107477) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/checkout.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: checkout context survives new/edit address navigation without unrelated parameters
+ok 75 - checkout context survives new/edit address navigation without unrelated parameters
+  ---
+  duration_ms: 1.874815
+  type: 'test'
+  ...
+# Subtest: reject invalid checkout business "NaN"
+ok 76 - reject invalid checkout business "NaN"
+  ---
+  duration_ms: 0.238444
+  type: 'test'
+  ...
+# Subtest: reject invalid checkout business "-1"
+ok 77 - reject invalid checkout business "-1"
+  ---
+  duration_ms: 0.154845
+  type: 'test'
+  ...
+# Subtest: reject invalid checkout business "0"
+ok 78 - reject invalid checkout business "0"
+  ---
+  duration_ms: 0.122514
+  type: 'test'
+  ...
+# Subtest: reject invalid checkout business "7x"
+ok 79 - reject invalid checkout business "7x"
+  ---
+  duration_ms: 0.125038
+  type: 'test'
+  ...
+# Subtest: reject invalid checkout business ["7"]
+ok 80 - reject invalid checkout business ["7"]
+  ---
+  duration_ms: 0.83918
+  type: 'test'
+  ...
+# Subtest: reject invalid checkout business "9007199254740992"
+ok 81 - reject invalid checkout business "9007199254740992"
+  ---
+  duration_ms: 0.098167
+  type: 'test'
+  ...
+# Subtest: reject invalid selected food ""
+ok 82 - reject invalid selected food ""
+  ---
+  duration_ms: 0.147801
+  type: 'test'
+  ...
+# Subtest: reject invalid selected food "21,"
+ok 83 - reject invalid selected food "21,"
+  ---
+  duration_ms: 0.303479
+  type: 'test'
+  ...
+# Subtest: reject invalid selected food "21,no"
+ok 84 - reject invalid selected food "21,no"
+  ---
+  duration_ms: 0.39872
+  type: 'test'
+  ...
+# Subtest: reject invalid selected food "21,0"
+ok 85 - reject invalid selected food "21,0"
+  ---
+  duration_ms: 0.168842
+  type: 'test'
+  ...
+# Subtest: reject invalid selected food ["21"]
+ok 86 - reject invalid selected food ["21"]
+  ---
+  duration_ms: 0.082808
+  type: 'test'
+  ...
+# Subtest: reject invalid selected food "9007199254740992"
+ok 87 - reject invalid selected food "9007199254740992"
+  ---
+  duration_ms: 0.071978
+  type: 'test'
+  ...
+# Subtest: pickup is explicit and missing mode defaults to delivery
+ok 88 - pickup is explicit and missing mode defaults to delivery
+  ---
+  duration_ms: 0.158291
+  type: 'test'
+  ...
+# Subtest: checkout never silently includes another merchant or unselected food
+ok 89 - checkout never silently includes another merchant or unselected food
+  ---
+  duration_ms: 0.434899
+  type: 'test'
+  ...
+# Subtest: delivery requires an address and never sends user IDs or client prices
+ok 90 - delivery requires an address and never sends user IDs or client prices
+  ---
+  duration_ms: 0.488301
+  type: 'test'
+  ...
+# Subtest: pickup submits without an address even if a previous address was selected
+ok 91 - pickup submits without an address even if a previous address was selected
+  ---
+  duration_ms: 0.173411
+  type: 'test'
+  ...
+# Subtest: double click and successful resubmission share a single order
+ok 92 - double click and successful resubmission share a single order
+  ---
+  duration_ms: 0.219228
+  type: 'test'
+  ...
+# Subtest: retry after network failure retains the idempotency key
+ok 93 - retry after network failure retains the idempotency key
+  ---
+  duration_ms: 0.263923
+  type: 'test'
+  ...
+# Subtest: failed business response cannot be mistaken for a created order
+ok 94 - failed business response cannot be mistaken for a created order
+  ---
+  duration_ms: 0.177118
+  type: 'test'
+  ...
+# Subtest: payment receipt checks actual server state 0
+ok 95 - payment receipt checks actual server state 0
+  ---
+  duration_ms: 0.197266
+  type: 'test'
+  ...
+# Subtest: payment receipt checks actual server state 1
+ok 96 - payment receipt checks actual server state 1
+  ---
+  duration_ms: 0.075324
+  type: 'test'
+  ...
+# Subtest: payment receipt checks actual server state 7
+ok 97 - payment receipt checks actual server state 7
+  ---
+  duration_ms: 0.068129
+  type: 'test'
+  ...
+# Subtest: payment receipt checks actual server state 8
+ok 98 - payment receipt checks actual server state 8
+  ---
+  duration_ms: 0.072438
+  type: 'test'
+  ...
+# Subtest: payment receipt checks actual server state 9
+ok 99 - payment receipt checks actual server state 9
+  ---
+  duration_ms: 0.067729
+  type: 'test'
+  ...
+# Subtest: missing order, failed API and unknown state cannot display success
+ok 100 - missing order, failed API and unknown state cannot display success
+  ---
+  duration_ms: 0.237363
+  type: 'test'
+  ...
+# Subtest: production pages connect selectable addresses to checkout and preserve return context
+ok 101 - production pages connect selectable addresses to checkout and preserve return context
+  ---
+  duration_ms: 15.354145
+  type: 'test'
+  ...
+# Subtest: account pages use implemented current-profile and admin-only endpoints
+ok 102 - account pages use implemented current-profile and admin-only endpoints
+  ---
+  duration_ms: 1.49459
+  type: 'test'
+  ...
+# Subtest: rider navigation uses the owned task endpoint and opens the validated map URL
+ok 103 - rider navigation uses the owned task endpoint and opens the validated map URL
+  ---
+  duration_ms: 1.444123
+  type: 'test'
+  ...
+# Subtest: blocked popup prevents a navigation request
+ok 104 - blocked popup prevents a navigation request
+  ---
+  duration_ms: 0.883765
+  type: 'test'
+  ...
+# Subtest: rejects an unsafe navigation URL: javascript:alert(1)
+ok 105 - rejects an unsafe navigation URL: javascript:alert(1)
+  ---
+  duration_ms: 0.206925
+  type: 'test'
+  ...
+# Subtest: rejects an unsafe navigation URL: https://evil.example/search
+ok 106 - rejects an unsafe navigation URL: https://evil.example/search
+  ---
+  duration_ms: 0.145106
+  type: 'test'
+  ...
+# Subtest: rejects an unsafe navigation URL: https://uri.amap.com.evil.example/search
+ok 107 - rejects an unsafe navigation URL: https://uri.amap.com.evil.example/search
+  ---
+  duration_ms: 0.157431
+  type: 'test'
+  ...
+# Subtest: authorization failure closes the blank window without navigation
+ok 108 - authorization failure closes the blank window without navigation
+  ---
+  duration_ms: 0.202617
+  type: 'test'
+  ...
+# (node:2107479) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/deliveryNavigation.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: production requests stay on their own deployment: http://localhost:38081
+ok 109 - production requests stay on their own deployment: http://localhost:38081
+  ---
+  duration_ms: 0.788604
+  type: 'test'
+  ...
+# Subtest: production requests stay on their own deployment: http://127.0.0.1:38081
+ok 110 - production requests stay on their own deployment: http://127.0.0.1:38081
+  ---
+  duration_ms: 0.125599
+  type: 'test'
+  ...
+# Subtest: production requests stay on their own deployment: https://demo.example.org
+ok 111 - production requests stay on their own deployment: https://demo.example.org
+  ---
+  duration_ms: 0.947907
+  type: 'test'
+  ...
+# Subtest: local development retains its separate backend port
+ok 112 - local development retains its separate backend port
+  ---
+  duration_ms: 0.213076
+  type: 'test'
+  ...
+# Subtest: an explicit backend configuration takes priority
+ok 113 - an explicit backend configuration takes priority
+  ---
+  duration_ms: 0.195202
+  type: 'test'
+  ...
+# (node:2107480) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/resolveApiBaseUrl.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: personal services retain wallet, appearance, notifications and rider shortcuts
+ok 114 - personal services retain wallet, appearance, notifications and rider shortcuts
+  ---
+  duration_ms: 4.761669
+  type: 'test'
+  ...
+# Subtest: layout-container animations cannot replace fixed element positioning transforms
+ok 115 - layout-container animations cannot replace fixed element positioning transforms
+  ---
+  duration_ms: 0.931736
+  type: 'test'
+  ...
+# Subtest: location dialog escapes the animated header and surfaces configuration errors
+ok 116 - location dialog escapes the animated header and surfaces configuration errors
+  ---
+  duration_ms: 1.886456
+  type: 'test'
+  ...
+# Subtest: pickup is not incorrectly disabled by dine-in seating metadata
+ok 117 - pickup is not incorrectly disabled by dine-in seating metadata
+  ---
+  duration_ms: 1.131066
+  type: 'test'
+  ...
+# Subtest: sticky store header is not translated like a viewport-fixed legacy header
+ok 118 - sticky store header is not translated like a viewport-fixed legacy header
+  ---
+  duration_ms: 0.744019
+  type: 'test'
+  ...
+# Subtest: Index updated template compiles
+ok 119 - Index updated template compiles
+  ---
+  duration_ms: 114.814904
+  type: 'test'
+  ...
+# Subtest: MyInformation updated template compiles
+ok 120 - MyInformation updated template compiles
+  ---
+  duration_ms: 34.770495
+  type: 'test'
+  ...
+# Subtest: AdminHome updated template compiles
+ok 121 - AdminHome updated template compiles
+  ---
+  duration_ms: 36.839119
+  type: 'test'
+  ...
+# Subtest: AdminUser updated template compiles
+ok 122 - AdminUser updated template compiles
+  ---
+  duration_ms: 13.44766
+  type: 'test'
+  ...
+# Subtest: AdminBusiness updated template compiles
+ok 123 - AdminBusiness updated template compiles
+  ---
+  duration_ms: 11.148066
+  type: 'test'
+  ...
+# Subtest: AdminShop updated template compiles
+ok 124 - AdminShop updated template compiles
+  ---
+  duration_ms: 13.821894
+  type: 'test'
+  ...
+# (node:2107488) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/composables/useLocationPicker.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: default does not invent a user location and legacy region entries remain available
+ok 125 - default does not invent a user location and legacy region entries remain available
+  ---
+  duration_ms: 2.143437
+  type: 'test'
+  ...
+# Subtest: selection only changes the header after confirmation and persists across reload
+ok 126 - selection only changes the header after confirmation and persists across reload
+  ---
+  duration_ms: 2.402711
+  type: 'test'
+  ...
+# Subtest: municipalities are not repeated in the displayed region
+ok 127 - municipalities are not repeated in the displayed region
+  ---
+  duration_ms: 0.780258
+  type: 'test'
+  ...
+# Subtest: cancel discards pending changes
+ok 128 - cancel discards pending changes
+  ---
+  duration_ms: 0.433577
+  type: 'test'
+  ...
+# Subtest: each missing level prevents confirmation and selecting clears validation errors
+ok 129 - each missing level prevents confirmation and selecting clears validation errors
+  ---
+  duration_ms: 0.425431
+  type: 'test'
+  ...
+# Subtest: switching parents resets descendants and filters options
+ok 130 - switching parents resets descendants and filters options
+  ---
+  duration_ms: 1.139372
+  type: 'test'
+  ...
+# Subtest: province-direct counties can be selected
+ok 131 - province-direct counties can be selected
+  ---
+  duration_ms: 0.504592
+  type: 'test'
+  ...
+# Subtest: closed dialog ignores selections and confirmations
+ok 132 - closed dialog ignores selections and confirmations
+  ---
+  duration_ms: 0.465488
+  type: 'test'
+  ...
+# Subtest: invalid and unrelated options or levels are ignored
+ok 133 - invalid and unrelated options or levels are ignored
+  ---
+  duration_ms: 0.569496
+  type: 'test'
+  ...
+# Subtest: restoration rejects corrupt, incomplete and mismatched administrative paths
+ok 134 - restoration rejects corrupt, incomplete and mismatched administrative paths
+  ---
+  duration_ms: 0.521034
+  type: 'test'
+  ...
+# Subtest: old location versions are ignored and stored labels are recomputed
+ok 135 - old location versions are ignored and stored labels are recomputed
+  ---
+  duration_ms: 0.824692
+  type: 'test'
+  ...
+# Subtest: disabled local storage does not prevent selection
+ok 136 - disabled local storage does not prevent selection
+  ---
+  duration_ms: 0.733468
+  type: 'test'
+  ...
+# (node:2107493) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/roles.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the redesigned login page does not publish identity before profile verification
+ok 137 - the redesigned login page does not publish identity before profile verification
+  ---
+  duration_ms: 2.881484
+  type: 'test'
+  ...
+# Subtest: the redesigned login page rejects a different server role
+ok 138 - the redesigned login page rejects a different server role
+  ---
+  duration_ms: 0.645431
+  type: 'test'
+  ...
+# Subtest: the redesigned login page validates the actual redirect: /admin/home
+ok 139 - the redesigned login page validates the actual redirect: /admin/home
+  ---
+  duration_ms: 0.473693
+  type: 'test'
+  ...
+# Subtest: the redesigned login page validates the actual redirect: /\\evil.example
+ok 140 - the redesigned login page validates the actual redirect: /\\evil.example
+  ---
+  duration_ms: 0.241861
+  type: 'test'
+  ...
+# Subtest: unavailable remembered-name storage cannot break login
+ok 141 - unavailable remembered-name storage cannot break login
+  ---
+  duration_ms: 0.365847
+  type: 'test'
+  ...
+# (node:2107499) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/businessDistance.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: map picker template compiles with explicit confirmation
+ok 142 - map picker template compiles with explicit confirmation
+  ---
+  duration_ms: 36.850281
+  type: 'test'
+  ...
+# Subtest: search handles empty and unavailable services without fake points
+ok 143 - search handles empty and unavailable services without fake points
+  ---
+  duration_ms: 1.718837
+  type: 'test'
+  ...
+# Subtest: late reverse-geocoding cannot overwrite a newer POI choice
+ok 144 - late reverse-geocoding cannot overwrite a newer POI choice
+  ---
+  duration_ms: 0.444658
+  type: 'test'
+  ...
+# Subtest: failed reverse lookup and denied geolocation do not confirm an invented position
+ok 145 - failed reverse lookup and denied geolocation do not confirm an invented position
+  ---
+  duration_ms: 0.386246
+  type: 'test'
+  ...
+# Subtest: unmounted picker ignores pending location responses
+ok 146 - unmounted picker ignores pending location responses
+  ---
+  duration_ms: 0.367771
+  type: 'test'
+  ...
+# (node:2107505) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/merchantMotion.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: indicator follows actual active-tab dimensions without selecting a different tab
+ok 147 - indicator follows actual active-tab dimensions without selecting a different tab
+  ---
+  duration_ms: 0.794434
+  type: 'test'
+  ...
+# Subtest: leaving cards retain their measured geometry and cleanup removes only motion styles
+ok 148 - leaving cards retain their measured geometry and cleanup removes only motion styles
+  ---
+  duration_ms: 0.210662
+  type: 'test'
+  ...
+# (node:2107511) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/orderPresentation.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# 获取商铺列表失败: Error: offline
+#     at listMyBusinesses (file:///tmp/lightweight-takeout-platform/elmclient/tests/merchant-redesign.test.mjs:43:86)
+#     at Object.loadShops (eval at mount (file:///tmp/lightweight-takeout-platform/elmclient/tests/merchant-redesign.test.mjs:21:16), <anonymous>:72:29)
+#     at TestContext.<anonymous> (file:///tmp/lightweight-takeout-platform/elmclient/tests/merchant-redesign.test.mjs:44:14)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: merchant templates compile and referenced cropped assets are shipped
+ok 149 - merchant templates compile and referenced cropped assets are shipped
+  ---
+  duration_ms: 112.638554
+  type: 'test'
+  ...
+# Subtest: workbench fetches existing stores on first entry, then filters without falsifying summary counts
+ok 150 - workbench fetches existing stores on first entry, then filters without falsifying summary counts
+  ---
+  duration_ms: 2.887274
+  type: 'test'
+  ...
+# Subtest: store-load failures surface a retryable error instead of a false empty success
+ok 151 - store-load failures surface a retryable error instead of a false empty success
+  ---
+  duration_ms: 2.110283
+  type: 'test'
+  ...
+# Subtest: successful application refreshes all stores rather than narrowing the stored summary to the current tab
+ok 152 - successful application refreshes all stores rather than narrowing the stored summary to the current tab
+  ---
+  duration_ms: 0.969318
+  type: 'test'
+  ...
+# Subtest: merchant profile counts only approved and operating stores as open
+ok 153 - merchant profile counts only approved and operating stores as open
+  ---
+  duration_ms: 0.640281
+  type: 'test'
+  ...
+# Subtest: acceptance dialog derives the selected order and cancellation sends no mutation
+ok 154 - acceptance dialog derives the selected order and cancellation sends no mutation
+  ---
+  duration_ms: 1.092323
+  type: 'test'
+  ...
+# Subtest: merchant acceptance remains single-flight, rejects close while pending, and retains the existing endpoint
+ok 155 - merchant acceptance remains single-flight, rejects close while pending, and retains the existing endpoint
+  ---
+  duration_ms: 1.013893
+  type: 'test'
+  ...
+# Subtest: failed accept or reject releases controls; ready still uses its original contract
+ok 156 - failed accept or reject releases controls; ready still uses its original contract
+  ---
+  duration_ms: 0.756643
+  type: 'test'
+  ...
+# Subtest: ready button feedback follows the actual request and preserves single-flight behavior
+ok 157 - ready button feedback follows the actual request and preserves single-flight behavior
+  ---
+  duration_ms: 0.605986
+  type: 'test'
+  ...
+# Subtest: new order highlight is limited to unseen pending orders, not every refresh
+ok 158 - new order highlight is limited to unseen pending orders, not every refresh
+  ---
+  duration_ms: 1.110998
+  type: 'test'
+  ...
+# (node:2107522) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/backNavigation.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: AI main -> tool -> return -> return exits to the original page
+ok 159 - AI main -> tool -> return -> return exits to the original page
+  ---
+  duration_ms: 43.881858
+  type: 'test'
+  ...
+# Subtest: AI tab changes do not grow browser history: /ai-chat/recommend
+ok 160 - AI tab changes do not grow browser history: /ai-chat/recommend
+  ---
+  duration_ms: 8.698445
+  type: 'test'
+  ...
+# Subtest: directly opened AI subpage can exit in two clicks: /ai-chat/recommend
+ok 161 - directly opened AI subpage can exit in two clicks: /ai-chat/recommend
+  ---
+  duration_ms: 11.447045
+  type: 'test'
+  ...
+# Subtest: AI tab changes do not grow browser history: /ai-chat/voice
+ok 162 - AI tab changes do not grow browser history: /ai-chat/voice
+  ---
+  duration_ms: 7.773291
+  type: 'test'
+  ...
+# Subtest: directly opened AI subpage can exit in two clicks: /ai-chat/voice
+ok 163 - directly opened AI subpage can exit in two clicks: /ai-chat/voice
+  ---
+  duration_ms: 10.341668
+  type: 'test'
+  ...
+# Subtest: AI tab changes do not grow browser history: /ai-chat/image
+ok 164 - AI tab changes do not grow browser history: /ai-chat/image
+  ---
+  duration_ms: 9.825814
+  type: 'test'
+  ...
+# Subtest: directly opened AI subpage can exit in two clicks: /ai-chat/image
+ok 165 - directly opened AI subpage can exit in two clicks: /ai-chat/image
+  ---
+  duration_ms: 5.789028
+  type: 'test'
+  ...
+# Subtest: image keyword -> recommendation uses the same AI history entry
+ok 166 - image keyword -> recommendation uses the same AI history entry
+  ---
+  duration_ms: 8.215264
+  type: 'test'
+  ...
+# Subtest: the chat tab itself replaces the current AI subpage
+ok 167 - the chat tab itself replaces the current AI subpage
+  ---
+  duration_ms: 2.15547
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: null
+ok 168 - AI exit falls back safely for absent or invalid history: null
+  ---
+  duration_ms: 5.25496
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: /ai-chat/voice
+ok 169 - AI exit falls back safely for absent or invalid history: /ai-chat/voice
+  ---
+  duration_ms: 5.224141
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: /ai-chat?old=1
+ok 170 - AI exit falls back safely for absent or invalid history: /ai-chat?old=1
+  ---
+  duration_ms: 5.028477
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: /login
+ok 171 - AI exit falls back safely for absent or invalid history: /login
+  ---
+  duration_ms: 8.128368
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: /register
+ok 172 - AI exit falls back safely for absent or invalid history: /register
+  ---
+  duration_ms: 7.293004
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: /missing
+ok 173 - AI exit falls back safely for absent or invalid history: /missing
+  ---
+  duration_ms: 6.886781
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: /admin/home
+ok 174 - AI exit falls back safely for absent or invalid history: /admin/home
+  ---
+  duration_ms: 5.674489
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: //evil.example
+ok 175 - AI exit falls back safely for absent or invalid history: //evil.example
+  ---
+  duration_ms: 4.49507
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: /\\evil.example
+ok 176 - AI exit falls back safely for absent or invalid history: /\\evil.example
+  ---
+  duration_ms: 3.629401
+  type: 'test'
+  ...
+# Subtest: AI exit falls back safely for absent or invalid history: https://evil.example
+ok 177 - AI exit falls back safely for absent or invalid history: https://evil.example
+  ---
+  duration_ms: 3.685597
+  type: 'test'
+  ...
+# Subtest: a refreshed AI entry retains a valid business-list origin and query
+ok 178 - a refreshed AI entry retains a valid business-list origin and query
+  ---
+  duration_ms: 4.939818
+  type: 'test'
+  ...
+# Subtest: a late second AI back click cannot re-enter AI after leaving
+ok 179 - a late second AI back click cannot re-enter AI after leaving
+  ---
+  duration_ms: 3.757164
+  type: 'test'
+  ...
+# Subtest: /search: directly opened detail has an in-app fallback
+ok 180 - /search: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 1.42146
+  type: 'test'
+  ...
+# Subtest: /businessInfo?businessId=7: directly opened detail has an in-app fallback
+ok 181 - /businessInfo?businessId=7: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 8.411538
+  type: 'test'
+  ...
+# Subtest: /listDetail?orderId=1: directly opened detail has an in-app fallback
+ok 182 - /listDetail?orderId=1: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 1.585092
+  type: 'test'
+  ...
+# Subtest: /assets: directly opened detail has an in-app fallback
+ok 183 - /assets: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 1.650357
+  type: 'test'
+  ...
+# Subtest: /notifications: directly opened detail has an in-app fallback
+ok 184 - /notifications: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 0.863216
+  type: 'test'
+  ...
+# Subtest: /notifications?role=rider: directly opened detail has an in-app fallback
+ok 185 - /notifications?role=rider: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 1.010377
+  type: 'test'
+  ...
+# Subtest: /merchant/apply: directly opened detail has an in-app fallback
+ok 186 - /merchant/apply: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 0.768275
+  type: 'test'
+  ...
+# Subtest: /merchant/reviews: directly opened detail has an in-app fallback
+ok 187 - /merchant/reviews: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 0.820214
+  type: 'test'
+  ...
+# Subtest: /merchant/businessInfo?businessId=1: directly opened detail has an in-app fallback
+ok 188 - /merchant/businessInfo?businessId=1: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 1.877439
+  type: 'test'
+  ...
+# Subtest: /admin/user: directly opened detail has an in-app fallback
+ok 189 - /admin/user: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 0.941935
+  type: 'test'
+  ...
+# Subtest: /admin/business: directly opened detail has an in-app fallback
+ok 190 - /admin/business: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 0.974688
+  type: 'test'
+  ...
+# Subtest: /admin/shop?ownerId=2: directly opened detail has an in-app fallback
+ok 191 - /admin/shop?ownerId=2: directly opened detail has an in-app fallback
+  ---
+  duration_ms: 1.082264
+  type: 'test'
+  ...
+# Subtest: cart's return-to-merchant button uses a validated merchant id: businessId=7
+ok 192 - cart's return-to-merchant button uses a validated merchant id: businessId=7
+  ---
+  duration_ms: 6.815424
+  type: 'test'
+  ...
+# Subtest: cart's return-to-merchant button uses a validated merchant id: businessId=0
+ok 193 - cart's return-to-merchant button uses a validated merchant id: businessId=0
+  ---
+  duration_ms: 4.316661
+  type: 'test'
+  ...
+# Subtest: cart's return-to-merchant button uses a validated merchant id: businessId=-2
+ok 194 - cart's return-to-merchant button uses a validated merchant id: businessId=-2
+  ---
+  duration_ms: 4.074189
+  type: 'test'
+  ...
+# Subtest: cart's return-to-merchant button uses a validated merchant id: businessId=1.5
+ok 195 - cart's return-to-merchant button uses a validated merchant id: businessId=1.5
+  ---
+  duration_ms: 4.303235
+  type: 'test'
+  ...
+# Subtest: cart's return-to-merchant button uses a validated merchant id: businessId=oops
+ok 196 - cart's return-to-merchant button uses a validated merchant id: businessId=oops
+  ---
+  duration_ms: 4.651479
+  type: 'test'
+  ...
+# Subtest: cart's return-to-merchant button uses a validated merchant id: 
+ok 197 - cart's return-to-merchant button uses a validated merchant id: 
+  ---
+  duration_ms: 4.411131
+  type: 'test'
+  ...
+# Subtest: valid same-portal previous page is preserved by the shared return control
+ok 198 - valid same-portal previous page is preserved by the shared return control
+  ---
+  duration_ms: 1.010346
+  type: 'test'
+  ...
+# Subtest: a stale login entry cannot trap the shared return control
+ok 199 - a stale login entry cannot trap the shared return control
+  ---
+  duration_ms: 0.937007
+  type: 'test'
+  ...
+# Subtest: shared return helper rejects cross-portal and payment-completion origins
+ok 200 - shared return helper rejects cross-portal and payment-completion origins
+  ---
+  duration_ms: 0.403359
+  type: 'test'
+  ...
+# Subtest: Pages allows first-party voice and geolocation while blocking camera
+ok 201 - Pages allows first-party voice and geolocation while blocking camera
+  ---
+  duration_ms: 27.304952
+  type: 'test'
+  ...
+# Subtest: missing assets still return 404 instead of the SPA document
+ok 202 - missing assets still return 404 instead of the SPA document
+  ---
+  duration_ms: 0.830854
+  type: 'test'
+  ...
+# (node:2107532) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/checkout.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: payment quote clamps negative, non-numeric, excessive and fractional point inputs
+ok 203 - payment quote clamps negative, non-numeric, excessive and fractional point inputs
+  ---
+  duration_ms: 5.93229
+  type: 'test'
+  ...
+# Subtest: retrying an order load also reloads usable coupons
+ok 204 - retrying an order load also reloads usable coupons
+  ---
+  duration_ms: 1.866108
+  type: 'test'
+  ...
+# Subtest: payment is single-flight and coupon selection freezes while submitting
+ok 205 - payment is single-flight and coupon selection freezes while submitting
+  ---
+  duration_ms: 1.056805
+  type: 'test'
+  ...
+# Subtest: insufficient wallet balance and paid orders cannot submit a payment
+ok 206 - insufficient wallet balance and paid orders cannot submit a payment
+  ---
+  duration_ms: 1.08602
+  type: 'test'
+  ...
+# Subtest: a late payment response cannot navigate away from a newer page
+ok 207 - a late payment response cannot navigate away from a newer page
+  ---
+  duration_ms: 1.277325
+  type: 'test'
+  ...
+# (node:2107548) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/formatters.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: shared rating formatter preserves unrated state and consistent rounding
+ok 208 - shared rating formatter preserves unrated state and consistent rounding
+  ---
+  duration_ms: 1.280591
+  type: 'test'
+  ...
+# Subtest: address requests do not submit owner, audit or default flags
+ok 209 - address requests do not submit owner, audit or default flags
+  ---
+  duration_ms: 1.409648
+  type: 'test'
+  ...
+# Subtest: default selection is a server request, not a browser-only preference
+ok 210 - default selection is a server request, not a browser-only preference
+  ---
+  duration_ms: 0.47194
+  type: 'test'
+  ...
+# Subtest: reject malformed ids before making requests
+ok 211 - reject malformed ids before making requests
+  ---
+  duration_ms: 0.856823
+  type: 'test'
+  ...
+# Subtest: profile payload contains editable fields only and supports clearing optional values
+ok 212 - profile payload contains editable fields only and supports clearing optional values
+  ---
+  duration_ms: 0.581629
+  type: 'test'
+  ...
+# Subtest: invalid profile responses are not accepted as a new session profile
+ok 213 - invalid profile responses are not accepted as a new session profile
+  ---
+  duration_ms: 0.28838
+  type: 'test'
+  ...
+# Subtest: unfavorite sends false explicitly and discards request identity
+ok 214 - unfavorite sends false explicitly and discards request identity
+  ---
+  duration_ms: 0.428327
+  type: 'test'
+  ...
+# Subtest: string false must not be coerced to a true interaction
+ok 215 - string false must not be coerced to a true interaction
+  ---
+  duration_ms: 0.356931
+  type: 'test'
+  ...
+# Subtest: business failure is surfaced instead of returning an empty successful list
+ok 216 - business failure is surfaced instead of returning an empty successful list
+  ---
+  duration_ms: 0.846463
+  type: 'test'
+  ...
+# Subtest: accept opens the active task details and preserves the route through each delivery action
+ok 217 - accept opens the active task details and preserves the route through each delivery action
+  ---
+  duration_ms: 24.956062
+  type: 'test'
+  ...
+# Subtest: failed acceptance retains the available list and never shows success details
+ok 218 - failed acceptance retains the available list and never shows success details
+  ---
+  duration_ms: 1.408175
+  type: 'test'
+  ...
+# Subtest: pending delivery mutations are single-flight
+ok 219 - pending delivery mutations are single-flight
+  ---
+  duration_ms: 1.049651
+  type: 'test'
+  ...
+# Subtest: successful feedback never delays progression and dismissing it cannot mutate delivery state
+ok 220 - successful feedback never delays progression and dismissing it cannot mutate delivery state
+  ---
+  duration_ms: 1.377306
+  type: 'test'
+  ...
+# Subtest: new order attention runs once and repeated polling does not re-arm it
+ok 221 - new order attention runs once and repeated polling does not re-arm it
+  ---
+  duration_ms: 0.741103
+  type: 'test'
+  ...
+# Subtest: footer query changes cannot strand a selected task from a different list
+ok 222 - footer query changes cannot strand a selected task from a different list
+  ---
+  duration_ms: 0.736544
+  type: 'test'
+  ...
+# Subtest: offline mode clears available tasks and uses the existing online endpoint
+ok 223 - offline mode clears available tasks and uses the existing online endpoint
+  ---
+  duration_ms: 0.753427
+  type: 'test'
+  ...
+# Subtest: exception form keeps the existing delivery exception contract
+ok 224 - exception form keeps the existing delivery exception contract
+  ---
+  duration_ms: 0.941795
+  type: 'test'
+  ...
+# Subtest: rider profile and footer compile, and all illustration assets are shipped
+ok 225 - rider profile and footer compile, and all illustration assets are shipped
+  ---
+  duration_ms: 113.088511
+  type: 'test'
+  ...
+# Subtest: production component CSS has no hard-coded platform blue outside theme swatches or variable fallbacks
+ok 226 - production component CSS has no hard-coded platform blue outside theme swatches or variable fallbacks
+  ---
+  duration_ms: 563.824685
+  type: 'test'
+  ...
+# Subtest: theme classification preserves semantic success, warning and error colors
+ok 227 - theme classification preserves semantic success, warning and error colors
+  ---
+  duration_ms: 0.301214
+  type: 'test'
+  ...
+# Subtest: route rendering does not wait for fragment-root leave transitions
+ok 228 - route rendering does not wait for fragment-root leave transitions
+  ---
+  duration_ms: 4.887629
+  type: 'test'
+  ...
+# Subtest: saved theme applies before mounting and warm/mint do not paint every header
+ok 229 - saved theme applies before mounting and warm/mint do not paint every header
+  ---
+  duration_ms: 1.22738
+  type: 'test'
+  ...
+# Subtest: home search stays in its sticky parent without viewport-relative inline positioning
+ok 230 - home search stays in its sticky parent without viewport-relative inline positioning
+  ---
+  duration_ms: 1.355935
+  type: 'test'
+  ...
+# (node:2107600) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/lightweight-takeout-platform/elmclient/src/utils/theme.js is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/lightweight-takeout-platform/elmclient/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: auth routes use default colors without overwriting the chosen skin
+ok 231 - auth routes use default colors without overwriting the chosen skin
+  ---
+  duration_ms: 0.982543
+  type: 'test'
+  ...
+# Subtest: every offered theme is accepted and unknown values fall back to light
+ok 232 - every offered theme is accepted and unknown values fall back to light
+  ---
+  duration_ms: 0.201364
+  type: 'test'
+  ...
+# Subtest: theme applies to the document and round-trips through storage
+ok 233 - theme applies to the document and round-trips through storage
+  ---
+  duration_ms: 1.258049
+  type: 'test'
+  ...
+# Subtest: unavailable storage does not prevent visual theme changes
+ok 234 - unavailable storage does not prevent visual theme changes
+  ---
+  duration_ms: 0.20451
+  type: 'test'
+  ...
+# Subtest: theme utilities also work without browser globals
+ok 235 - theme utilities also work without browser globals
+  ---
+  duration_ms: 0.139025
+  type: 'test'
+  ...
+1..235
+# tests 235
+# suites 0
+# pass 235
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 958.834054

@@ -499,7 +499,7 @@ AI 智能点餐 & \code{/ai-chat}、\code{/ai-chat/recommend}、\code{/ai-chat/v
 
 \subsection{UI 设计原型与运行界面展示}
 
-图~\ref{fig:def-wireframe} 展示了需求阶段绘制的核心页面线框原型，图~\ref{fig:def-ui-four-roles} 汇总了当前平台顾客端、商家端、骑手端与管理员端的实际运行界面截图，图~\ref{fig:def-ui-placeholders} 为 AI 点餐页及钱包偏好等特色页面的本地补充截图预留了标准占位符。
+图~\ref{fig:def-wireframe} 展示了需求阶段绘制的核心页面线框原型，图~\ref{fig:def-ui-four-roles} 汇总了当前平台顾客端、商家端、骑手端与管理员端的实际运行界面截图。图~\ref{fig:def-ui-placeholders} 为 2026 年 11 月 16 日在服务器启动原项目与独立 MySQL 演示库后，由 Chrome 浏览器实际截取的钱包与偏好页面。
 
 \begin{figure}[H]
   \centering
@@ -534,4 +534,6 @@ AI 智能点餐 & \code{/ai-chat}、\code{/ai-chat/recommend}、\code{/ai-chat/v
 
 \placeholderfig{figures/screenshots/ui-assets-preferences.png}{顾客端钱包资产中心与主题偏好切换界面}{请在本地启动项目后，使用 \texttt{demo\_user} 登录，分别打开“我的 $\rightarrow$ 钱包与优惠”（\texttt{/assets}）及“偏好与外观”（\texttt{/preferences}，切换深海夜色或薄荷青主题）并拼图或截取主界面保存至此路径。}{fig:def-ui-placeholders}
 
-\placeholderfig{figures/screenshots/ui-amap-picker.png}{高德地图选址弹窗与骑手配送导航入口界面}{请在本地配置 \texttt{VUE\_APP\_AMAP\_KEY} 后，在“收货地址新增/编辑”页打开高德地图选址弹窗并输入关键词搜索地点，截取含 POI 列表与地图标记的画面保存至此路径。}{fig:def-ui-amap}
+\note{本次服务器未配置高德地图所需的 \code{AMAP_WEB_KEY}、\code{AMAP_JS_KEY} 与 \code{AMAP_SECURITY_CODE}。图~\ref{fig:def-ui-amap} 记录实际打开选址弹窗后出现的“地图服务尚未配置，仍可填写地址”提示，用于展示未配置时的降级状态；该图不作为地图瓦片、POI 搜索或真实定位成功的验证证据。}
+
+\placeholderfig{figures/screenshots/ui-amap-picker.png}{高德地图选址入口与服务未配置时的实际提示}{配置高德 Web 服务 Key、JS Key 与安全码后，可在收货地址编辑页补充验证地图加载、POI 搜索与地点选择。}{fig:def-ui-amap}

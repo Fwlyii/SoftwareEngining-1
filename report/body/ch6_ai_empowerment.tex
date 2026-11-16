@@ -111,7 +111,11 @@ DashScope / \code{qwen3-asr-flash} & 语音点餐草稿（\code{/api/v1/voice-or
   \item \textbf{超时熔断与本地兜底：} 配置总超时期限、错误重试上限（默认 3 次，受总超时约束）与 \code{AiCircuitBreaker} 工具；当未配置 API 密钥或外部服务异常时，自动切换至本地帮助与规则推荐，绝不阻断基础点餐链路。
 \end{enumerate}
 
-\placeholderfig{figures/screenshots/ui-ai-assistant.png}{AI 智能客服与多模态点餐（文字推荐 / 图片识菜 / 语音入口）界面}{请在本地启动项目后，使用 \texttt{demo\_user} 登录并点击首页右下角“AI 点餐”悬浮球进入 \texttt{/ai-chat}，演示输入一次点餐咨询（展示返回的可点击商品候选卡片）或切换识菜/语音入口，截取页面保存至此路径。}{fig:ai-runtime-placeholder}
+本次服务器未配置 DeepSeek 与 DashScope 密钥。图~\ref{fig:ai-runtime-placeholder} 为实际启动原项目后，输入“鸡腿饭”和预算 30 元得到的本地规则推荐结果，商品来自演示数据库中的在售菜单，页面保留加入购物车入口。该结果验证本地推荐路径，不代表外部大模型调用成功。图~\ref{fig:ai-media-unconfigured} 则记录图片识菜模型未配置时的真实禁用与提示状态，图片及语音识别的成功路径仍需在配置相应服务后另行验证。
+
+\placeholderfig{figures/screenshots/ui-ai-assistant.png}{智能点餐本地推荐结果（真实菜单，未调用外部模型）}{进入智能筛选页面，输入菜品关键词与预算，展示服务端返回的候选商品。}{fig:ai-runtime-placeholder}
+
+\reportfig[0.55\linewidth]{figures/screenshots/ui-ai-media-unconfigured.png}{图片识菜模型未配置时的实际提示}{fig:ai-media-unconfigured}
 
 \section{AI 赋能成效评估与核查反思}
 

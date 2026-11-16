@@ -7,7 +7,8 @@
 ```text
 report/
   tjumain.tex                 # 报告主入口文件
-  tjumain.pdf                 # 编译后的报告（保留待补截图占位符）
+  tjumain.pdf                 # 编译后的报告（包含本服务器补充截图）
+  evidence/                   # 测试日志、运行信息与截图来源记录
   setup/                      # 封面、页眉页脚、宏包与自定义命令配置
   body/
     ch1_team.tex              # 第1章 团队建立（角色、任务分配、培训大纲）
@@ -22,7 +23,7 @@ report/
     srs/                      # 复用的SRS系统建模图（上下文、用例、类图、状态机、时序图、部署图）
     report/                   # 复用的四端实景截图与过程协作截图
     cross/                    # 复用的跨组交叉验收与边界测试截图
-    screenshots/              # 【预留目录】本地补充浏览器截图放置位置
+    screenshots/              # 本服务器实际运行项目后的浏览器截图
 ```
 
 ## 本地编译方式
@@ -48,16 +49,19 @@ xelatex tjumain.tex
 
 > 说明：报告正文中的 `setup/commands.tex` 为本地待补截图命令 `\placeholderfig` 内置了 `\IfFileExists` 判断。即使暂未放入补充截图，文档亦可直接通过编译，并在对应位置显示带操作指引的蓝色占位框；放入对应图片后重新执行 `xelatex` 即可自动嵌入实景图。
 
-## 本地待补充截图清单（放入 `figures/screenshots/`）
+## 已补充截图与验证范围
 
-由于当前生成环境未运行前后端服务且无本地 Node/Maven/Docker 守护进程权限，以下 4 张增量界面/运行截图已预留标准占位符，可在本地启动 `lightweight-takeout-platform` 后按表补齐：
+2026 年 11 月 16 日，使用用户目录中的 Node.js 22.16.0、OpenJDK 17.0.21 和独立 MySQL 8.0.46 实例直接启动原项目，通过 Playwright 操作服务器已有的 Chrome 截图，全程无需 Docker。原先的 4 处占位符均已替换为实际运行证据，并额外补充了图片模型未配置状态。测试运行信息和截图来源见 `evidence/2026-11-16/`。
 
-| 预期文件名（位于 `figures/screenshots/`） | 对应章节 | 建议操作与截图内容 |
+| 文件名（位于 `figures/screenshots/`） | 对应章节 | 实际内容与验证范围 |
 | --- | --- | --- |
-| `ui-assets-preferences.png` | 第2章 2.7.3 | 使用 `demo_user` 登录，打开“我的 → 钱包与优惠”（`/assets`）与“偏好与外观”（`/preferences`，切换深海夜色或薄荷青主题），拼图或截取页面。 |
-| `ui-amap-picker.png` | 第2章 2.7.3 | 本地配置 `VUE_APP_AMAP_KEY` 后，在新增/编辑收货地址弹窗打开高德选址并搜索地点，截取含 POI 列表与地图标记的界面。 |
-| `test-terminal-results.png` | 第5章 5.1.2 | 在项目根目录运行 `npm --prefix elmclient test` 与 `cd elm_bk && ./mvnw test`，截取终端输出 `235` 项前端通过与 `340` 项后端通过的汇总画面。 |
-| `ui-ai-assistant.png` | 第6章 6.3.4 | 登录 `demo_user` 后点击首页右下角“AI 点餐”进入 `/ai-chat`，演示发送一次点餐询问（展示可点击候选商品卡片）或识菜/语音入口。 |
+| `ui-assets-preferences.png` | 第2章 | `demo_user` 的钱包、积分、优惠券和薄荷青主题页面，两张实际页面截图拼接。 |
+| `ui-amap-picker.png` | 第2章 | 地图选址弹窗及“地图服务尚未配置，仍可填写地址”的真实提示；不表示地图加载或 POI 搜索成功。 |
+| `test-terminal-results.png` | 第5章 | 实际执行前端 235 项、后端 340 项测试后的日志摘要，经浏览器排版截图；原始输出与统计随文归档。 |
+| `ui-ai-assistant.png` | 第6章 | 输入“鸡腿饭”和预算 30 元后，由本地规则与真实菜单返回的候选商品；未调用外部大模型。 |
+| `ui-ai-media-unconfigured.png` | 第6章 | 图片识菜服务未配置时，上传入口禁用且显示明确提示的实际状态。 |
+
+当前不需要用户为上述 4 处重新截图。若需要展示高德地图正常搜索、DeepSeek 对话或 DashScope 图片/语音识别成功结果，仍需先配置有效服务密钥，再执行相应验收；这些成功路径尚未在本次环境中验证。高德选址依赖后端读取的 `AMAP_WEB_KEY`、`AMAP_JS_KEY`、`AMAP_SECURITY_CODE`，仅设置前端构建变量不能满足当前选址实现的全部配置要求。
 
 ## 提交打包提醒
 

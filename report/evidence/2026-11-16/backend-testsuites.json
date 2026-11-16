@@ -1,0 +1,426 @@
+[
+  {
+    "name": "elm_bk.ElmBkApplicationTests",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "4.858"
+  },
+  {
+    "name": "elm_bk.adapter.impl.AmapUriMapAdapterTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.001"
+  },
+  {
+    "name": "elm_bk.adapter.impl.DashScopeImageRecognitionAdapterTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.085"
+  },
+  {
+    "name": "elm_bk.adapter.impl.DashScopeSpeechAdapterTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.005"
+  },
+  {
+    "name": "elm_bk.adapter.impl.RuleBasedRecommendationAdapterTest",
+    "tests": "5",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.009"
+  },
+  {
+    "name": "elm_bk.ai.AiChatJourneyTest",
+    "tests": "18",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "3.001"
+  },
+  {
+    "name": "elm_bk.ai.AiOrderStatusTest",
+    "tests": "10",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.014"
+  },
+  {
+    "name": "elm_bk.ai.AssistantIntegrationTest",
+    "tests": "8",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "1.315"
+  },
+  {
+    "name": "elm_bk.ai.DeepSeekDeadlineTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "1.478"
+  },
+  {
+    "name": "elm_bk.auth.AdminUserJourneyTest",
+    "tests": "4",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.581"
+  },
+  {
+    "name": "elm_bk.auth.ApiContractCleanupTest",
+    "tests": "17",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.833"
+  },
+  {
+    "name": "elm_bk.auth.AuthenticationHardeningTest",
+    "tests": "14",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "2.031"
+  },
+  {
+    "name": "elm_bk.auth.AuthenticationJourneyTest",
+    "tests": "46",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "1.811"
+  },
+  {
+    "name": "elm_bk.auth.AuthenticationTestEnvironmentTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.007"
+  },
+  {
+    "name": "elm_bk.auth.CheckoutCartJourneyTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.587"
+  },
+  {
+    "name": "elm_bk.auth.GuestCatalogTest",
+    "tests": "5",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.855"
+  },
+  {
+    "name": "elm_bk.auth.MainlineApprovalIntegrationTest",
+    "tests": "5",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.641"
+  },
+  {
+    "name": "elm_bk.constant.DeliveryTaskStatusTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.001"
+  },
+  {
+    "name": "elm_bk.controller.NotificationControllerTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.193"
+  },
+  {
+    "name": "elm_bk.controller.PreferenceControllerTest",
+    "tests": "7",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.094"
+  },
+  {
+    "name": "elm_bk.dto.BusinessOwnerDTOValidationTest",
+    "tests": "7",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.031"
+  },
+  {
+    "name": "elm_bk.mapper.AiChatHistoryMapperAuthorizationTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.0"
+  },
+  {
+    "name": "elm_bk.order.OrderNameSnapshotJourneyTest",
+    "tests": "39",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "1.529"
+  },
+  {
+    "name": "elm_bk.profile.ProfileAddressJourneyTest",
+    "tests": "29",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "1.03"
+  },
+  {
+    "name": "elm_bk.security.LoginRolePolicyTest",
+    "tests": "6",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.003"
+  },
+  {
+    "name": "elm_bk.security.OrderPricingTrustBoundaryTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.085"
+  },
+  {
+    "name": "elm_bk.security.RequestIdentityBoundaryTest",
+    "tests": "5",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.094"
+  },
+  {
+    "name": "elm_bk.security.SecurityHardeningTest",
+    "tests": "9",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.168"
+  },
+  {
+    "name": "elm_bk.security.TokenSessionTest",
+    "tests": "9",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.07"
+  },
+  {
+    "name": "elm_bk.service.AdminDeliveryAvailabilityTest",
+    "tests": "2",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.226"
+  },
+  {
+    "name": "elm_bk.service.AdminRefinementTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.107"
+  },
+  {
+    "name": "elm_bk.service.AssetServiceTest",
+    "tests": "9",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.032"
+  },
+  {
+    "name": "elm_bk.service.AuditRegressionTest",
+    "tests": "7",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.132"
+  },
+  {
+    "name": "elm_bk.service.BusinessPricingPolicyTest",
+    "tests": "2",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.004"
+  },
+  {
+    "name": "elm_bk.service.BusinessRecommendationPolicyTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.003"
+  },
+  {
+    "name": "elm_bk.service.CartRemarksTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.089"
+  },
+  {
+    "name": "elm_bk.service.CheckoutSelectionTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.426"
+  },
+  {
+    "name": "elm_bk.service.GeoPointTest",
+    "tests": "4",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.006"
+  },
+  {
+    "name": "elm_bk.service.GuestMenuTest",
+    "tests": "2",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.335"
+  },
+  {
+    "name": "elm_bk.service.ImageStorageServiceTest",
+    "tests": "2",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.018"
+  },
+  {
+    "name": "elm_bk.service.MainlinePolicyCompatibilityTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.004"
+  },
+  {
+    "name": "elm_bk.service.NotificationDispatcherTest",
+    "tests": "5",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.1"
+  },
+  {
+    "name": "elm_bk.service.OrderPricingServiceTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.002"
+  },
+  {
+    "name": "elm_bk.service.OrderSettlementServiceTest",
+    "tests": "3",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.198"
+  },
+  {
+    "name": "elm_bk.service.ProductPurchasePolicyTest",
+    "tests": "4",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.006"
+  },
+  {
+    "name": "elm_bk.service.RiderAuditCompatibilityTest",
+    "tests": "6",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.256"
+  },
+  {
+    "name": "elm_bk.service.impl.AiRecommendationServiceImplTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.084"
+  },
+  {
+    "name": "elm_bk.service.impl.DeliveryServiceNavigationTest",
+    "tests": "2",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.528"
+  },
+  {
+    "name": "elm_bk.service.impl.MultimodalAssistantServiceImplTest",
+    "tests": "2",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.011"
+  },
+  {
+    "name": "elm_bk.service.impl.StructuredAssistantServiceImplTest",
+    "tests": "2",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.172"
+  },
+  {
+    "name": "elm_bk.utils.AiCircuitBreakerTest",
+    "tests": "1",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.002"
+  },
+  {
+    "name": "elm_bk.utils.MediaFileValidatorTest",
+    "tests": "5",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.005"
+  },
+  {
+    "name": "elm_bk.utils.VoiceOrderParserTest",
+    "tests": "5",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "time": "0.006"
+  }
+]

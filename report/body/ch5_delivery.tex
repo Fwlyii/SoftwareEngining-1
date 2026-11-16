@@ -121,7 +121,9 @@ TC-08 & 消费者侧休息态 & 商家切换“休息中”后，顾客端明确
   \caption{浏览器核心流程与安全边界实机验收截图（复用自项目验收存档）}\label{fig:test-cross-evidence}
 \end{figure}
 
-\placeholderfig{figures/screenshots/test-terminal-results.png}{前后端全量自动化测试本地运行结果截图}{请在本地仓库根目录分别运行 \texttt{npm --prefix elmclient test} 与 \texttt{cd elm\_bk \&\& ./mvnw test}，将终端显示“235 项前端通过 / 340 项后端通过”的运行截图保存至此路径。}{fig:test-terminal-placeholder}
+2026 年 11 月 16 日，为补充报告中的运行证据，在本服务器以 Node.js 22.16.0、OpenJDK 17.0.21 与 Maven Wrapper 再次执行原仓库 \code{6ddb219} 快照的全量测试，结果仍为前端 235 项通过、后端 340 项通过，失败与跳过均为 0。图~\ref{fig:test-terminal-placeholder} 将本次真实日志摘要排版后由浏览器截图，原始前端输出、后端日志摘要及 Surefire 统计保存在 \code{report/evidence/2026-11-16/}。后端自动化测试使用测试配置中的 H2；页面截图则来自另外启动的 MySQL 演示环境，两类验证分开记录。
+
+\placeholderfig{figures/screenshots/test-terminal-results.png}{前后端测试真实日志摘要（浏览器排版展示）}{实际运行前后端自动化测试后，将本次日志摘要与运行环境一并展示。}{fig:test-terminal-placeholder}
 
 \subsubsection{主要缺陷修复闭环记录}
 内部 WPS 台账与后期集成回归共登记并修复 11+ 类关键体验与逻辑缺陷，典型闭环案例如表~\ref{tab:bug-closure} 所示。
