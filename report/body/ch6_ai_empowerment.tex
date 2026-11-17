@@ -1,43 +1,36 @@
 \chapter{AI 赋能专题}
 
-响应《软件工程 1》课程对“人工智能技术深度融入软件工程实践”的明确要求，本项目从\textbf{研发过程 AI 赋能}与\textbf{产品运行时 AI 赋能}两个维度系统化推进 AI 落地：前者将大语言模型与代码智能体嵌入需求分析、编码重构、测试生成与过程文档核查等软件生命周期环节，显著提升 4 人小团队的工程产出效率；后者在平台业务中引入多模态大模型与本地规则分流架构，实现受控、可降级的智能点餐体验。
+依据《软件工程 1》课程大作业对“文档与系统建设中体现 AI 赋能”的明确要求，本项目从 \textbf{研发工程全流程（AI for Engineering）} 与 \textbf{系统运行时业务能力（AI in Product）} 两个维度开展实践，并在“效率提升”与“安全可控边界”之间建立严格的工程验证机制。
 
 \section{AI 赋能全景架构}
 
-图~\ref{fig:ai-dual-arch} 展示了本项目“研发过程提效”与“运行时业务智能”双维协同的 AI 赋能总体架构。研发侧强调“人主决策、AI 辅助、测试兜底”，运行时侧强调“本地优先、权限隔离、事务解耦、熔断降级”。
+图~\ref{fig:ai-dual-arch} 展示了本组构建的双维 AI 赋能全景架构：左侧聚焦软件工程生命周期中的智能协同辅助与人工审查门禁；右侧聚焦系统运行时向顾客提供的多模态智能点餐服务与四重安全护栏。
 
 \begin{figure}[H]
   \centering
-  \begin{tikzpicture}[
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[
     node distance=0.55cm and 0.9cm,
-    panel/.style={rectangle,rounded corners=5pt,draw=tjublue,fill=lightblue,thick,inner sep=8pt},
-    item/.style={rectangle,rounded corners=3pt,draw=tjublue!70,fill=white,align=center,font=\scriptsize,text width=2.9cm,minimum height=0.9cm},
-    item2/.style={rectangle,rounded corners=3pt,draw=accentgreen!80,fill=white,align=center,font=\scriptsize,text width=2.9cm,minimum height=0.9cm},
-    arrow/.style={-{Stealth[length=2mm]},thick,tjublue}
+    box/.style={rectangle,rounded corners=4pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=4.6cm,minimum height=0.88cm,font=\small},
+    hdr/.style={rectangle,rounded corners=3pt,draw=tjublue,fill=tjublue,text=white,align=center,minimum width=4.6cm,minimum height=0.72cm,font=\small\bfseries},
+    arr/.style={-{Stealth[length=2mm]},thick,tjublue}
   ]
-    \node[item] (r1) {\textbf{需求与建模}\\SRS 异常流补全\\draw.io 图示校验};
-    \node[item,below=0.35cm of r1] (r2) {\textbf{编码与重构}\\分层骨架与条件 SQL\\CSS 主题与组件封装};
-    \node[item,below=0.35cm of r2] (r3) {\textbf{测试与排障}\\TDD 边界断言生成\\异步竞态与路由定位};
-    \node[item,below=0.35cm of r3] (r4) {\textbf{文档与审计}\\Git/代码事实核对\\CMM3 差异清单汇编};
+    \node[hdr] (lh) {维度一：研发过程 AI 协同赋能};
+    \node[box,below=0.45cm of lh] (l1) {需求与文档：SRS 用例补全 / 差异审计};
+    \node[box,below=0.35cm of l1] (l2) {设计与迁移：SQL 幂等迁移 / 接口契约对齐};
+    \node[box,below=0.35cm of l2] (l3) {编码与重构：样板生成 / TDD 边界用例生成};
+    \node[box,below=0.35cm of l3] (l4) {核查铁律：人工走查 + 575 项自动化门禁};
 
-    \node[item2,right=2.6cm of r1] (s1) {\textbf{本地意图分流}\\规则咨询/本人订单/推荐\\优先本地业务逻辑响应};
-    \node[item2,below=0.35cm of s1] (s2) {\textbf{DeepSeek 文本对话}\\\code{deepseek-chat}\\结合真实菜单生成候选};
-    \node[item2,below=0.35cm of s2] (s3) {\textbf{DashScope 多模态}\\\code{qwen-vl-plus} 识菜\\\code{qwen3-asr-flash} 语音};
-    \node[item2,below=0.35cm of s3] (s4) {\textbf{安全与熔断边界}\\JWT 身份上下文过滤\\超时熔断 + 本地帮助兜底};
+    \node[hdr,right=1.6cm of lh,draw=accentorange,fill=accentorange] (rh) {维度二：运行时多模态 AI 业务能力};
+    \node[box,below=0.45cm of rh,draw=accentorange,fill=orange!6] (r1) {文字对话与规则问答（DeepSeek / 本地帮助）};
+    \node[box,below=0.35cm of r1,draw=accentorange,fill=orange!6] (r2) {条件智能筛选（真实菜单库存 + 一键加购）};
+    \node[box,below=0.35cm of r2,draw=accentorange,fill=orange!6] (r3) {多模态识别（DashScope 图片识菜 / 语音草稿）};
+    \node[box,below=0.35cm of r3,draw=accentorange,fill=orange!6] (r4) {四重护栏：身份注入 / 脱事务 / 熔断 / 降级};
 
-    \begin{scope}[on background layer]
-      \node[panel,fit=(r1)(r4),label={[font=\small\bfseries,tjublue,text width=3.7cm,align=center]above:维度一：研发过程\\AI 赋能}] (p1) {};
-      \node[panel,draw=accentgreen,fill=green!4,fit=(s1)(s4),label={[font=\small\bfseries,accentgreen,text width=3.7cm,align=center]above:维度二：系统运行时\\AI 赋能}] (p2) {};
-    \end{scope}
-
-    \draw[arrow] (r1) -- (r2);
-    \draw[arrow] (r2) -- (r3);
-    \draw[arrow] (r3) -- (r4);
-    \draw[arrow,accentgreen] (s1) -- (s2);
-    \draw[arrow,accentgreen] (s2) -- (s3);
-    \draw[arrow,accentgreen] (s3) -- (s4);
-    \draw[dashed,thick,accentorange] (p1.east) -- (p2.west) node[midway,above,font=\scriptsize,color=accentorange,align=center]{工程质量\\双向反馈};
+    \draw[arr] (l1) -- (l2); \draw[arr] (l2) -- (l3); \draw[arr] (l3) -- (l4);
+    \draw[arr,accentorange] (r1) -- (r2); \draw[arr,accentorange] (r2) -- (r3); \draw[arr,accentorange] (r3) -- (r4);
   \end{tikzpicture}
+}
   \caption{项目研发过程与系统运行时双维 AI 赋能全景架构图}\label{fig:ai-dual-arch}
 \end{figure}
 
@@ -45,85 +38,144 @@
 
 \subsection{各工程阶段的 AI 协同应用}
 
-在项目开发与过程规范化期间，团队合理借助 AI 编程助手（如 Codex 等代码与文档智能工具）辅助四大核心环节，具体场景与产出如下：
+在需求梳理、数据库迁移、后端安全加固、前端动效实现与测试编写全过程中，团队将 AI 工具作为“辅助工程助手”而非“黑盒替代者”，所有生成内容均经过成员逐行核查与测试验证（详见表~\ref{tab:dev-ai-usage}）。
 
 \begin{longtable}{L{.17\linewidth}L{.28\linewidth}L{.46\linewidth}}
 \caption{软件生命周期各阶段 AI 赋能场景与人工核查机制}\label{tab:dev-ai-usage}\\
 \toprule
-\textbf{工程阶段} & \textbf{AI 辅助输入与任务} & \textbf{产出价值与人工核查把关} \\
+\textbf{工程阶段} & \textbf{AI 协同赋能场景} & \textbf{人工核查与质量门禁机制} \\
 \midrule
 \endfirsthead
 \multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{工程阶段} & \textbf{AI 辅助输入与任务} & \textbf{产出价值与人工核查把关} \\
+\textbf{工程阶段} & \textbf{AI 协同赋能场景} & \textbf{人工核查与质量门禁机制} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-需求分析与建模 & 输入四端业务背景，辅助梳理异常流、边界条件与 Mermaid/draw.io 建模布局。 & 补齐“自取免配送费”“取消恢复库存”“未登录访问隔离”等异常流；所有需求编号由 PO 逐条审核定稿。 \\
-架构与编码实现 & 辅助生成 Controller/Service 样板、MyBatis 条件更新 SQL、4 套 CSS 变量主题及前端组件拆分建议。 & 加快多端接口与壳层样式落地；涉及事务边界、\code{BigDecimal} 算价与条件锁 SQL 均由后端主责逐行审查。 \\
-测试与缺陷排查 & 辅助编写前端 \code{.test.mjs} 契约断言与 JUnit/MockMvc 异常分支测试，快速定位复杂报错栈。 & 在返回循环缺陷修复中辅助设计 RED 阶段用例；所有测试预期均以真实业务规则为唯一裁决依据。 \\
-过程审计与报告 & 检索仓库源码、数据库迁移与 220+ 条 Git 提交记录，自动核查 SRS 与源码实现差异并辅助 LaTeX 排版。 & 快速定位“订单阶段命名”“计价顺序”等文档与代码偏差；报告内容与成员分工由全体成员核对确认。 \\
+需求分析与 SRS 建模 & 梳理四端异常流（如店铺休息加购拦截、库存不足回滚），辅助排版 LaTeX 表格与用例矩阵。 & PO 逐条对照业务边界与源码枚举，标记并修正状态命名差异。 \\
+数据库设计与迁移 & 辅助生成幂等迁移 SQL 模板（\code{003} 快照列、\code{005} 备注列、\code{006} 坐标列）。 & 严格审查历史数据兼容性，禁止自动化脚本猜测回填历史菜名或坐标。 \\
+核心业务编码 & 辅助生成 DTO 校验注解、MyBatis XML 基础映射与前端 CSS 主题变量骨架。 & SM 逐个 PR 核查权限上下文来源，严禁信任前端传入金额或用户 ID。 \\
+测试编写与问题排查 & 针对复杂状态机与越权场景，辅助扩充 JUnit/MockMvc 与 Node 边界断言用例；协助定位异步时序竞态。 & 测试预期必须由团队成员依据需求亲手确认，禁止为求“全绿”放宽断言。 \\
+工程文档汇编 & 跨仓库代码检索提取 23 张表结构、24 个控制器端点及 575 项测试统计数据，辅助规范撰写报告。 & 全部数据以仓库源码、实际测试日志及真实截图为准，杜绝虚构指标。 \\
 \end{longtable}
 
 \subsection{人机协同工作闭环}
 
-团队在研发实践中摸索出了一套可复用的“四步人机协同规范”，确保成员始终掌握系统架构与核心代码的主导权：
-\begin{enumerate}
-  \item \textbf{人工定义约束（Prompt Engineering）：} 成员先写明业务前置条件、表字段约束、接口契约与安全红线（例如“禁止信任前端传入 \code{customerId}”“外部 HTTP 调用不得包含在数据库事务内”），再向 AI 发起辅助请求。
-  \item \textbf{AI 生成候选方案：} AI 根据仓库上下文输出候选代码 Diff、测试样例或文档草稿。
-  \item \textbf{人工 Diff 审查与测试验证：} 成员逐行阅读变更差异，重点核查是否存在“幽灵字段”“吞异常”“放宽权限”等问题，并在本地运行 \code{npm test} 与 \code{./mvnw test} 验证。
-  \item \textbf{人工决策与记录归档：} 由责任人决定采纳、改写或拒绝方案，并在提交说明及开发记录中留存核查依据。
-\end{enumerate}
+为避免 AI 辅助引入隐蔽安全漏洞或接口漂移，团队建立了如图~\ref{fig:ai-collab-loop} 所示的四步闭环流程：\textbf{（1） 明确约束提示（输入既有 DTO/表结构与不变量） $\rightarrow$ （2） 生成候选代码或测试用例 $\rightarrow$ （3） 成员人工走查边界条件（特别是越权、并发锁、空值与事务边界） $\rightarrow$ （4） 提交至仓库运行 \code{./mvnw test} 与 \code{npm test} 自动化验证}。表~\ref{tab:ai-audit-catches} 记录了该闭环在研发期间实际拦截的 4 类典型 AI 辅助编码漂移问题。
+
+\begin{figure}[H]
+  \centering
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.6cm and 0.55cm,
+    pstep/.style={rectangle,rounded corners=4pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=2.8cm,minimum height=1.25cm,font=\small},
+    arr/.style={-{Stealth[length=2mm]},thick,tjublue}
+  ]
+    \node[pstep] (s1) {\textbf{1. 约束输入}\\锁定 DTO/表/红线};
+    \node[pstep,right=of s1] (s2) {\textbf{2. 辅助产出}\\样板/SQL/用例草稿};
+    \node[pstep,right=of s2,draw=accentred,fill=red!5] (s3) {\textbf{3. 人工审计}\\查鉴权/事务/断言};
+    \node[pstep,right=of s3,draw=accentgreen,fill=green!6] (s4) {\textbf{4. 门禁验证}\\575 项回归与 PR 合入};
+    \draw[arr] (s1) -- (s2);
+    \draw[arr] (s2) -- (s3);
+    \draw[arr] (s3) -- (s4);
+    \draw[arr,dashed,accentorange] (s3.south) -- ++(0,-0.45) -| node[pos=0.25,below,font=\scriptsize]{发现隐式漂移则打回重写} (s1.south);
+  \end{tikzpicture}
+}
+  \caption{研发过程四步人机协同审计闭环流程图}\label{fig:ai-collab-loop}
+\end{figure}
+
+\begin{longtable}{L{.18\linewidth}L{.29\linewidth}L{.44\linewidth}}
+\caption{人工核查拦截的典型 AI 辅助产物风险与修正案例表}\label{tab:ai-audit-catches}\\
+\toprule
+\textbf{发现环节} & \textbf{AI 初稿存在的潜在风险} & \textbf{人工核查结论与工程修正动作} \\
+\midrule
+接口身份入参校验 & 初期生成的请求 DTO 保留了可写的 \code{userId} 字段，存在前端伪造越权风险。 & 为 \code{AiChatRequestDTO.userId} 增加 \code{READ_ONLY} 标记，强制从 JWT 上下文注入。 \\
+外部服务事务边界 & 若将外部 HTTP 推理调用放在 \code{@Transactional} 内，慢请求会占满数据库连接池。 & 拆分为“无事务 HTTP 调用 $\rightarrow$ 短事务写 \code{ai_chat_history}”两阶段架构。 \\
+单测断言强度检查 & 部分生成测试仅断言 HTTP 200 而未校验真实数据变化与库存/价格不变量。 & 引入 \code{OrderPricingTrustBoundaryTest} 等强断言用例，验证篡改价格不生效。 \\
+未配置密钥兜底 & 缺少环境变量时若直接抛出 500 堆栈会破坏前端点餐体验并泄露堆栈信息。 & 在 \code{GlobalExceptionHandler} 统一返回 \code{503 FEATURE_UNAVAILABLE} 与友好引导。 \\
+\end{longtable}
 
 \section{系统运行时 AI 业务能力设计与落地}
 
 \subsection{多模态 AI 服务矩阵}
 
-根据仓库 \code{elm_bk/src/main/resources/application.yml} 及适配器实现，平台面向顾客端集成了文字对话、结构化推荐、图片识菜与语音点餐四类智能化入口，形成表~\ref{tab:runtime-ai-matrix} 所示的多模型与规则混合服务矩阵。
+系统在运行时向顾客端提供统一的“AI 智能助手”入口（\code{/ai-chat} 及对应子路由），涵盖文字对话、规则推荐、图片识菜与语音草稿四类核心能力，具体接口、依托模型与降级策略见表~\ref{tab:runtime-ai-matrix}。
 
 \begin{longtable}{L{.24\linewidth}L{.20\linewidth}L{.47\linewidth}}
 \caption{系统运行时 AI 服务能力与配置依据表}\label{tab:runtime-ai-matrix}\\
 \toprule
-\textbf{AI 服务 / 模型} & \textbf{使用场合} & \textbf{核心机制与配置依据} \\
+\textbf{运行时 AI 能力} & \textbf{后端端点与服务类} & \textbf{调用模型与缺失降级策略} \\
 \midrule
 \endfirsthead
 \multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{AI 服务 / 模型} & \textbf{使用场合} & \textbf{核心机制与配置依据} \\
+\textbf{运行时 AI 能力} & \textbf{后端端点与服务类} & \textbf{调用模型与缺失降级策略} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-本地意图分流与规则引擎 & 平台规则咨询、本人订单查询与失败兜底 & \code{StructuredAssistantServiceImpl} 先在本地分类意图；规则咨询与简单推荐直接读取服务端真实数据响应，零外部模型消耗。 \\
-DeepSeek / \code{deepseek-chat} & 文字智能客服与上下文点餐建议 & 在 \code{AiChatServiceImpl} 校验用户权限后注入筛选过的菜单与本人订单数据，结合总超时与重试上限返回结构化推荐。 \\
-DashScope / \code{qwen-vl-plus} & 拍照/传图菜品识别（\code{/api/v1/dish-recognitions}） & 上传图片经大小与格式校验后交视觉模型识别菜名特征，再在平台真实在售菜单中匹配可下单商品候选。 \\
-DashScope / \code{qwen3-asr-flash} & 语音点餐草稿（\code{/api/v1/voice-order-drafts}） & 音频流识别转为点餐意图文本并解析生成可编辑草稿；关闭抽屉或迟到授权时自动释放浏览器麦克风。 \\
+结构化智能助手（问答与订单咨询） & \code{/api/v1/assistant/messages}\newline\code{StructuredAssistantServiceImpl} & 接入 DeepSeek（\code{deepseek-chat}）；无 Key 或触发熔断时，自动回退至本地帮助问答与订单查询。 \\
+条件智能推荐（关联真实菜单） & \code{/api/ai/chat/recommendations}\newline\code{RuleBasedRecommendationAdapter} & 查询 MySQL 真实在售有库存菜品，结合用户偏好与历史订单返回结构化候选商品卡片，支持一键加购。 \\
+多轮对话与历史管理 & \code{/api/ai/chat/**}\newline\code{AiChatServiceImpl} & 按 \code{session_id} 持久化至 \code{ai_chat_history}，支持会话查询、单条删除与保留最新 N 条清理。 \\
+图片识菜与菜品匹配 & \code{/api/v1/dish-recognitions}\newline\code{DashScopeImageRecognitionAdapter} & 接入 DashScope 视觉模型（默认 \code{qwen-vl-plus}）；限制图片 5~MB 内；未配置凭证返回 503 提示。 \\
+语音点菜草稿生成 & \code{/api/v1/voice-order-drafts}\newline\code{DashScopeSpeechAdapter} & 接入 DashScope 语音识别（默认 \code{qwen3-asr-flash}）；关闭抽屉主动释放麦克风流；支持文本兜底。 \\
 \end{longtable}
 
 \subsection{意图分流、安全隔离与熔断降级设计}
 
-为防止外部大模型引入越权泄露、幻觉加购或数据库长事务锁死，团队在工程实现中设置了四重护栏：
+为防止外部大模型引入越权泄露、幻觉加购或数据库长事务锁死，团队在工程实现中设置了如图~\ref{fig:ai-guardrails} 所示的四重护栏：
 \begin{enumerate}
-  \item \textbf{结构化候选与权威加购：} 助手返回结果被规范为“答复文本 + 结构化商品候选数组 + 是否需确认标识”，候选商品 ID 与价格严格来自服务端菜单查询；顾客点击确认加购时仍走标准购物车与库存限购校验。
-  \item \textbf{最小权限数据注入：} \code{AiChatServiceImpl} 从认证上下文获取当前登录用户 ID，仅允许检索本人名下订单，并将查询到的数据库内容明确标记为非指令数据，降低提示词注入风险；日志输出隐藏用户对话正文。
+  \item \textbf{结构化候选与权威加购：} 当用户输入饮食偏好或预算时，系统先由后端查询当前上架且库存充足的真实菜品（含价格、起送门槛与商铺营业状态），仅将合法商品组装为“可点击候选卡片”；加购与结算仍走标准购物车与权威计价接口，杜绝大模型编造“幻觉菜品”或虚假低价。
+  \item \textbf{身份上下文强隔离与防注入：} \code{StructuredAssistantServiceImpl} 从认证上下文获取当前登录用户 ID，仅允许检索本人名下订单，并将查询到的数据库内容明确标记为非指令数据，降低提示词注入风险；日志输出隐藏用户对话正文。
   \item \textbf{事务解耦设计：} 外部模型网络调用完全置于数据库事务之外，待调用完成并获得响应后再开启短事务持久化 \code{ai_chat_history}，防止慢响应耗尽连接池。
   \item \textbf{超时熔断与本地兜底：} 配置总超时期限、错误重试上限（默认 3 次，受总超时约束）与 \code{AiCircuitBreaker} 工具；当未配置 API 密钥或外部服务异常时，自动切换至本地帮助与规则推荐，绝不阻断基础点餐链路。
 \end{enumerate}
 
-本次服务器未配置 DeepSeek 与 DashScope 密钥。图~\ref{fig:ai-runtime-placeholder} 为实际启动原项目后，输入“鸡腿饭”和预算 30 元得到的本地规则推荐结果，商品来自演示数据库中的在售菜单，页面保留加入购物车入口。该结果验证本地推荐路径，不代表外部大模型调用成功。图~\ref{fig:ai-media-unconfigured} 则记录图片识菜模型未配置时的真实禁用与提示状态，图片及语音识别的成功路径仍需在配置相应服务后另行验证。
+\begin{figure}[H]
+  \centering
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.55cm and 0.6cm,
+    blk/.style={rectangle,rounded corners=4pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=2.7cm,minimum height=1.15cm,font=\scriptsize},
+    dec/.style={diamond,aspect=1.8,draw=accentorange,thick,fill=orange!8,align=center,font=\scriptsize,inner sep=1.5pt},
+    safe/.style={rectangle,rounded corners=4pt,draw=accentgreen,thick,fill=green!6,align=center,minimum width=2.8cm,minimum height=1.15cm,font=\scriptsize},
+    arr/.style={-{Stealth[length=2mm]},thick,tjublue}
+  ]
+    \node[blk] (in) {\textbf{用户多模态输入}\\文本 / 图片 / 语音};
+    \node[blk,right=of in] (ctx) {\textbf{JWT 身份注入}\\剥离伪造 userId};
+    \node[dec,right=of ctx] (intent) {意图分流\\与密钥检查};
+    \node[safe,above right=0.7cm and 1.75cm of intent] (local) {\textbf{本地规则 / 订单查询}\\查库真实菜单与本人订单};
+    \node[blk,below right=0.7cm and 1.75cm of intent,draw=accentorange,fill=orange!6] (ext) {\textbf{脱事务外部调用}\\超时控制 + \code{AiCircuitBreaker}};
+    \node[safe,right=0.9cm of ext] (out) {\textbf{结构化候选输出}\\卡片一键加购 / 503 降级};
 
-\placeholderfig{figures/screenshots/ui-ai-assistant.png}{智能点餐本地推荐结果（真实菜单，未调用外部模型）}{进入智能筛选页面，输入菜品关键词与预算，展示服务端返回的候选商品。}{fig:ai-runtime-placeholder}
+    \draw[arr] (in) -- (ctx);
+    \draw[arr] (ctx) -- (intent);
+    \draw[arr] (intent) |- node[above=2pt,pos=0.75,font=\scriptsize]{本地意图/无Key} (local);
+    \draw[arr] (intent) |- node[below=2pt,pos=0.75,font=\scriptsize]{外部增强意图} (ext);
+    \draw[arr] (ext) -- (out);
+    \draw[arr] (local) -| (out);
+  \end{tikzpicture}
+}
+  \caption{运行时 AI 意图分流、脱事务外部调用与四重安全护栏流程图}\label{fig:ai-guardrails}
+\end{figure}
 
-\reportfig[0.55\linewidth]{figures/screenshots/ui-ai-media-unconfigured.png}{图片识菜模型未配置时的实际提示}{fig:ai-media-unconfigured}
+本次服务器未配置 DeepSeek 与 DashScope 密钥。图~\ref{fig:ai-qa-recommend} 展示了实际启动原项目后“问答客服”欢迎入口以及在“智能筛选”输入“鸡腿饭”与预算 30 元得到的本地规则推荐结果（候选商品均来自演示数据库在售菜单并保留加入购物车入口，未调用外部大模型）。图~\ref{fig:ai-voice-media} 则记录了“语音点菜”交互界面以及图片识菜模型未配置时的真实禁用与提示状态；外部大模型对话、图片识菜与语音识别的成功路径仍需在配置相应密钥后另行验证。
+
+\uitwofig{figures/screenshots/ui-ai-chat-qa.png}{（a）AI 问答客服入口与快捷提问气泡（\code{/ai-chat}）}{figures/screenshots/ui-ai-assistant.png}{（b）智能筛选本地规则推荐结果（真实在售菜单）}{AI 智能客服与本地规则推荐界面实景截图（未调用外部大模型）}{fig:ai-qa-recommend}
+
+\uitwofig{figures/screenshots/ui-ai-voice.png}{（a）AI 语音点菜入口与浏览器权限控制（\code{/ai-chat/voice}）}{figures/screenshots/ui-ai-media-unconfigured.png}{（b）图片识菜模型未配置时的禁用与提示（\code{/ai-chat/image}）}{AI 语音点菜与图片识菜未配置降级界面实景截图}{fig:ai-voice-media}
+
+\phantomsection\label{fig:ai-runtime-placeholder}\phantomsection\label{fig:ai-media-unconfigured}
 
 \section{AI 赋能成效评估与核查反思}
 
 \subsection{工程成效评估}
 
 \begin{enumerate}
-  \item \textbf{研发效率显著提升：} 面对涵盖四端 33 个页面、22 张数据表、22 个后端 Controller 的庞大工程体量，借助 AI 辅助生成基础样板、SQL 迁移与回归测试用例，4 人团队在不足三周的高强度周期内高质量完成了 575 项自动化测试与全部核心及扩展模块交付。
+  \item \textbf{研发效率显著提升：} 面对涵盖四端 33 个页面、23 张数据表、24 个后端控制器（135 个映射端点）的庞大工程体量，借助 AI 辅助生成基础样板、SQL 迁移与回归测试用例，4 人团队在紧凑迭代周期内高质量完成了 575 项自动化测试与全部核心及扩展模块交付。
   \item \textbf{文档与代码一致性增强：} 通过 AI 跨文件检索代码与 Git 历史，团队快速发现了“订单阶段命名与枚举不一致”“计价顺序未写入 SRS”等 8 项隐性差异，沉淀为清晰的改进清单。
+  \item \textbf{运行时安全降级经受实机检验：} 在未配置外部 API 密钥的演示主机上，智能筛选依然能基于真实库存商品准确推荐并直通购物车，图片与语音入口明确反馈原因且完全不干扰普通点餐流程。
 \end{enumerate}
 
 \subsection{核查暴露的问题与改进方向}
@@ -132,4 +184,5 @@ DashScope / \code{qwen3-asr-flash} & 语音点餐草稿（\code{/api/v1/voice-or
 \begin{enumerate}
   \item \textbf{警惕 AI 辅助编码中的“隐式漂移”：} 早前辅助生成的个别前端接口调用与后端字段命名存在细微差异，或出现默认放行兜底；为此团队确立了“测试预期与安全边界必须由成员亲手确认，禁止盲目信任生成结果”的铁律。
   \item \textbf{深化运行时调用成本与限流治理：} 代码级已实现意图分流、总超时与熔断器，但在高并发场景下针对单用户的 Token 预算控制、按路由级调用次数监控与全链路压测报告仍待后续课程演进中进一步补齐运行数据。
+  \item \textbf{外部多模态成功链路待密钥补齐验收：} 受服务器密钥缺省限制，DeepSeek 对话与 DashScope 视觉/语音识别目前仅完成了未配置降级状态与单元测试模拟验证，后续部署需补充真实商用 Key 下的端到端识别准确率测评。
 \end{enumerate}

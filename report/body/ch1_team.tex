@@ -1,36 +1,68 @@
 \chapter{团队建立}
 
-为顺利完成“轻量级外卖服务平台”从需求定义、架构设计、多端研发到测试交付的全生命周期工程实践，本组依据《软件工程 1》课程大作业规范组建了一支 4 人敏捷开发团队（第十组）。团队采用“核心技术方向主责 + 跨端特色模块牵头 + Scrum 敏捷角色兼任”的组织模式，使每位成员既能深耕自身技术专长，又能在四端协同业务链路中承担明确责任。
+本小组由天津大学软件学院 2024 级 4 名本科生组成，围绕课程综合实践成果 \textbf{“轻量级外卖服务平台”（\code{lightweight-takeout-platform}）} 开展《软件工程 1》全周期软件工程化实施与规范化交付。团队严格遵循小规模敏捷团队（4--6 人）的跨职能协作模式，明确每位成员的管理角色、工程主责、扩展模块与质量把关职责。
 
 \section{团队成员}
 
-本组由 4 名软件工程专业 2024 级本科生组成，在建立团队阶段（10 月 21 日前完成成员确认与分工定稿，并按期完成项目名称与分组信息汇总）明确了每位成员的行政身份、Scrum 角色、工程职能与技能矩阵，具体如下：
+本组共 4 名成员，组长为李承文（统筹进度与主干集成），其余成员依次负责产品需求与 AI 数据、前端交互与看板以及质量保障与地图集成。团队整体具备扎实的 Java/Spring Boot、Vue 3、MySQL 8 与自动化测试工程基础，成员详情如下：
 
 \begin{enumerate}
-  \item \textbf{范文丽（学号：3024244438）}
+  \item \textbf{组长 --- 李承文（学号：3024232129）}
   \begin{itemize}
-    \item \textbf{职位与角色：} 前端主责工程师、UI/交互设计师、数据看板负责人、Sprint 会议协同记录员
-    \item \textbf{核心技能：} Vue 3 组合式 API、Vue Router 4 路由守卫、CSS 变量多主题与响应式布局、前端动效与无障碍适配、看板数据可视化对接、跨端页面联调。
+    \item \textbf{职位与角色：} 项目经理（PM）、Scrum Master（SM）、后端主责开发工程师、部署运维负责人
+    \item \textbf{核心技能：} 敏捷迭代统筹与风险闭环、GitHub 分支治理与 PR 评审、Java 17/Spring Boot 3.4.6、Spring Security + JWT 认证鉴权、MyBatis 事务与并发控制（乐观锁与条件扣减）、Docker Compose 容器编排与云端解耦部署。
+    \item \textbf{工程归属：} 负责 \code{elm_bk} 认证授权、订单定价/结算/提交事务、资产积分优惠券、骑手配送与管理端核心服务，统筹 \code{scripts/} 与 \code{docker-compose.demo.yml}。
   \end{itemize}
 
-  \item \textbf{李承文（学号：3024232129）}
+  \item \textbf{组员 --- 范文丽（学号：3024244438）}
   \begin{itemize}
-    \item \textbf{职位与角色：} 项目组长（Project Manager）、Scrum Master（敏捷教练）、后端主责工程师、红包积分与资产模块负责人
-    \item \textbf{核心技能：} Scrum 流程推进与风险协调、GitHub 分支与 Pull Request 代码评审、Java 17 / Spring Boot 3、Spring Security 与 JWT 鉴权、订单定价/结算/事务控制、资产流水与 Docker 部署配置。
+    \item \textbf{职位与角色：} 前端主责开发工程师、UI/UX 设计师、可视化数据看板负责人
+    \item \textbf{核心技能：} Vue 3 Composition API、Vue Router 角色路由守卫与转场动效、CSS 变量多主题系统（4 套主题）、响应式双端页面壳层、ECharts/SVG 统计看板与 Excel/PDF 导出、Axios 请求与异常拦截。
+    \item \textbf{工程归属：} 负责 \code{elmclient/src/views/} 顾客端、商家端与管理员端核心视图、\code{AiChat.vue} 交互界面、主题偏好设置及看板可视化模块。
   \end{itemize}
 
-  \item \textbf{赵紫怡（学号：3024244137）}
+  \item \textbf{组员 --- 赵紫怡（学号：3024244137）}
   \begin{itemize}
     \item \textbf{职位与角色：} 产品负责人（Product Owner）、需求分析师、数据库设计师、AI 智能点餐模块负责人
-    \item \textbf{核心技能：} 软件需求规格说明书（SRS）编写与 UML 建模、MySQL 8 表结构设计与历史快照隔离、MyBatis 显式 SQL 与增量迁移、飞书协同空间管理、DeepSeek 与 DashScope 多模态 AI 接口适配器设计。
+    \item \textbf{核心技能：} 软件需求规格说明书（SRS）编写与 UML/draw.io 建模、MySQL 8 表结构设计与历史快照隔离、MyBatis 显式 SQL 与增量迁移、飞书协同空间管理、DeepSeek 与 DashScope 多模态 AI 接口适配器设计。
+    \item \textbf{工程归属：} 主编 \code{docs/SRS.pdf} 与飞书需求文档，维护 \code{elm_bk/db/schema/elm_v2.sql} 与 \code{001}--\code{006} 迁移脚本，负责 \code{AiChatController}、\code{AssistantController} 及多模态客户端实现。
   \end{itemize}
 
-  \item \textbf{仲禹潼（学号：3024244140）}
+  \item \textbf{组员 --- 仲禹潼（学号：3024244140）}
   \begin{itemize}
     \item \textbf{职位与角色：} 测试工程师（QA 负责人）、高德地图服务负责人、交叉验收与缺陷闭环协调人
-    \item \textbf{核心技能：} 测试用例设计与边界等价类分析、TDD 自动化回归验证、JUnit/MockMvc 与 Node 测试运行器执行、跨组交叉验收、WPS 缺陷台账跟踪、高德 POI 检索/逆地理编码/GCJ-02 坐标距离与导航适配。
+    \item \textbf{核心技能：} 测试用例设计与边界等价类分析、TDD 自动化回归验证、JUnit 5/MockMvc 与 Node 测试运行器执行、跨组交叉验收、WPS 缺陷台账跟踪、高德 POI 检索/逆地理编码/GCJ-02 坐标距离与导航适配。
+    \item \textbf{工程归属：} 负责 \code{MapController} 与 \code{MapLocationPicker} 选址弹窗、骑手端 \code{RiderDashboard.vue} 地图导航联动、WPS 缺陷台账及跨组交叉测试验收文档。
   \end{itemize}
 \end{enumerate}
+
+为清晰呈现 4 名成员在“管理治理—产品定义—工程研发—质量验收”四条主线上的协同关系，图~\ref{fig:team-topology} 绘制了本组的角色与协作基础设施拓扑图。
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    node distance=0.85cm and 1.1cm,
+    role/.style={rectangle,rounded corners=5pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=3.5cm,minimum height=1.55cm,font=\small},
+    infra/.style={rectangle,rounded corners=4pt,draw=accentorange,thick,fill=orange!6,align=center,minimum width=3.1cm,minimum height=1.0cm,font=\footnotesize},
+    arr/.style={-{Stealth[length=2.2mm]},thick,tjublue}
+  ]
+    \node[role] (sm) {\textbf{李承文（SM / PM）}\\后端核心 · 交易与资产\\Docker 运维 · PR 门禁};
+    \node[role,right=1.6cm of sm] (po) {\textbf{赵紫怡（PO / DB）}\\SRS 与 UML 建模\\23 张表 · AI 服务端};
+    \node[role,below=1.3cm of sm] (fe) {\textbf{范文丽（前端 / UI）}\\Vue 3 四端壳层 · 主题\\AI 界面 · 数据看板};
+    \node[role,below=1.3cm of po] (qa) {\textbf{仲禹潼（QA / 地图）}\\575 项自动化与交叉验收\\WPS 缺陷 · 高德适配};
+
+    \draw[arr] (po) -- node[above,font=\scriptsize]{需求基线与表结构} (sm);
+    \draw[arr] (sm) -- node[left,font=\scriptsize]{REST API 与鉴权} (fe);
+    \draw[arr] (po) -- node[right,font=\scriptsize]{测试用例与 SRS 验收} (qa);
+    \draw[arr] (fe) -- node[below,font=\scriptsize]{页面走查与定位弹窗} (qa);
+    \draw[arr] (sm) -- node[above,sloped,font=\scriptsize]{测试门禁} (qa);
+
+    \node[infra,below=1.2cm of fe,xshift=-0.2cm] (git) {\textbf{GitHub 主仓}\\265 次提交 · 34 个 PR};
+    \node[infra,right=0.6cm of git] (feishu) {\textbf{飞书共享空间}\\SRS 纪要 · 差异清单};
+    \node[infra,right=0.6cm of feishu] (wps) {\textbf{WPS / 腾讯会议}\\缺陷台账 · 9 次线上例会};
+  \end{tikzpicture}
+  \caption{小组成员角色分工与工程协作基础设施拓扑图}\label{fig:team-topology}
+\end{figure}
 
 \section{团队角色与任务分配}
 
@@ -50,7 +82,7 @@
     \item \textbf{任务分配：}
     \begin{enumerate}[label=\alph*.]
       \item 制定三大 Sprint 迭代计划与 CMM3 级过程管理规范；
-      \item 建立仓库代码规范、契约校验脚本及 Docker Compose 演示环境；
+      \item 建立仓库代码规范、契约校验脚本（\code{scripts/check-repository.mjs}）及 Docker Compose 演示环境；
       \item 协调前后端接口口径对齐，统筹跨模块集成联调与最终交付检查。
     \end{enumerate}
   \end{itemize}
@@ -118,8 +150,8 @@
     \end{enumerate}
     \item \textbf{任务分配：}
     \begin{enumerate}[label=\alph*.]
-      \item 完善 \code{elm_v2.sql} 中的 22 张业务表（含订单快照、配送任务、资产流水、评价、通知与 AI 对话历史表）；
-      \item 协同制定 \code{001}–\code{006} 增量迁移脚本（账号唯一性、默认地址、订单商品名快照、地图经纬度字段等）。
+      \item 完善 \code{elm_v2.sql} 中的 23 张核心业务表（含订单快照、配送任务、资产流水、评价、通知与 AI 对话历史表）；
+      \item 协同制定 \code{001}--\code{006} 增量迁移脚本（账号唯一性、默认地址、订单商品名快照、备注字段与地图经纬度字段等）。
     \end{enumerate}
   \end{itemize}
 
@@ -135,12 +167,12 @@
     \item \textbf{任务分配：}
     \begin{enumerate}[label=\alph*.]
       \item 仲禹潼：维护 WPS 缺陷登记表，执行四端全流程人工测试、越权隔离测试、库存与密码边界测试及高德定位异常验证；
-      \item 全体成员：遵循提交前自测规范，完善后端 JUnit/MockMvc 测试（340 项）与前端 Node 逻辑/契约测试（235 项）。
+      \item 全体成员：遵循提交前自测规范，完善后端 JUnit/MockMvc 测试（53 个测试类、340 项通过）与前端 Node 逻辑/契约测试（28 个文件、235 项通过）。
     \end{enumerate}
   \end{itemize}
 \end{enumerate}
 
-由于外卖平台的一条完整交易链路横跨多端，本组在“基础技术方向”之外还为每位成员划定了特色扩展模块的联调责任。表~\ref{tab:team-matrix}总结了团队实际分工与协作接口关系。
+由于外卖平台的一条完整交易链路横跨多端，本组在“基础技术方向”之外还为每位成员划定了特色扩展模块的联调责任，并进一步细化到仓库中的后端控制器与前端页面视图归属。表~\ref{tab:team-matrix} 与表~\ref{tab:code-ownership} 分别给出了团队协作接口矩阵与工程模块归属清单。
 
 \begin{longtable}{L{.13\linewidth}L{.15\linewidth}L{.18\linewidth}L{.45\linewidth}}
 \caption{小组成员角色、扩展模块与协作接口矩阵}\label{tab:team-matrix}\\
@@ -161,6 +193,25 @@
 仲禹潼 & 测试工程 & QA 负责人、高德地图 & 组织回归测试与交叉验收；负责地图选址、距离估算、骑手导航与降级场景验证。 \\
 \end{longtable}
 
+\begin{longtable}{L{.12\linewidth}L{.35\linewidth}L{.44\linewidth}}
+\caption{团队成员仓库代码与文档制品归属矩阵}\label{tab:code-ownership}\\
+\toprule
+\textbf{成员} & \textbf{后端与数据库制品归属} & \textbf{前端视图与文档制品归属} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{成员} & \textbf{后端与数据库制品归属} & \textbf{前端视图与文档制品归属} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+李承文 & \code{AuthenticationRestController}、\code{UserRestController}、\code{OrderController}、\code{AssetController}、\code{DeliveryOrderController}、\code{Admin*Controller} & \code{authGuard.js}、\code{checkout.js}、\code{docker-compose.demo.yml}、\code{docs/DEPLOYMENT.md} \\
+范文丽 & \code{BusinessController}、\code{FoodController}（联合联调）、\code{PreferenceController} & \code{Login.vue}、\code{Index.vue}、\code{BusinessInfo.vue}、\code{Cart.vue}、\code{AiChat.vue}、\code{Preferences.vue}、\code{Merchant*}、\code{AdminHome.vue} \\
+赵紫怡 & \code{elm_v2.sql}、\code{001}--\code{006} 迁移、\code{AiChatController}、\code{AssistantController}、\code{NotificationController} & \code{docs/SRS.pdf}（UML 建模图、用例规格）、飞书知识库、实验报告数据库与 AI 章节 \\
+仲禹潼 & \code{MapController}、\code{RiderController}、\code{DeliveryTaskController}、后端测试回归 & \code{RiderDashboard.vue}、\code{MapLocationPicker}、WPS 缺陷台账、交叉测试报告与测试证据 \\
+\end{longtable}
+
 \section{培训大纲}
 
 为了消除成员在技术栈、敏捷流程与工程工具上的熟练度差异，确保后续三大 Sprint 高效推进，团队在项目启动初期制定并实施了分层技术与过程培训方案。
@@ -168,10 +219,10 @@
 \subsection{培训目标}
 
 \begin{enumerate}
-  \item \textbf{统一工程流程认知：} 掌握 Scrum 敏捷迭代节奏、CMM3 过程域（需求管理 REQM、项目策划 PP、验证与确认 VER/VAL）及缺陷闭环规范，做到每日同步有依据、文档与代码可追溯。
-  \item \textbf{对齐前后端技术栈与契约：} 确保所有成员能够独立在本地跑通 Vue 3 前端、Spring Boot 3 后端与 MySQL 8 数据库，理解 RESTful 接口规范与 JWT 认证机制。
-  \item \textbf{熟练使用协作与测试工具链：} 掌握 Git 分支开发与 Pull Request 评审流程、飞书云文档任务追踪、Docker Compose 容器化启动以及 JUnit/Node 自动化测试运行。
-  \item \textbf{攻克特色扩展难点：} 提前完成事务并发控制、AI 接口超时降级、高德地图坐标系转换（GCJ-02）等关键技术预研，降低开发期阻塞风险。
+  \item \textbf{统一工程流程认知：} 掌握 Scrum 敏捷迭代节奏、CMM3 过程域（需求管理 REQM、项目策划 PP、验证与确认 VER/VAL）及缺陷闭环规范，做到每日同步有记录、每次合入有评审、每个缺陷有复测。
+  \item \textbf{拉齐前后端与数据栈能力：} 使 4 名成员均能独立完成前端页面运行、后端 Spring Boot 调试、MySQL 容器初始化及自动化测试执行，避免单点依赖阻塞。
+  \item \textbf{建立质量内建与安全防线意识：} 深化 TDD（红--绿--重构）实践，明确“服务端权威计价、JWT 上下文身份提取、历史订单快照不可篡改、外部服务超时熔断”等工程红线。
+  \item \textbf{规范协同工具链操作：} 熟练使用 GitHub Feature 分支与 PR 审查、飞书共享空间与腾讯会议纪要归档、WPS 缺陷台账登记及 Playwright/Chrome 本地页面验证。
 \end{enumerate}
 
 \subsection{培训对象与分层重点}
@@ -194,12 +245,12 @@
 全员公共基础层 & 全体 4 名成员 & Scrum + CMM3 敏捷规范、Git 分支与 PR 协同、飞书任务归档、Docker Compose 环境启动、四端业务链路走读。 \\
 前端与交互深化层 & 范文丽、仲禹潼 & Vue 3 组合式状态管理、Vue Router 角色路由守卫、CSS 变量主题切换、地图弹窗与响应式适配、前端单测编写。 \\
 后端与数据深化层 & 李承文、赵紫怡 & Spring Security + JWT 鉴权、MyBatis 条件更新与事务回滚、\code{BigDecimal} 金额计算、AI 外部适配与历史表快照设计。 \\
-质量保障与运维层 & 仲禹潼、李承文 & TDD 红-绿-重构流程、MockMvc 集成测试、越权与边界用例设计、WPS 缺陷登记规范、Nginx 反向代理与环境排查。 \\
+质量保障与运维层 & 仲禹潼、李承文 & TDD 红--绿--重构流程、MockMvc 集成测试、越权与边界用例设计、WPS 缺陷登记规范、Nginx 反向代理与环境排查。 \\
 \end{longtable}
 
 \subsection{培训内容与实施计划}
 
-团队于立项阶段及 Sprint 1 初期完成核心培训模块，并在后续迭代中结合站会问题开展实时研讨。培训内容与实施计划见表~\ref{tab:training-plan}。
+团队于立项阶段及 Sprint 1 初期完成核心培训模块，并在后续迭代中结合站会问题开展实时研讨。培训内容与实施计划见表~\ref{tab:training-plan}，对应的实操演练检查点见表~\ref{tab:training-labs}。
 
 \begin{longtable}{L{.18\linewidth}L{.42\linewidth}L{.16\linewidth}L{.15\linewidth}}
 \caption{团队培训内容与实施计划表}\label{tab:training-plan}\\
@@ -216,7 +267,7 @@
 \endfoot
 1. 项目启动与流程培训 &
 - 解读《软件工程 1》任务目标与 CMM3 敏捷过程规范 \newline
-- 明确“需求-设计-代码-测试”追溯矩阵 \newline
+- 明确“需求--设计--代码--测试”追溯矩阵 \newline
 - 制定立会日志、缺陷台账与飞书归档约定 &
 腾讯会议集中培训 &
 李承文（SM） \newline 赵紫怡（PO） \\
@@ -243,7 +294,7 @@
 李承文（订单/资产） \newline 赵紫怡（AI 模块） \newline 仲禹潼（地图） \\
 \midrule
 5. 测试与质量闭环培训 &
-- TDD 回归用例编写（红-绿-重构） \newline
+- TDD 回归用例编写（红--绿--重构） \newline
 - 边界与越权场景设计（库存溢出、跨用户访问隔离） \newline
 - WPS 缺陷登记规范（模块、步骤、截图、复测状态） &
 实操演练 + 复核 &
@@ -255,11 +306,50 @@
 全体成员 \\
 \end{longtable}
 
+\begin{longtable}{L{.11\linewidth}L{.24\linewidth}L{.38\linewidth}L{.18\linewidth}}
+\caption{团队初期工程化实操演练清单（Lab 1--Lab 5）}\label{tab:training-labs}\\
+\toprule
+\textbf{演练编号} & \textbf{演练主题} & \textbf{实操任务与检验动作} & \textbf{过关标志} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{演练编号} & \textbf{演练主题} & \textbf{实操任务与检验动作} & \textbf{过关标志} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Lab-01 & 容器与本地环境联启 & 运行 \code{docker-compose.demo.yml} 或本地 MySQL + Jar + Vue，分别使用 \code{demo_user}/\code{demo_merchant}/\code{demo_rider}/\code{demo_admin} 登录验证角色隔离。 & 四端首屏无控制台报错且接口返回 200。 \\
+Lab-02 & Git PR 与分支协同 & 基于 \code{main} 拉取特性分支，提交 1 次含测试的原子变更并关联飞书任务 ID 发起 Pull Request，由 SM 审查合入。 & 提交信息规范、无构建警告与冲突遗留。 \\
+Lab-03 & 安全边界与鉴权验证 & 在 Postman/MockMvc 中构造篡改 \code{userId} 的请求与未携带 Token 的受保护请求，确认返回 401/403。 & 服务端严格依据 JWT 上下文鉴权。 \\
+Lab-04 & 并发事务与快照演练 & 对 \code{food} 表执行条件库存扣减 SQL，修改菜品名称后查询历史订单明细表 \code{orderdetailet}。 & 不出现负库存；历史订单商品名不变。 \\
+Lab-05 & TDD 与缺陷台账演练 & 先编写失败测试用例（RED），再补充最小业务代码通过（GREEN），在 WPS 台账按规范录入 1 条含截图的复现记录。 & 形成可重复回归测试与标准缺陷闭环。 \\
+\end{longtable}
+
 \subsection{培训考核与验收标准}
 
-为确保培训不流于形式，本组制定了可验证的考核与验收标准：
+为确保培训不流于形式，本组制定了可验证的考核与验收标准（定量检查项汇总见表~\ref{tab:training-eval}）：
 \begin{enumerate}
   \item \textbf{环境与工具考核：} 4 名成员均需在本地成功拉取仓库代码、执行 \code{ensure-demo-env.sh} 并启动本地前后端或容器环境，完成至少一次规范的分支创建与 Pull Request 提交流程。
   \item \textbf{技术实操考核：} 前端成员需独立跑通页面路由守卫与接口联调；后端与数据库成员需编写至少 1 组带条件更新的 Mapper 查询及对应单元测试；测试成员需提交覆盖正常与异常边界的完整用例清单。
   \item \textbf{过程合规考核：} Sprint 1 结束前完成首个完整增量闭环验证，要求飞书文档中的任务状态、GitHub 提交记录与测试结果保持一致，无未登记的重大接口变更。
 \end{enumerate}
+
+\begin{longtable}{L{.22\linewidth}L{.38\linewidth}L{.14\linewidth}L{.17\linewidth}}
+\caption{团队培训考核量化验收标准表}\label{tab:training-eval}\\
+\toprule
+\textbf{考核维度} & \textbf{具体验收指标} & \textbf{达标阈值} & \textbf{实际达成情况} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{考核维度} & \textbf{具体验收指标} & \textbf{达标阈值} & \textbf{实际达成情况} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+工程环境就绪度 & 全体成员独立完成 MySQL 8、后端 Jar 与 Vue 3 环境启动及账号登录 & 4/4 成员达标 & 100\% 达成 \\
+协同规范执行度 & Git 提交遵循语义化前缀，PR 合并前经同侪或 SM 复核且不破坏基线 & PR 合入通过率 100\% & 累计 34 个 PR 合入 \\
+业务安全规范度 & 接口契约、JWT 上下文提取、BigDecimal 金额计算与快照规范执行到位 & 0 高危越权漏洞 & 通过全部安全测试 \\
+自动化测试习惯 & 核心逻辑补齐 JUnit/Node 测试，重大 Bug 优先采用 TDD 红--绿--重构固定 & 关键模块测试覆盖 & 累计 575 项全通过 \\
+\end{longtable}

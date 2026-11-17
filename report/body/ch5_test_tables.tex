@@ -1,0 +1,117 @@
+% Auto-generated grounded breakdown of all 53 backend test suites (340 tests) and 28 frontend test files (235 tests)
+\subsubsection{全量 53 个后端测试类与 28 个前端测试文件明细}
+表~\ref{tab:all-backend-tests} 与表~\ref{tab:all-frontend-tests} 依据 2026 年 11 月 16 日在源码快照 \code{6ddb219} 上实际执行的 Surefire XML 报告（归档于 \code{report/evidence/2026-11-16/backend-testsuites.json}）与 Node Test Runner 日志（\code{frontend-tests.txt}），完整列出全量 575 项自动化测试套件的执行明细。
+\begin{longtable}{C{.06\linewidth}L{.41\linewidth}L{.23\linewidth}C{.07\linewidth}C{.07\linewidth}C{.08\linewidth}}
+\caption{后端全量 53 个 JUnit 5 / MockMvc 测试类执行明细表（共 340 项）}\label{tab:all-backend-tests}\\
+\toprule
+\textbf{序号} & \textbf{测试类全限定名} & \textbf{所属测试域} & \textbf{用例} & \textbf{失败} & \textbf{耗时(s)} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{测试类全限定名} & \textbf{所属测试域} & \textbf{用例} & \textbf{失败} & \textbf{耗时(s)} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{ElmBkApplicationTests} & 基础架构、契约与偏好 & 1 & 0 & 4.858 \\
+2 & \code{adapter.impl.AmapUriMapAdapterTest} & 高德地图代理与坐标 & 1 & 0 & 0.001 \\
+3 & \code{adapter.impl.DashScopeImageRecognitionAdapterTest} & AI 助手与多模态适配 & 1 & 0 & 0.085 \\
+4 & \code{adapter.impl.DashScopeSpeechAdapterTest} & AI 助手与多模态适配 & 1 & 0 & 0.005 \\
+5 & \code{adapter.impl.RuleBasedRecommendationAdapterTest} & AI 助手与多模态适配 & 5 & 0 & 0.009 \\
+6 & \code{ai.AiChatJourneyTest} & AI 助手与多模态适配 & 18 & 0 & 3.001 \\
+7 & \code{ai.AiOrderStatusTest} & 交易定价、资产与快照 & 10 & 0 & 0.014 \\
+8 & \code{ai.AssistantIntegrationTest} & AI 助手与多模态适配 & 8 & 0 & 1.315 \\
+9 & \code{ai.DeepSeekDeadlineTest} & AI 助手与多模态适配 & 1 & 0 & 1.478 \\
+10 & \code{auth.AdminUserJourneyTest} & 认证安全与身份边界 & 4 & 0 & 0.581 \\
+11 & \code{auth.ApiContractCleanupTest} & 认证安全与身份边界 & 17 & 0 & 0.833 \\
+12 & \code{auth.AuthenticationHardeningTest} & 认证安全与身份边界 & 14 & 0 & 2.031 \\
+13 & \code{auth.AuthenticationJourneyTest} & 认证安全与身份边界 & 46 & 0 & 1.811 \\
+14 & \code{auth.AuthenticationTestEnvironmentTest} & 认证安全与身份边界 & 1 & 0 & 0.007 \\
+15 & \code{auth.CheckoutCartJourneyTest} & 认证安全与身份边界 & 3 & 0 & 0.587 \\
+16 & \code{auth.GuestCatalogTest} & 认证安全与身份边界 & 5 & 0 & 0.855 \\
+17 & \code{auth.MainlineApprovalIntegrationTest} & 认证安全与身份边界 & 5 & 0 & 0.641 \\
+18 & \code{constant.DeliveryTaskStatusTest} & 骑手配送与状态机 & 3 & 0 & 0.001 \\
+19 & \code{controller.NotificationControllerTest} & 基础架构、契约与偏好 & 3 & 0 & 0.193 \\
+20 & \code{controller.PreferenceControllerTest} & 基础架构、契约与偏好 & 7 & 0 & 0.094 \\
+21 & \code{dto.BusinessOwnerDTOValidationTest} & 店铺目录与商品库存 & 7 & 0 & 0.031 \\
+22 & \code{mapper.AiChatHistoryMapperAuthorizationTest} & 认证安全与身份边界 & 1 & 0 & 0.0 \\
+23 & \code{order.OrderNameSnapshotJourneyTest} & 交易定价、资产与快照 & 39 & 0 & 1.529 \\
+24 & \code{profile.ProfileAddressJourneyTest} & 认证安全与身份边界 & 29 & 0 & 1.03 \\
+25 & \code{security.LoginRolePolicyTest} & 认证安全与身份边界 & 6 & 0 & 0.003 \\
+26 & \code{security.OrderPricingTrustBoundaryTest} & 认证安全与身份边界 & 1 & 0 & 0.085 \\
+27 & \code{security.RequestIdentityBoundaryTest} & 认证安全与身份边界 & 5 & 0 & 0.094 \\
+28 & \code{security.SecurityHardeningTest} & 认证安全与身份边界 & 9 & 0 & 0.168 \\
+29 & \code{security.TokenSessionTest} & 认证安全与身份边界 & 9 & 0 & 0.07 \\
+30 & \code{service.AdminDeliveryAvailabilityTest} & 骑手配送与状态机 & 2 & 0 & 0.226 \\
+31 & \code{service.AdminRefinementTest} & 管理治理、审核与评价 & 3 & 0 & 0.107 \\
+32 & \code{service.AssetServiceTest} & 交易定价、资产与快照 & 9 & 0 & 0.032 \\
+33 & \code{service.AuditRegressionTest} & 基础架构、契约与偏好 & 7 & 0 & 0.132 \\
+34 & \code{service.BusinessPricingPolicyTest} & 交易定价、资产与快照 & 2 & 0 & 0.004 \\
+35 & \code{service.BusinessRecommendationPolicyTest} & AI 助手与多模态适配 & 3 & 0 & 0.003 \\
+36 & \code{service.CartRemarksTest} & 交易定价、资产与快照 & 3 & 0 & 0.089 \\
+37 & \code{service.CheckoutSelectionTest} & 交易定价、资产与快照 & 1 & 0 & 0.426 \\
+38 & \code{service.GeoPointTest} & 基础架构、契约与偏好 & 4 & 0 & 0.006 \\
+39 & \code{service.GuestMenuTest} & 基础架构、契约与偏好 & 2 & 0 & 0.335 \\
+40 & \code{service.ImageStorageServiceTest} & 基础架构、契约与偏好 & 2 & 0 & 0.018 \\
+41 & \code{service.MainlinePolicyCompatibilityTest} & 管理治理、审核与评价 & 3 & 0 & 0.004 \\
+42 & \code{service.NotificationDispatcherTest} & 基础架构、契约与偏好 & 5 & 0 & 0.1 \\
+43 & \code{service.OrderPricingServiceTest} & 交易定价、资产与快照 & 3 & 0 & 0.002 \\
+44 & \code{service.OrderSettlementServiceTest} & 交易定价、资产与快照 & 3 & 0 & 0.198 \\
+45 & \code{service.ProductPurchasePolicyTest} & 店铺目录与商品库存 & 4 & 0 & 0.006 \\
+46 & \code{service.RiderAuditCompatibilityTest} & 骑手配送与状态机 & 6 & 0 & 0.256 \\
+47 & \code{service.impl.AiRecommendationServiceImplTest} & AI 助手与多模态适配 & 1 & 0 & 0.084 \\
+48 & \code{service.impl.DeliveryServiceNavigationTest} & 骑手配送与状态机 & 2 & 0 & 0.528 \\
+49 & \code{service.impl.MultimodalAssistantServiceImplTest} & AI 助手与多模态适配 & 2 & 0 & 0.011 \\
+50 & \code{service.impl.StructuredAssistantServiceImplTest} & AI 助手与多模态适配 & 2 & 0 & 0.172 \\
+51 & \code{utils.AiCircuitBreakerTest} & AI 助手与多模态适配 & 1 & 0 & 0.002 \\
+52 & \code{utils.MediaFileValidatorTest} & 基础架构、契约与偏好 & 5 & 0 & 0.005 \\
+53 & \code{utils.VoiceOrderParserTest} & 交易定价、资产与快照 & 5 & 0 & 0.006 \\
+\midrule
+\textbf{合计} & \textbf{53 个后端测试类（全量通过）} & \textbf{H2 内存库隔离验证} & \textbf{340} & \textbf{0} & \textbf{---} \\
+\end{longtable}
+
+\begin{longtable}{C{.06\linewidth}L{.31\linewidth}C{.08\linewidth}C{.08\linewidth}L{.39\linewidth}}
+\caption{前端全量 28 个 Node 测试文件执行明细表（共 235 项）}\label{tab:all-frontend-tests}\\
+\toprule
+\textbf{序号} & \textbf{测试文件名（位于 \texttt{elmclient/tests/}）} & \textbf{用例数} & \textbf{通过数} & \textbf{核心验证逻辑与回归保护点} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{测试文件名（位于 \texttt{elmclient/tests/}）} & \textbf{用例数} & \textbf{通过数} & \textbf{核心验证逻辑与回归保护点} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{adminAccountApi.test.mjs} & 2 & 2 & 管理员账号 API 封装与并发竞态守卫（最新请求优先） \\
+2 & \code{adminAccountsState.test.mjs} & 3 & 3 & 管理员账号状态列表过滤、启停切换与展示文本同步 \\
+3 & \code{api-contract-cleanup.test.mjs} & 3 & 3 & 前后端遗留接口契约清理与统一路由请求格式校验 \\
+4 & \code{assistant-business-data.test.mjs} & 5 & 5 & AI 助手候选商品绑定真实店铺数据与一键加购字段检查 \\
+5 & \code{assistant-drawer.test.mjs} & 9 & 9 & AI 抽屉开关、关闭/延迟授权时麦克风流自动释放保护 \\
+6 & \code{assistant-launcher-layout.test.mjs} & 1 & 1 & AI 点餐悬浮球在统一页面壳层内的边界定位不溢出校验 \\
+7 & \code{assistant-page.test.mjs} & 16 & 16 & AI 智能客服多 Tab 状态流转、推荐筛选与未配置降级交互 \\
+8 & \code{audit-regressions.test.mjs} & 5 & 5 & 跨角色权限边界与审核状态回流回归断言 \\
+9 & \code{authentication.test.mjs} & 19 & 19 & 四端角色登录策略、JWT 持久化、注销清理与跳转校验 \\
+10 & \code{build-inputs.test.mjs} & 3 & 3 & 生产构建环境变量与静态资源输入完整性检查 \\
+11 & \code{business-distance.test.mjs} & 6 & 6 & GCJ-02 坐标距离计算、送达时间估算与无坐标“距离暂无”降级 \\
+12 & \code{cart-remarks.test.mjs} & 2 & 2 & 购物车跨店备注编辑与同步提交持久化校验 \\
+13 & \code{checkout.test.mjs} & 28 & 28 & 外送/自取履约模式判断、地址返回导航、幂等键与结算算价逻辑 \\
+14 & \code{delivery-navigation.test.mjs} & 6 & 6 & 骑手端高德外部导航链接拼装与缺坐标文本兜底逻辑 \\
+15 & \code{endpoints.test.mjs} & 5 & 5 & API 基础地址解析、代理适配与 WebSocket \code{access_token} 拼装 \\
+16 & \code{experience-regressions.test.mjs} & 11 & 11 & 游客浏览、店铺休息拦截与连续切页防白屏回归检查 \\
+17 & \code{location-picker.test.mjs} & 12 & 12 & 地图选址弹窗 POI 搜索防抖、城市过滤与离线地址回退 \\
+18 & \code{login-page.test.mjs} & 5 & 5 & 登录页四端入口切换、密码可见性及窄屏表单防溢出校验 \\
+19 & \code{map-location-picker.test.mjs} & 5 & 5 & 高德选址回调坐标写回地址表单与前缀防篡改校验 \\
+20 & \code{merchant-motion.test.mjs} & 2 & 2 & 店铺列表与详情 View Transitions 共享元素转场与减弱动效降级 \\
+21 & \code{merchant-redesign.test.mjs} & 10 & 10 & 分类店铺卡片重排、营业状态徽标与商家信息展示逻辑 \\
+22 & \code{navigation.test.mjs} & 42 & 42 & 全平台 33 视图返回路径规则、AI 返回防死循环（TDD 核心套件） \\
+23 & \code{pages-security.test.mjs} & 2 & 2 & Cloudflare Pages/代理安全头、一端权限隔离与语音权限声明检查 \\
+24 & \code{payment-view.test.mjs} & 5 & 5 & 支付页防重复点击锁、余额/券/积分选择与结果状态渲染 \\
+25 & \code{profile-api.test.mjs} & 9 & 9 & 个人资料、头像上传、地址管理 API 契约与错误提示透传 \\
+26 & \code{rider-dashboard.test.mjs} & 9 & 9 & 骑手上线状态切换、任务抢单并发报错提示与订单阶段按钮状态 \\
+27 & \code{skin-regressions.test.mjs} & 5 & 5 & 视觉壳层对齐、图标按钮无障碍文本与样式隔离回归校验 \\
+28 & \code{theme.test.mjs} & 5 & 5 & 4 套 CSS 变量主题切换、localStorage 持久化与无全局对象兜底 \\
+\midrule
+\textbf{合计} & \textbf{28 个前端测试文件（100\% 通过）} & \textbf{235} & \textbf{235} & \textbf{耗时约 0.96 秒，覆盖全部核心工具与契约} \\
+\end{longtable}

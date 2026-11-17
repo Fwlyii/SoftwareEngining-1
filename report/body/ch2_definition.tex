@@ -1,6 +1,6 @@
 \chapter{定义项目}
 
-本章围绕“轻量级外卖服务平台”开展项目范围定义与软件系统设计，覆盖产品愿景与敏捷规划、MoSCoW 优先级与 Product Backlog、技术架构、MySQL 8 数据库模型、四端及特色功能详细设计、RESTful 接口契约与用户界面（UI）设计。
+本章围绕“轻量级外卖服务平台”开展项目范围定义与软件系统设计，覆盖产品愿景与敏捷规划、MoSCoW 优先级与 Product Backlog、技术架构、MySQL 8 数据库模型（全量 23 张数据表）、四端及特色功能详细设计、RESTful 接口契约（全量 24 个控制器 135 个端点）与用户界面（UI）设计。
 
 \section{产品愿景与敏捷规划}
 
@@ -16,13 +16,32 @@
 \end{enumerate}
 
 \subsubsection{项目核心目标（与 TQCS 对齐）}
-围绕软件工程质量、进度、成本与范围控制目标，本项目在课程初始工程基础上完成架构重构与全链路增强：
+围绕软件工程时间（Time）、质量（Quality）、成本（Cost）与范围（Scope）控制目标，本项目在课程初始工程基础上完成架构重构与全链路增强（详见表~\ref{tab:tqcs-goals}）：
 \begin{enumerate}
   \item \textbf{构建四端闭环（Scope \& Quality）：} 打通顾客、商家、骑手、管理员四端核心流程，支持外送与到店自取双模式，实现订单状态与配送任务的严格联动。
   \item \textbf{强化数据与资金准确性（Reliability）：} 采用服务端权威计价、下单商品/地址快照隔离、条件更新防超卖及幂等支付机制，保障交易记录与资产流水准确可追溯。
   \item \textbf{融入 AI 与地图差异化能力（Innovation）：} 提供文字对话、智能推荐、图片识菜、语音草稿四类受控 AI 点餐入口，结合高德地图实现精准选址、直线距离与送达时长估算。
   \item \textbf{按敏捷迭代按期交付（Time \& Cost）：} 遵循 Scrum + CMM3 过程规范，通过三大短周期迭代及持续自动化测试保护，在有限周期内高质量完成交付与验收。
 \end{enumerate}
+
+\begin{longtable}{L{.14\linewidth}L{.26\linewidth}L{.51\linewidth}}
+\caption{项目 TQCS 工程目标与量化验收基准表}\label{tab:tqcs-goals}\\
+\toprule
+\textbf{TQCS 维度} & \textbf{核心管理目标} & \textbf{量化验收标准} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{TQCS 维度} & \textbf{核心管理目标} & \textbf{量化验收标准} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Time（进度） & 三大 Scrum 短周期迭代按期收敛 & 9 月 1 日至 9 月 19 日完成全部 P0/P1 主流程与扩展功能，核心演示版本准时封板。 \\
+Quality（质量） & 高覆盖自动化回归与零高危越权缺陷 & 后端 53 个测试类（340 项）与前端 28 个测试文件（235 项）100\% 通过，高危越权与并发问题清零。 \\
+Cost（成本） & 4 人跨职能协同与外部依赖可控降级 & 总实际工时控制在 238~h（偏差 +3.48\%），未配置外部 AI/地图密钥时基础主链路零成本阻塞。 \\
+Scope（范围） & 聚焦四端闭环与特色增值能力 & 严格执行 MoSCoW 分级，将真实支付清算与高频 GPS 轨迹明确划出本期基线，防止范围蔓延。 \\
+\end{longtable}
 
 \subsection{项目定义}
 
@@ -41,160 +60,192 @@
 
 团队采用增量式 Scrum 敏捷开发框架，并结合 CMM3 级过程域实施标准化管理：
 \begin{itemize}
-  \item \textbf{迭代周期划分：} 核心研发工作划分为 3 个紧凑迭代周期（Sprint 1：需求建模与用户下单核心闭环；Sprint 2：商家履约、骑手配送与资产积分；Sprint 3：管理治理、AI 多模态、高德地图与全链路回归），随后开展交叉验收复盘与《软件工程 1》CMM3 过程标准化归档及报告交付。
-  \item \textbf{核心 Scrum 仪式：} 每个 Sprint 依次执行迭代规划会（拆解 Backlog 与三点估算）、每日同步站会（登记阻塞并追踪解决方案）、迭代评审会（对照 DoD 验收功能与测试通过率）及迭代回顾会（沉淀工程改进措施）。
-  \item \textbf{工具支撑：} 使用 GitHub 进行分支隔离、Pull Request 代码互审与提交追踪；使用飞书云文档维护任务看板与会议纪要；使用 WPS 表格维护缺陷登记与复测闭环；使用 JUnit/MockMvc 与 Node 测试运行器保障回归安全。
+  \item \textbf{迭代周期划分：} 核心研发工作划分为 3 个紧凑迭代周期（Sprint 1：需求建模与用户下单核心闭环；Sprint 2：商家履约、骑手配送与资产体系；Sprint 3：管理治理、AI 多模态、高德地图与全链路回归），随后开展跨组交叉验收与《软件工程 1》规范化文档归档。
+  \item \textbf{敏捷例会制度：} 每个迭代起点召开规划会拆解 Sprint Backlog；开发期间通过飞书文档与线上短会同步每日进展与阻塞；迭代末期开展演示评审与问题回顾，并依据 TDD 红--绿--重构与自动化测试门禁合并 PR。
+  \item \textbf{就绪与完成定义（DoR / DoD）：} 团队明确规定只有具备明确角色故事、接口字段与异常边界的用户故事才允许进入 Sprint（DoR）；只有完成编码实现、通过前后端自动化测试、经过 SM 代码审查合并且飞书状态更新的任务才标记为完成（DoD），具体准则见表~\ref{tab:dor-dod}。
 \end{itemize}
+
+\begin{longtable}{L{.18\linewidth}L{.35\linewidth}L{.38\linewidth}}
+\caption{团队敏捷就绪定义（DoR）与完成定义（DoD）检查标准}\label{tab:dor-dod}\\
+\toprule
+\textbf{质量门禁阶段} & \textbf{核心准入/验收条目} & \textbf{工程验证载体} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{质量门禁阶段} & \textbf{核心准入/验收条目} & \textbf{工程验证载体} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+DoR（迭代就绪） & 1. 故事具备明确的角色、目标、商业价值及 MoSCoW 优先级；\newline 2. 涉及表结构变更已明确迁移 SQL 策略；\newline 3. 前后端已对齐请求路径、DTO 字段与状态码。 & 飞书 Product Backlog、SRS 用例章节与 \code{elm_v2.sql} 评审记录 \\
+\midrule
+DoD（任务完成） & 1. 核心逻辑与分支边界通过 \code{./mvnw test} 与 \code{npm test}；\newline 2. 安全边界（JWT 上下文提取、权限注解）经人工复核；\newline 3. PR 合并至 \code{main} 且未破坏容器一键启动脚本；\newline 4. 关联缺陷已在 WPS 台账复测关闭。 & GitHub PR 合并记录、Surefire/Node 测试日志、WPS 闭环台账 \\
+\end{longtable}
 
 \section{项目范围与 Product Backlog}
 
 \subsection{项目范围界定}
 
-图~\ref{fig:def-context} 与图~\ref{fig:def-actors} 界定了系统的上下文边界与四类参与者职责。平台内部由前端 SPA、Spring Boot 业务服务与 MySQL 8 持久化层构成；外部依赖包括 DeepSeek 大模型、DashScope 视觉与语音识别、高德地图服务及对象存储。本期明确将真实微信/支付宝清算、复杂多级调度派单、骑手薪资劳动合同及实时 GPS 持续轨迹追踪列为范围外事项，支付以课程模拟钱包与模拟支付为主。
+图~\ref{fig:def-context} 与图~\ref{fig:def-actors} 分别展示了系统的上下文外部依赖边界与四类参与者职责。平台内部由前端 SPA、Spring Boot 业务服务与 MySQL 8 持久化层构成；外部依赖包括 DeepSeek 大模型、DashScope 视觉与语音识别、高德地图服务及对象存储。本期明确将范围边界固化在表~\ref{tab:scope-boundary} 中，避免需求蔓延挤压测试回归窗口。
 
-\begin{figure}[H]
-  \centering
-  \begin{minipage}[t]{.54\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.32\textheight,keepaspectratio]{figures/srs/01-system-context.png}\\[-2pt]
-    \small（a）系统上下文与外部依赖边界
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.42\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.32\textheight,keepaspectratio]{figures/srs/09-actor-analysis.png}\\[-2pt]
-    \small（b）系统参与者及职责分析
-  \end{minipage}
-  \caption{系统上下文边界与参与者分析模型}\label{fig:def-context}
-\end{figure}
-\vspace{-1.2em}\phantomsection\label{fig:def-actors}
-
-\subsection{Product Backlog}
-
-本组结合 MoSCoW 优先级法则（P0：必须实现的核心基线；P1：应当实现的完整增强；P2：条件允许时纳入的可选增强），将全部需求拆解为 20 项标准用户故事（\code{US001}–\code{US020}），构成项目的 Product Backlog，如表~\ref{tab:product-backlog} 所示。
-
-\begin{longtable}{L{.08\linewidth}L{.10\linewidth}L{.38\linewidth}L{.07\linewidth}L{.07\linewidth}L{.22\linewidth}}
-\caption{Product Backlog 用户故事清单}\label{tab:product-backlog}\\
+\begin{longtable}{L{.16\linewidth}L{.38\linewidth}L{.37\linewidth}}
+\caption{系统建设范围（In-Scope）与显式排除项（Out-of-Scope）清单}\label{tab:scope-boundary}\\
 \toprule
-\textbf{编号} & \textbf{角色} & \textbf{用户故事描述} & \textbf{优先} & \textbf{点数} & \textbf{核心验收标准} \\
+\textbf{范围分类} & \textbf{本期纳入建设范围（In-Scope）} & \textbf{显式排除项与理由（Out-of-Scope）} \\
 \midrule
 \endfirsthead
-\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{编号} & \textbf{角色} & \textbf{用户故事描述} & \textbf{优先} & \textbf{点数} & \textbf{核心验收标准} \\
+\textbf{范围分类} & \textbf{本期纳入建设范围（In-Scope）} & \textbf{显式排除项与理由（Out-of-Scope）} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-US001 & 通用用户 & 作为用户，我希望能注册、登录、修改资料/头像与退出，以便安全使用平台。 & P0 & 5 & JWT 鉴权有效，错误密码拒绝，敏感数据不回传。 \\
-US002 & 通用用户 & 作为用户，我希望能申请成为商家或骑手并查看站内审核通知，以便切换业务角色。 & P0 & 5 & 角色由服务端权限决定，审核通知可标记已读。 \\
-US003 & 顾客 & 作为游客或顾客，我希望能按分类、关键字和排序浏览店铺及菜单详情，以便快速选餐。 & P0 & 5 & 未登录可公开浏览店铺，休息中店铺明确标识。 \\
-US004 & 顾客 & 作为顾客，我希望能增删改查收货地址并设置默认地址，以便下单时快速选择。 & P0 & 3 & 仅本人可读写本人地址，支持手机格式校验。 \\
-US005 & 顾客 & 作为顾客，我希望能跨店独立管理购物车、填写口味备注并支持部分勾选结算，以便灵活下单。 & P0 & 8 & 限购校验、未勾选商品保留、备注随单传递。 \\
-US006 & 顾客 & 作为顾客，我希望能选择外送或自取模式提交订单并执行模拟支付，以便完成交易。 & P0 & 8 & 自取免外送费和地址；防超卖且支持幂等键防重。 \\
-US007 & 顾客 & 作为顾客，我希望能查看订单列表、状态流转并取消待处理订单，以便掌控履约进度。 & P0 & 5 & 跨用户订单严格隔离；取消订单同步恢复库存。 \\
-US008 & 顾客 & 作为顾客，我希望能对已完成订单进行评分评价并收藏/点赞店铺，以便沉淀消费反馈。 & P1 & 5 & 一单一评，支持图片上传与收藏列表管理。 \\
-US009 & 顾客 & 作为顾客，我希望能使用模拟钱包充值、开通会员、领用优惠券及积分抵扣，以便享受优惠。 & P1 & 8 & 金额按 BigDecimal 计算，取消订单生成反向流水。 \\
-US010 & 顾客 & 作为顾客，我希望能切换 4 套视觉主题并维护辣度/口味/忌口偏好，以便获得个性化体验。 & P1 & 3 & 主题与偏好持久化恢复，支持一键清除。 \\
-US011 & 商家 & 作为商家，我希望能申请开店并维护店铺名称、起送费、配送费、满减和营业状态，以便经营店铺。 & P0 & 5 & 仅审核通过的本人店铺可编辑营业配置。 \\
-US012 & 商家 & 作为商家，我希望能新增/编辑菜品、管理分类、库存、限购和上下架状态，以便实时控制供给。 & P0 & 5 & 库存为 0 或下架商品不可下单；历史订单不受改名调价影响。 \\
-US013 & 商家 & 作为商家，我希望能查看本店订单并执行接单、拒单或备餐出餐，以便高效履约。 & P0 & 5 & 仅本人店铺订单可操作，严格按状态机推进。 \\
-US014 & 商家 & 作为商家，我希望能回复顾客评价并查看店铺销量/营业额趋势看板，以便辅助经营决策。 & P1 & 5 & 看板日期口径统一，支持报表数据导出。 \\
-US015 & 骑手 & 作为骑手，我希望能提交实名入驻申请、切换在线状态并抢单接单，以便承接配送任务。 & P0 & 5 & 乐观锁/预期状态防多人同时抢单冲突。 \\
-US016 & 骑手 & 作为骑手，我希望能按“到店—取餐—送达”流程更新配送并上报配送异常，以便完成履约。 & P0 & 8 & 仅任务归属骑手可操作，同步推进主订单状态。 \\
-US017 & 管理员 & 作为管理员，我希望能审核商家、开店与骑手入驻申请并治理账号启停，以便保障平台合规。 & P0 & 5 & 审核写入通知，停用账号即时阻断后续访问。 \\
-US018 & 管理员 & 作为管理员，我希望能处理配送异常、隐藏违规评价并查看平台统计看板，以便维护秩序。 & P1 & 5 & 支持异常恢复/改派/终止，统计维度准确。 \\
-US019 & 顾客 & 作为顾客，我希望能通过 AI 文字客服、智能推荐及图片/语音草稿辅助点餐，以便提升点餐效率。 & \code{P1/P2} & 8 & 仅查询本人订单，异常时熔断降级至本地帮助。 \\
-US020 & 顾客/骑手 & 作为顾客和骑手，我希望使用高德地图选址、查看直线距离及跳转外部导航，以便精准送达。 & P1 & 5 & 保存文本与 GCJ-02 坐标，无坐标时降级为文本搜索。 \\
+认证与权限域 & 统一账号注册/登录、BCrypt 加密、JWT 无状态鉴权、商家/骑手入驻审批与角色路由隔离 & 第三方微信/QQ OAuth 授权登录、短信真实验证码付费通道（演示环境保留本地校验） \\
+顾客点餐域 & 分类搜索、店铺详情、限购与库存校验、跨店购物车、外送/自取双模结算、订单跟踪与评价 & 跨商家合并拆单支付、拼单外卖、复杂预售定时排期 \\
+资金与资产域 & 服务端权威算价、模拟钱包充值、模拟支付、新人/领券核销、积分累计与抵扣、只增不改流水账本 & 真实微信支付/支付宝商户号清算、银行卡提现打款与发票税控 \\
+配送与地图域 & 骑手入驻审核、在线接单池、乐观锁并发抢单、到店/取餐/送达、异常仲裁、高德选址与距离估算 & 商业级智能路径派单调度算法、骑手实时高频 WebSocket GPS 轨迹推流 \\
+智能与管理域 & 结构化菜单筛选、DeepSeek 问答、DashScope 识菜与语音草稿（含未配置降级）、四端看板与导出 & 大规模向量知识库 RAG 集群、单用户精细化商业计费配额系统 \\
+\end{longtable}
+
+\srsfig[0.95\linewidth]{figures/srs/01-system-context.png}{系统上下文边界与外部依赖集成视图}{fig:def-context}
+
+\srsfig[0.92\linewidth]{figures/srs/09-actor-analysis.png}{系统四端参与者职责与交互边界分析模型}{fig:def-actors}
+
+\subsection{Product Backlog}
+
+本组结合 MoSCoW 优先级法则（P0：必须实现的核心基线；P1：应当实现的完整增强；P2：条件允许时纳入的可选增强），并对照《软件需求规格说明书》（SRS）中的标准用例编号（\code{UC-COM/CUS/MER/RID/ADM/AI/MKT/PER}），将全部需求拆解为 22 项标准用户故事（\code{US001}--\code{US022}，总故事点 118 点），构成项目的 Product Backlog。表~\ref{tab:backlog-summary} 汇总了优先级分布，表~\ref{tab:product-backlog} 给出了完整的用户故事卡片与验收标准。
+
+\begin{longtable}{C{.14\linewidth}L{.28\linewidth}C{.16\linewidth}C{.16\linewidth}L{.18\linewidth}}
+\caption{Product Backlog 优先级与故事点统计表}\label{tab:backlog-summary}\\
+\toprule
+\textbf{优先级} & \textbf{MoSCoW 业务定位} & \textbf{故事数量} & \textbf{故事点合计} & \textbf{主要覆盖迭代} \\
+\midrule
+P0（Must） & 核心交易、四端履约与安全闭环（MVP 基线） & 14 项 & 78 点（66.1\%） & Sprint 1 -- Sprint 2 \\
+P1（Should） & 资产优惠、评价通知、看板与结构化智能服务 & 6 项 & 31 点（26.3\%） & Sprint 2 -- Sprint 3 \\
+P2（Could） & 多模态识菜/语音草稿、高德定位与视觉动效增强 & 2 项 & 9 点（7.6\%） & Sprint 3 \\
+\midrule
+\textbf{合计} & \textbf{全平台四端及特色扩展需求} & \textbf{22 项} & \textbf{118 点（100\%）} & \textbf{Sprint 1 -- Sprint 3} \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{L{.08\linewidth}L{.10\linewidth}L{.11\linewidth}L{.34\linewidth}C{.06\linewidth}C{.06\linewidth}L{.17\linewidth}}
+\caption{Product Backlog 详细用户故事与验收标准清单（US001--US022）}\label{tab:product-backlog}\\
+\toprule
+\textbf{编号} & \textbf{SRS 映射} & \textbf{角色} & \textbf{用户故事描述（As a / I want / So that）} & \textbf{优先} & \textbf{点数} & \textbf{核心验收标准（DoD）} \\
+\midrule
+\endfirsthead
+\multicolumn{7}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{SRS 映射} & \textbf{角色} & \textbf{用户故事描述（As a / I want / So that）} & \textbf{优先} & \textbf{点数} & \textbf{核心验收标准（DoD）} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+US001 & UC-COM-01 & 通用用户 & 作为平台用户，我希望能通过账号密码注册、登录、修改个人资料/头像并安全退出，以便使用受保护功能。 & P0 & 5 & 用户名/手机号全局唯一；错误密码与停用账号拒绝登录；JWT 无状态鉴权且密码密文不回传。 \\
+US002 & UC-COM-02/03 & 通用用户 & 作为已登录用户，我希望能申请成为商家或骑手并查看站内审核通知，以便合法切换对应工作端。 & P0 & 5 & 角色切换严格由服务端权威权限决定；入驻审核结果实时写入站内通知并支持标为已读。 \\
+US003 & UC-CUS-01 & 游客/顾客 & 作为游客或顾客，我希望能按分类、关键字、销量或起送价浏览店铺及菜品详情，以便快速决策选餐。 & P0 & 5 & 未登录可公开浏览店铺，休息中店铺明确标示并拦截加购；售罄/下架菜品不可下单。 \\
+US004 & UC-COM-02 & 顾客 & 作为顾客，我希望能增删改查收货地址并设置默认地址，以便下单结算时自动填充联系信息。 & P0 & 3 & 仅本人可读写本人地址；支持 11 位有效手机号正则校验与默认地址唯一切换。 \\
+US005 & UC-CUS-02 & 顾客 & 作为顾客，我希望能分店管理购物车、填写口味备注并支持部分勾选商品结算，以便灵活安排多人点餐。 & P0 & 8 & 同商品自动合并数量；超限购/超库存拦截；未勾选商品提交后仍保留在购物车中。 \\
+US006 & UC-CUS-03/04 & 顾客 & 作为顾客，我希望能选择外送或到店自取模式进行试算并幂等提交订单，以便准确完成下单支付。 & P0 & 8 & 自取免外送费、起送价及收货地址；按 \code{idempotencyKey} 防重复建单；高并发防超卖。 \\
+US007 & UC-CUS-04/05 & 顾客 & 作为顾客，我希望能查看本人订单状态时间线、取消未接单订单并确认收货，以便掌控交易闭环。 & P0 & 5 & 跨用户订单严格隔离（403）；取消订单事务内恢复库存与退还资产；确认收货发放积分。 \\
+US008 & UC-CUS-06 & 顾客 & 作为顾客，我希望能对已完成订单进行 1--5 星评价（支持传图）、查看商家回复以及点赞收藏店铺。 & P1 & 5 & 坚持“一单一评”原则；支持上传最多 3 张评价图片；收藏列表支持增删查看。 \\
+US009 & UC-MKT-01 & 顾客 & 作为顾客，我希望能使用模拟钱包充值、领取新人券、开通 30 天体验会员及用积分抵扣订单金额。 & P1 & 8 & 所有金额严格采用 \code{BigDecimal} 精确运算；钱包扣款、退款与积分变更均记入流水账本。 \\
+US010 & UC-PER-01 & 顾客 & 作为顾客，我希望能切换 4 套视觉主题并保存辣度、口味偏好与忌口标签，以便获得个性化界面与推荐。 & P1 & 3 & 主题切换即时应用 CSS 变量并同步后端；支持一键恢复默认设置且屏蔽过敏忌口提示。 \\
+US011 & UC-MER-01 & 商家 & 作为商家，我希望能提交开店申请并维护店名、地址、起送费、配送费、满减规则及营业/休息状态。 & P0 & 5 & 仅审核通过的本人店铺可维护营业配置；切换“休息中”后顾客端同步禁止新下单。 \\
+US012 & UC-MER-02 & 商家 & 作为商家，我希望能新增/编辑菜品、自定义菜品分类、调整库存与单笔限购并控制上下架状态。 & P0 & 5 & 修改商品名或价格不影响历史订单明细快照（\code{food_name_snapshot}）；库存支持原子条件扣减。 \\
+US013 & UC-MER-03 & 商家 & 作为商家，我希望能查看本店待处理与进行中订单明细，并执行接单、拒单退款或确认出餐操作。 & P0 & 5 & 拒单自动退还顾客资产与恢复库存；出餐后外送订单自动生成待抢配送任务，自取转为待取餐。 \\
+US014 & UC-MER-04 & 商家 & 作为商家，我希望能查看顾客评价并发布回复，并在经营看板按日期范围查看营收与热销趋势、导出报表。 & P1 & 5 & 仅本店所属订单评价可回复；经营看板支持 CSV/Excel 导出且数据与真实已完成订单一致。 \\
+US015 & UC-RID-01/02 & 骑手 & 作为骑手，我希望能提交实名与车辆类型入驻申请，审核通过后切换在线接单并在任务池抢单。 & P0 & 5 & 采用乐观锁（\code{version}）条件更新实现并发抢单互斥，后发起请求明确返回“任务已被领取”。 \\
+US016 & UC-RID-03/04 & 骑手 & 作为骑手，我希望能按“到店 $\rightarrow$ 取餐 $\rightarrow$ 送达”节点推进配送，并使用高德地图外部导航。 & P0 & 5 & 节点推进同步主订单状态并记录时间戳；缺坐标时自动降级为文本地址提示而不阻断履约。 \\
+US017 & UC-ADM-01 & 管理员 & 作为管理员，我希望能集中审核商家入驻、新店铺开店及骑手资格申请，控制平台准入质量。 & P0 & 5 & 审核通过或拒绝必须记录审批意见并自动触发站内通知；未授权账号访问返回 403。 \\
+US018 & UC-ADM-02 & 管理员 & 作为管理员，我希望能启停违规用户账号、隐藏恶意评价并查看平台汇总订单，维护社区生态。 & P0 & 5 & 停用账号立即拦截登录与接口调用；隐藏评价在公开店铺页不可见但保留后台审计记录。 \\
+US019 & UC-AI-01 & 顾客 & 作为顾客，我希望能通过 AI 客服咨询平台规则与个人订单状态，并通过条件推荐获得真实菜品候选卡片。 & P1 & 5 & AI 不得直接代下单；候选菜品必须来自在售库存表且支持一键加购；订单查询严格隔离本人数据。 \\
+US020 & UC-AI-02 & 顾客 & 作为顾客，我希望能上传菜品图片识菜或通过语音生成点餐草稿，并在未配置模型时获得清晰提示。 & P2 & 5 & 外部网络调用置于数据库事务外；超时熔断后平滑降级至本地筛选规则，绝不阻断普通点餐。 \\
+US021 & UC-RID-04 / ADM-02 & 骑手/管理员 & 作为骑手我希望能上报配送异常，作为管理员我希望能对异常任务执行恢复、改派或终止仲裁。 & P0 & 4 & 异常上报同步挂起主订单（状态 9）；管理员仲裁恢复原态、换绑骑手或取消订单并回退资产。 \\
+US022 & UC-ADM-03 / CUS-06 & 管理员/顾客 & 作为管理员我希望能查看平台级多维趋势看板与导出数据，作为顾客我希望能按月/年查看个人消费统计。 & P1 & 4 & 平台看板支持按时间粒度统计成交额、活跃店铺与订单分布；消费统计支持按月/年维度聚合展示。 \\
 \end{longtable}
 
 \section{技术架构与风险应对}
 
 \subsection{技术栈选型}
 
-系统遵循前后端分离与三层架构思想，浏览器端负责视图交互与路由守卫，应用服务端承担认证授权、核心业务规则、事务控制及外部 AI/地图适配，数据库层基于 MySQL 8 存储业务事实与快照流水。图~\ref{fig:def-arch} 展示了系统总体架构，表~\ref{tab:tech-stack} 列出了各层级技术栈选型及版本依据。
+平台采用前后端完全分离的现代 Web 架构，总体技术架构见图~\ref{fig:def-arch}。为保证大型单页应用的加载效率，前端仅首页保留首屏同步打包，商家端、骑手端、管理员端及 AI 点餐页均采用路由懒加载；后端采用经典的 \textbf{Controller $\rightarrow$ Service $\rightarrow$ Mapper（MyBatis）$\rightarrow$ MySQL 8} 分层架构，并将第三方外部依赖（DeepSeek、DashScope、高德地图）封装为独立客户端与适配器层，严禁与数据库事务耦合。系统各层技术选型及工程用途见表~\ref{tab:tech-stack}。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=.88\linewidth,height=.48\textheight,keepaspectratio]{figures/report/process/architecture.png}
-  \caption{轻量级外卖服务平台系统总体架构图}\label{fig:def-arch}
-\end{figure}
+\srsfig[0.95\linewidth]{figures/report/process/architecture.png}{轻量级外卖服务平台五层技术架构与外部服务解耦视图}{fig:def-arch}
+
+在代码组织层面，系统严格划分以下五层职责边界：
+\begin{enumerate}
+  \item \textbf{表现与交互层（\code{elmclient/src/views/} 与 \code{components/}）：} 基于 Vue 3 Composition API 与全局 CSS 变量主题引擎构建 33 个页面视图，配合 \code{authGuard.js} 实施四端角色路由隔离。
+  \item \textbf{前端通信与状态契约层（\code{elmclient/src/services/} 与 \code{utils/}）：} 通过 Axios 拦截器统一注入 Bearer JWT 并拦截跨站泄露；封装 \code{checkout.js}、\code{amap.js}、\code{theme.js} 等纯函数工具以支持 Node 无浏览器单元测试。
+  \item \textbf{安全网关与接口控制器层（\code{elm_bk/config/} 与 \code{controller/}）：} Spring Security 过滤器链解析并校验 JWT，配合 \code{@PreAuthorize} 注解与 \code{CurrentUserService} 从认证上下文提取真实用户身份；\code{GlobalExceptionHandler} 将业务异常映射为标准 HTTP 401/403/404/409/422/503 状态码。
+  \item \textbf{核心业务与事务服务层（\code{elm_bk/service/impl/}）：} 承载订单权威计价（\code{OrderPricingService}）、混合资产结算（\code{OrderSettlementService}）、订单状态机及骑手乐观锁抢单等核心逻辑，确保资金与库存操作处于 ACID 事务边界内。
+  \item \textbf{持久层与外部隔离适配层（\code{mapper/} 与 \code{client/}）：} MyBatis 显式 XML/注解 SQL 控制复杂条件更新与历史快照写入；DeepSeek、DashScope 与高德 REST 客户端均配置独立超时控制与 \code{AiCircuitBreaker} 熔断器，故障时自动回退本地规则。
+\end{enumerate}
 
 \begin{longtable}{L{.18\linewidth}L{.28\linewidth}L{.45\linewidth}}
 \caption{系统技术栈选型与工程用途}\label{tab:tech-stack}\\
 \toprule
-\textbf{架构层次} & \textbf{选型与版本} & \textbf{核心职责与选型理由} \\
+\textbf{架构层级} & \textbf{核心技术与版本} & \textbf{选型依据与工程用途} \\
 \midrule
 \endfirsthead
 \multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{架构层次} & \textbf{选型与版本} & \textbf{核心职责与选型理由} \\
+\textbf{架构层级} & \textbf{核心技术与版本} & \textbf{选型依据与工程用途} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-前端展示层 & Vue 3.2.13、Vue Router 4.4.3、Axios 1.20.0、SweetAlert2、Font Awesome & 采用组合式 API 与按角色路由懒加载，减少首屏体积；使用 CSS 变量实现多主题与响应式壳层。 \\
-后端应用层 & Java 17、Spring Boot 3.4.6、Spring Security、JWT (jjwt) & 清晰划分 Controller/Service/Mapper；无状态令牌认证与服务端权限上下文校验保障接口安全。 \\
-数据持久层 & MyBatis 3.0.4、MySQL 8.0 & 显式编写可控 SQL，精确实现库存条件扣减、预期状态抢单及多表同一事务提交。 \\
-外部集成层 & DeepSeek (\code{deepseek-chat})、DashScope (\code{qwen-vl-plus}, \code{qwen3-asr-flash})、高德地图 API & 通过适配器模式将第三方协议、密钥、超时重试与降级逻辑收敛在服务端，页面仅调用统一接口。 \\
-测试与质量 & JUnit 5、Mockito、MockMvc、H2；Node.js 内置测试运行器 & 覆盖后端领域规则/集成链路测试与前端纯函数/接口契约/源码规范检查。 \\
-构建与部署 & Docker Compose、Nginx、Maven Wrapper、Shell/MJS 校验脚本 & 统一本地与演示容器编排，自动执行数据库初始化与版本化迁移脚本。 \\
+前端工程 & Vue 3 + Vue Router 4 + Axios + CSS Variables & 组合式 API 便于拆分业务逻辑；路由元信息实现四端权限守卫；CSS 变量实现 4 套主题即时切换。 \\
+前端质量与构建 & Vue CLI + Node.js Test Runner (\code{node --test}) & 零额外重型框架即可执行 28 个测试文件（235 项断言），保障算价、导航与契约回归。 \\
+后端应用框架 & Java 17 + Spring Boot 3.4.6 + Spring Security & 提供稳健的 REST 接口、方法级权限控制（\code{@PreAuthorize}）、参数校验与全局异常处理。 \\
+认证与实时推送 & JJWT (HMAC-SHA512) + WebSocket & 无状态令牌鉴权（含记住我时长区分）与订单状态实时推送通道。 \\
+数据持久化 & MySQL 8.0 + MyBatis + HikariCP + 迁移脚本 & MyBatis 便于精准编写条件更新 SQL 与历史快照写入；版本号递增脚本保障可复现演进。 \\
+外部服务适配 & DeepSeek API + DashScope + 高德 Web/JS API & 接入大模型对话、多模态识菜/语音识别与地理编码；内置超时限制、熔断器与降级路径。 \\
+后端测试与容器 & JUnit 5 + Mockito + MockMvc + H2 + Docker Compose & H2 内存库支撑 53 个测试类（340 项）秒级隔离执行；Docker Compose + Nginx 一键编排交付。 \\
 \end{longtable}
 
 \subsection{初期架构风险与敏捷应对}
 
-在项目定义阶段，团队同步评估了初期最易导致返工的四类技术与过程风险，并设定了敏捷应对机制（见表~\ref{tab:init-risk}）。
+在架构设计初期，团队重点识别了多端共用后端、资金并发一致性及外部依赖稳定性三类高风险架构决策点，并制定了敏捷演进对策（见表~\ref{tab:init-risk}）。
 
 \begin{longtable}{L{.22\linewidth}L{.33\linewidth}L{.36\linewidth}}
 \caption{项目定义阶段核心技术风险与敏捷应对}\label{tab:init-risk}\\
 \toprule
-\textbf{识别风险} & \textbf{潜在工程影响} & \textbf{敏捷应对策略} \\
+\textbf{初期架构风险点} & \textbf{潜在系统故障后果} & \textbf{架构层敏捷应对策略} \\
 \midrule
 \endfirsthead
 \multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{识别风险} & \textbf{潜在工程影响} & \textbf{敏捷应对策略} \\
+\textbf{初期架构风险点} & \textbf{潜在系统故障后果} & \textbf{架构层敏捷应对策略} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-历史交易数据漂移 & 商家修改菜品名称或价格后，历史订单详情展示失真。 & 在 \code{orders} 与 \code{orderdetailet} 中冗余写入下单时快照，并与商品表解耦。 \\
-外部 AI 与地图不可用 & 密钥缺失、超时或限流导致核心下单流程被连带阻塞。 & 将外部调用移出数据库事务，设置超时熔断与本地规则/文本搜索降级路径。 \\
-前端试算与后端算价分歧 & 满减、会员折扣、优惠券与积分顺序不一致导致支付金额异常。 & 明确由 \code{OrderPricingService} 与 \code{OrderSettlementService} 权威算价，前后端共用公式口径。 \\
-新旧接口前缀并存 & 历史遗留入口 \code{/api/*} 与新规范 \code{/api/v1/*} 混用易造成规则绕过。 & 保留旧入口兼容适配层并统一委托给核心 Service，辅以源码契约测试防止回归。 \\
+信任客户端价格与身份参数 & 恶意篡改下单金额或伪造 \code{userId}/\code{riderId} 越权读写他人订单 & 彻底废弃客户端金额直传；后端从 JWT 上下文提取身份并重新查库计算全部价格。 \\
+外部 AI 调用嵌入数据库事务 & 大模型慢响应（3--10 秒）长期占用数据库连接池导致系统雪崩 & 在 \code{AiChatServiceImpl} 与 \code{StructuredAssistantServiceImpl} 中先完成外部调用，再开启短事务落库。 \\
+高并发库存扣减与骑手抢单冲突 & 热门商品超卖为负库存、多个骑手同时抢单造成任务归属错乱 & 采用 \code{stock >= qty} 条件更新扣库存，为 \code{delivery_task} 引入 \code{version} 乐观锁校验。 \\
+多端演进导致旧前端接口失配 & 保留的课程初始接口与新增 v1 业务接口返回数据结构不一致 & 在旧 Controller 内保留兼容路径并统一委托至同一 Service，同时编写接口契约清理测试守护。 \\
+第三方地图或密钥未配置阻断演示 & 课程部署环境缺少高德或 DashScope 密钥时，选址或点餐页面卡死报错 & 地图选址增加离线地址回退与“距离暂无”提示；AI 服务不可用时自动切换本地筛选帮助。 \\
 \end{longtable}
 
 \section{数据库设计}
 
 \subsection{数据库概述}
 
-系统采用 MySQL 8 作为核心关系型数据库（演示库名 \code{elm_v2}，字符集 \code{utf8mb4}，排序规则 \code{utf8mb4_general_ci}）。数据库设计遵循三项核心工程原则：
-\begin{enumerate}
-  \item \textbf{历史交易快照隔离：} 订单主表 \code{orders} 保存下单时的联系人、电话、地址快照及支付状态；订单明细表 \code{orderdetailet} 保存下单时菜品单价与 \code{food_name_snapshot}，确保历史账目与商家后续修改互不干扰。
-  \item \textbf{审计流水可追溯：} 订单状态变更写入 \code{order_status_history}，资产余额与积分增减写入 \code{user_asset_ledger}，使“取消回退”通过反向流水表达而非直接篡改原纪录。
-  \item \textbf{结构演进可迁移：} 在全量基线脚本 \code{elm_v2.sql} 之外，通过 \code{db/migrations/001}–\code{006} 依次落实账号手机号唯一约束、默认地址标识、商品名快照、演示分类、购物车/订单备注及高德地图坐标字段。
-\end{enumerate}
+系统数据库基于 MySQL 8.0（字符集统一为 \code{utf8mb4}、排序规则 \code{utf8mb4_0900_ai_ci}、存储引擎 InnoDB）构建，整体设计严格遵循第三范式（3NF）以消除基础实体冗余；同时针对外卖交易场景特有的“历史不可变性”需求，在订单明细与收货地址中引入受控的反范式快照字段（\code{food_name_snapshot}、\code{food_price} 与 \code{address_snapshot}），确保商家后续改价、改名或下架商品不会污染既有历史账单。
 
 \subsection{领域模型与数据表设计}
 
-图~\ref{fig:def-domain} 展示了系统核心业务领域模型与资产偏好领域模型。数据库共包含 22 张数据表，表~\ref{tab:db-overview} 给出全量数据表清单，表~\ref{tab:db-core-fields} 详述核心交易与履约表的关键字段设计。
+图~\ref{fig:def-domain-core} 与图~\ref{fig:def-domain-assets} 分别展示了系统核心交易领域（用户、店铺、商品、购物车、订单、配送）与扩展增值领域（资产流水、优惠券、偏好、AI 会话）的 UML 类图模型。全库共包含 23 张数据表，按五大业务域汇总于表~\ref{tab:db-overview}。
 
-\begin{figure}[H]
-  \centering
-  \begin{minipage}[t]{.49\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.34\textheight,keepaspectratio]{figures/srs/02-core-domain-class.png}\\[-2pt]
-    \small（a）核心交易与履约领域类图
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.49\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.34\textheight,keepaspectratio]{figures/srs/03-assets-preference-class.png}\\[-2pt]
-    \small（b）资产、优惠与偏好领域类图
-  \end{minipage}
-  \caption{系统核心领域模型类图}\label{fig:def-domain}
-\end{figure}
+\srsfig[0.96\linewidth]{figures/srs/02-core-domain-class.png}{系统核心交易与多端履约领域模型类图}{fig:def-domain-core}
+
+\srsfig[0.94\linewidth]{figures/srs/03-assets-preference-class.png}{用户资产、优惠券、偏好与 AI 会话领域模型类图}{fig:def-domain-assets}
 
 \begin{longtable}{L{.18\linewidth}L{.31\linewidth}L{.42\linewidth}}
-\caption{系统 22 张数据库表全景清单}\label{tab:db-overview}\\
+\caption{系统 23 张数据库表全景清单}\label{tab:db-overview}\\
 \toprule
 \textbf{业务域} & \textbf{数据表名} & \textbf{核心业务职责} \\
 \midrule
@@ -213,152 +264,105 @@ US020 & 顾客/骑手 & 作为顾客和骑手，我希望使用高德地图选�
 资产、互动与智能域 & \code{user_asset}、\code{user_coupon}、\code{user_asset_ledger}、\code{review}、\code{notification}、\code{user_preference}、\code{ai_chat_history} & 钱包余额/积分/会员到期时间；优惠券持有与核销；资产变更流水；评价与商家回复；站内通知；主题与口味偏好；AI 会话记录。 \\
 \end{longtable}
 
-\begin{longtable}{L{.18\linewidth}L{.22\linewidth}L{.20\linewidth}L{.31\linewidth}}
-\caption{核心数据表关键字段与约束说明}\label{tab:db-core-fields}\\
+\input{body/ch2_db_specs}
+
+\subsubsection{数据库版本化增量迁移演进}
+除基线初始化脚本 \code{elm_v2.sql} 外，团队针对开发演进过程中发现的唯一性漏洞、历史数据漂移及新特性扩展，编写了 6 个可审计的幂等增量迁移脚本（存放于 \code{elm_bk/db/migrations/}），具体演进记录见表~\ref{tab:db-migrations}。
+
+\begin{longtable}{L{.26\linewidth}L{.22\linewidth}L{.43\linewidth}}
+\caption{数据库版本化增量迁移脚本（001--006）演进清单}\label{tab:db-migrations}\\
 \toprule
-\textbf{表名} & \textbf{关键字段} & \textbf{数据类型} & \textbf{约束与业务含义} \\
+\textbf{迁移脚本文件名} & \textbf{涉及核心表} & \textbf{演进动因与安全保护策略} \\
 \midrule
 \endfirsthead
-\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{表名} & \textbf{关键字段} & \textbf{数据类型} & \textbf{约束与业务含义} \\
+\textbf{迁移脚本文件名} & \textbf{涉及核心表} & \textbf{演进动因与安全保护策略} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-\code{users} & \code{id}, \code{username}, \code{password}, \code{activated} & \code{bigint}, \code{varchar(100)}, \code{tinyint(1)} & 主键自增；\code{uk_users_username} 唯一；\code{activated} 控制启停。 \\
-\code{business} & \code{id}, \code{user_id}, \code{start_price}, \code{delivery_price}, \code{promotion_threshold}, \code{promotion_discount}, \code{status}, \code{operating_status}, \code{longitude}, \code{latitude} & \code{bigint}, \code{decimal(10,2)}, \code{tinyint}, \code{decimal(10,6)} & 外键关联店主；\code{status}（0待审/1上线/2拒绝）；\code{operating_status}（1营业/0休息）；含高德经纬度。 \\
-\code{food} & \code{id}, \code{business_id}, \code{food_name}, \code{food_price}, \code{stock}, \code{shelve_status}, \code{category}, \code{purchase_limit} & \code{bigint}, \code{decimal(10,2)}, \code{int}, \code{tinyint} & \code{stock} 默认 100，支持条件扣减；\code{purchase_limit} 限购数量（空不限）。 \\
-\code{orders} & \code{id}, \code{order_state}, \code{order_total}, \code{service_mode}, \code{address_id}, \code{payment_method}, \code{points_used}, \code{wallet_paid}, \code{payment_status}, \code{idempotency_key}, \code{address_snapshot}, \code{remarks} & \code{bigint}, \code{int}, \code{decimal(10,2)}, \code{varchar(16/20/64/255)} & \code{uk_orders_customer_idempotency} 防重；自取时 \code{address_id} 为空；保存地址/联系人快照。 \\
-\code{orderdetailet} & \code{id}, \code{order_id}, \code{food_id}, \code{quantity}, \code{food_price}, \code{food_name_snapshot} & \code{bigint}, \code{int}, \code{decimal(10,2)}, \code{varchar(100)} & 记录下单瞬间单价与菜名快照，历史查询不回填当前商品表。 \\
-\code{delivery_task} & \code{id}, \code{order_id}, \code{rider_user_id}, \code{task_status}, \code{version}, \code{distance_km}, \code{rider_fee}, \code{accepted_time} & \code{bigint}, \code{varchar(32)}, \code{int}, \code{decimal(10,2)} & \code{uk_delivery_order} 唯一；\code{version} 与状态条件用于并发抢单保护。 \\
-\code{user_asset} & \code{id}, \code{user_id}, \code{balance}, \code{points}, \code{membership_expire} & \code{bigint}, \code{decimal(10,2)}, \code{int}, \code{datetime} & \code{uk_asset_user} 唯一；余额与积分非负校验。 \\
-\code{user_asset_ledger} & \code{id}, \code{user_id}, \code{type}, \code{amount}, \code{points_delta}, \code{reason}, \code{reference_id} & \code{bigint}, \code{varchar(32)}, \code{decimal(10,2)}, \code{int} & 记录充值、消费、退款、积分抵扣与发放的完整流水凭证。 \\
-\code{ai_chat_history} & \code{id}, \code{user_id}, \code{session_id}, \code{user_message}, \code{ai_response}, \code{chat_type}, \code{processing_time}, \code{context_data} & \code{bigint}, \code{varchar(64/20)}, \code{text}, \code{json} & 外键关联用户，按 \code{user_id} 隔离查询与清理权限。 \\
+\code{001_account_uniqueness.sql} & \code{users}, \code{person} & 为用户名与手机号增设唯一约束，先检测重复记录而不自动删改历史账号；逻辑删除后保留唯一占位防冒充。 \\
+\code{002_default_address.sql} & \code{delivery_address} & 新增 \code{is_default} 标识列，自动为已有地址的老账号将最早有效地址设为默认。 \\
+\code{003_order_name_snapshot.sql} & \code{orderdetailet} & 新增 \code{food_name_snapshot} 列固化下单商品名称；幂等检查列存在性且不回填历史空值。 \\
+\code{004_demo_business_categories.sql} & \code{business} & 事务化修正演示店铺分类编码，严格限定按 ID 与店名条件更新，避免覆盖线上真实店铺。 \\
+\code{005_cart_order_remarks.sql} & \code{cart}, \code{orders} & 幂等增加口味备注列（\code{remarks VARCHAR(255)}），支持下单时备注由购物车自动透传至订单。 \\
+\code{006_map_coordinates.sql} & \code{business}, \code{delivery_address} & 为商铺与收货地址增设高德经纬度（\code{DECIMAL(10,6)}）与 \code{poi_id}/\code{adcode}，不猜测既有历史坐标。 \\
 \end{longtable}
 
 \subsection{数据库访问与并发事务接口}
 
-后端通过 MyBatis Mapper 封装数据库操作，避免全自动 ORM 隐式更新导致的并发覆盖问题：
 \begin{enumerate}
-  \item \textbf{条件库存扣减：} 下单时执行带 \code{stock >= \#\{quantity\}} 与上架状态过滤的 \code{UPDATE} 语句，通过受影响行数判断库存是否充足，杜绝先查后改引发的超卖。
-  \item \textbf{预期状态与乐观锁流转：} 订单取消、商家接单、骑手抢单与履约推进均采用“旧状态 + 主键（及版本号）”条件更新，受影响行数为 0 时向前端返回状态冲突提示。
-  \item \textbf{统一事务边界：} \code{OrderSubmissionService} 在单个 Spring 事务内完成幂等校验、库存预占、订单与明细快照写入、已勾选购物车清理及状态历史落库，任何环节失败均自动回滚；而外部 AI 与地图 HTTP 调用严格隔离在数据库事务之外，避免长连接拖垮数据库连接池。
+  \item \textbf{条件更新防超卖：} 扣减商品库存执行 \texttt{\small UPDATE food SET stock = stock - \#\{qty\} WHERE id = \#\{foodId\} AND stock >= \#\{qty\} AND shelve\_status = 1}，通过数据库行锁与受影响行数判断确保并发零超卖。
+  \item \textbf{乐观锁防撞单：} 骑手抢单执行 \texttt{\small UPDATE delivery\_task SET rider\_id = \#\{riderId\}, task\_status = 1, version = version + 1 WHERE id = \#\{taskId\} AND task\_status = 0 AND version = \#\{expectedVersion\}}，杜绝多人并发点击导致同一订单被多名骑手领取。
+  \item \textbf{订单幂等与只增账本：} \code{orders} 表通过联合唯一索引 \code{uk_orders_customer_idempotency} 阻止超时重试引起的重复建单；\code{user_asset_ledger} 采用纯追加（Append-Only）模式记录每笔余额、积分变动，取消退款或商家拒单均以反向冲正流水体现，绝不直接覆写历史账目。
 \end{enumerate}
 
 \section{详细功能设计}
 
-图~\ref{fig:def-usecase-all} 展示了系统总用例图，清晰刻画了普通用户、顾客、商家、骑手与管理员五大参与者之间的用例继承与协同关系。下面分端阐述详细功能设计。
+为全面支撑四端协同业务闭环，本节从系统全局用例出发，逐端阐述顾客、商家、骑手、管理员及 AI 智能体的详细功能逻辑，并给出全链路活动图、状态机与核心时序交互模型。图~\ref{fig:def-usecase-all} 呈现了平台顶层系统总用例边界。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=.84\linewidth,height=.48\textheight,keepaspectratio]{figures/srs/10-system-use-case.png}
-  \caption{系统总用例图（四端角色与核心业务边界）}\label{fig:def-usecase-all}
-\end{figure}
+\srsfig[0.95\linewidth]{figures/srs/10-system-use-case.png}{系统顶层总用例图（四端角色与核心业务域边界）}{fig:def-usecase-all}
 
 \subsection{顾客端功能模块}
 
-顾客端是平台交易流量的核心入口（用例见图~\ref{fig:def-uc-cust-merch}(a)），包含六大子模块：
+顾客端覆盖从游客发现店铺到售后评价、资产管理与智能点餐的完整消费旅程（详细用例模型见图~\ref{fig:def-uc-customer}）：
 \begin{enumerate}
-  \item \textbf{店铺发现与检索：} 支持游客免登录浏览首页推荐、10 大美食分类入口、关键字检索、综合/销量/直线距离排序及满减筛选；基于个人口味偏好推荐菜品与店铺。
-  \item \textbf{店铺详情与购物车：} 展示菜品分类、库存、单笔限购与商家满减；支持同店多商品选购、统一商家备注保存、部分勾选结算（未选商品继续留在购物车）及跨店购物车隔离。
-  \item \textbf{地址与地图选址：} 支持个人收货地址增删改查、默认地址设定、手机号校验及高德地图 POI 关键词检索/逆地理编码选址。
-  \item \textbf{下单定价与多模式结算：} 支持“外送”与“到店自取”切换（自取自动免除配送费且不校验收货地址）；采用 \code{BigDecimal} 执行服务端权威算价，支持模拟钱包、优惠券（每单 1 张）、积分（100 积分抵 1 元，上限不超过券后金额 20\%）与演示模拟支付。
-  \item \textbf{订单全周期管理：} 支持待支付订单取消、超时 15 分钟自动关闭、履约状态实时跟踪、确认收货（24 小时自动完成并触发积分发放）、历史评价查看与发布。
-  \item \textbf{资产、偏好与互动：} 提供钱包余额充值、固定会员开通、优惠券领取、资产流水明细、收藏点赞店铺列表、站内审核/订单通知以及 4 套视觉主题与口味忌口配置。
+  \item \textbf{公开浏览与多维检索（UC-CUS-01）：} 支持游客与已登录顾客按 10 类美食分类筛选、关键字模糊匹配店铺及菜品名称、按销量/评分/起送费排序，并在配置坐标后展示商铺与当前收货地址间的直线距离与预估送达时长。店铺处于“休息中”（\code{operating_status = 0}）时，列表与详情页均以明确徽标提示并禁用结算加购按钮。
+  \item \textbf{购物车跨店隔离与备注管理（UC-CUS-02）：} 购物车按店铺分块展示，支持同商品数量合并、部分勾选待结算商品、单品删除、按店清空及整单口味/餐具备注编辑（\code{remarks}）。加入或修改数量时服务端实时校验商品上架状态、当前可用库存与单笔限购上限（\code{purchase_limit}）。
+  \item \textbf{双模履约结算与权威试算（UC-CUS-03/04）：} 支持“外送（DELIVERY）”与“到店自取（PICKUP）”切换。选择自取时自动豁免外送费、起送门槛及收货地址校验。结算页通过试算接口实时返回原价小计、商家满减、会员 95 折、优惠券面额及积分抵扣（100 积分抵 1 元，上限不超过券后金额 20\%），支持以钱包余额或模拟支付完成付款，并携带前端生成的 \code{idempotencyKey} 防止弱网连点重复下单。
+  \item \textbf{订单跟踪、取消与确认收货（UC-CUS-05）：} 订单列表按状态分组展示；详情页展示下单商品快照（名称、单价、数量）、配送任务进度及状态变更历史时间线。在商家接单前允许顾客自助取消并全额退还已核销资产；货物送达后支持确认收货并自动累计消费积分与触发评价入口。
+  \item \textbf{个人资产、消费统计与主题偏好（UC-CUS-06 / MKT-01 / PER-01）：} 提供钱包余额查询、模拟充值、新人券领取、30 天体验会员开通与资产明细流水；提供按月度/年度聚合的个人消费金额与常去店铺分析；支持 4 套视觉主题切换与辣度/口味/忌口标签持久化。
 \end{enumerate}
+
+\srsfig[0.95\linewidth]{figures/srs/11-customer-use-case.png}{顾客端详细用例图（浏览检索、购物车结算、订单资产与评价）}{fig:def-uc-customer}
 
 \subsection{商家端功能模块}
 
-商家端赋能入驻商户自主开展日常经营（用例见图~\ref{fig:def-uc-cust-merch}(b)），包括：
+商家端赋能入驻商户自主完成店铺配置、供给维护、高效接单出餐与经营复盘（详细用例模型见图~\ref{fig:def-uc-merchant}）：
 \begin{enumerate}
-  \item \textbf{入驻与店铺配置：} 普通用户申请商家资格并提交开店申请；通过审核后可维护店铺封面、营业/休息状态切换、起送价、配送费、满减门槛与堂食支持配置。
-  \item \textbf{菜品与供给管控：} 支持新增/编辑/上下架菜品，维护自定义分类、实时库存与单笔限购，避免已下架或零库存菜品继续下单。
-  \item \textbf{订单履约工作台：} 接收顾客已支付订单，支持接单、拒单（触发退款与库存恢复）、备餐出餐（外送推入骑手池，自取等待顾客取餐），并支持评价公开回复。
-  \item \textbf{经营数据看板：} 按统一时间窗口汇总订单量、营业额及热销表现，支持经营报表导出。
+  \item \textbf{入驻申请与资质状态流转（UC-MER-01）：} 普通用户可通过 \code{/merchant/apply} 提交入驻申请，待管理员审核通过并授予 \code{BUSINESS} 权限后即可进入商家工作台；工作台支持多店铺管理、新开店铺申请、店名/地址/起送费/配送费/满减活动修改，以及一键切换“营业中/休息中”。
+  \item \textbf{商品分类、库存与限购控制（UC-MER-02）：} 支持自定义店铺内部菜品分类、上传菜品图片、调整价格与可售库存、设置单笔限购数量（\code{purchaseLimit}）及即时上下架操作；任何菜品名称或价格更新均不影响已生成历史订单的明细快照。
+  \item \textbf{订单履约流转（UC-MER-03）：} 实时接收 WebSocket 与列表推送的新支付订单，支持“接单制作（1 $\rightarrow$ 2）”“拒单取消并自动退还顾客资产（1 $\rightarrow$ 8）”及“确认出餐（2 $\rightarrow$ 3/4）”。外送订单出餐后自动在 \code{delivery_task} 生成抢单任务；到店自取订单则直接进入待顾客取餐状态。
+  \item \textbf{评价回复与经营看板（UC-MER-04）：} 支持按店铺查看全部顾客评分评价与晒图并发布官方回复；经营看板按日期区间统计订单量、营业额、热销菜品排行及顾客复购表现，并支持导出对账报表。
 \end{enumerate}
 
-\begin{figure}[H]
-  \centering
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.34\textheight,keepaspectratio]{figures/srs/11-customer-use-case.png}\\[-2pt]
-    \small（a）顾客端详细用例图
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.34\textheight,keepaspectratio]{figures/srs/12-merchant-use-case.png}\\[-2pt]
-    \small（b）商家端详细用例图
-  \end{minipage}
-  \caption{顾客端与商家端详细用例图}\label{fig:def-uc-cust-merch}
-\end{figure}
+\srsfig[0.95\linewidth]{figures/srs/12-merchant-use-case.png}{商家端详细用例图（店铺经营、商品库存、接单出餐与评价看板）}{fig:def-uc-merchant}
 
 \subsection{骑手端功能模块}
 
-骑手端承接外送履约“最后一公里”（用例见图~\ref{fig:def-uc-rider-admin}(a)）：
+骑手端围绕校园配送员“安全抢单—高效导航—透明异常处理”的实操场景设计（详细用例模型见图~\ref{fig:def-uc-rider}）：
 \begin{enumerate}
-  \item \textbf{入驻与状态管理：} 提交实名信息与配送车辆类型申请；审核通过后可自由切换“在线接单/离线休息”，实时查看累计完成单量、配送里程与收益。
-  \item \textbf{任务抢单与履约推进：} 浏览待接配送任务列表，基于数据库条件更新完成抢单；严格按“已接单 $\rightarrow$ 已到店 $\rightarrow$ 已取餐配送中 $\rightarrow$ 已送达”推进并记录时间戳。
-  \item \textbf{高德外部导航与异常上报：} 一键唤起高德导航（无坐标时降级为地址搜索）；遇到联系不上顾客或交通事故等情形时上报配送异常，暂挂任务交由管理员处置。
+  \item \textbf{实名入驻与在线上下线控制（UC-RID-01）：} 支持用户填写实名、手机号及配送工具（电动车/自行车/步行）提交入驻申请；审核通过后骑手可自主切换“上线接单/休息离线”状态，并实时查看个人累计完成单数、配送里程与预估收益。
+  \item \textbf{并发抢单池与任务防撞（UC-RID-02）：} 在线骑手可浏览所有待抢配送任务（展示店铺名、取餐地址、送达地址与配送费），点击抢单后后端利用状态校验与乐观锁 \code{version} 原子锁定归属权。
+  \item \textbf{分阶段履约与高德外部导航（UC-RID-03/04）：} 骑手按“确认到店 $\rightarrow$ 确认取餐 $\rightarrow$ 确认送达”三步推进状态并记录时间戳；界面提供一键跳转高德地图导航入口，并在缺少坐标时平滑保留纯文本地址与楼栋号展示。
+  \item \textbf{配送异常上报：} 遇到顾客失联、地址错误或天气/交通受阻时，骑手可在工作台选择异常类型并填写说明，即时挂起任务并推送给平台管理员仲裁处置。
 \end{enumerate}
+
+\srsfig[0.95\linewidth]{figures/srs/13-rider-use-case.png}{骑手端详细用例图（入驻、在线抢单、履约节点与异常上报）}{fig:def-uc-rider}
 
 \subsection{管理员端功能模块}
 
-管理员端负责平台准入合规、异常仲裁与全局监控（用例见图~\ref{fig:def-uc-rider-admin}(b)）：
+管理员端承担平台准入把关、违规治理与全局数据监控职责（详细用例模型见图~\ref{fig:def-uc-admin}）：
 \begin{enumerate}
-  \item \textbf{三类准入审核：} 集中审批商家资格申请、店铺上线申请及骑手入驻申请，自动生成并推送审核通知至对应用户。
-  \item \textbf{账号与内容治理：} 支持启用或停用异常用户/商家账号（即时拦截后续令牌请求）；支持隐藏违规评价，维护评价区秩序。
-  \item \textbf{配送异常处置与平台看板：} 对骑手上报的异常任务执行“恢复配送、改派其他骑手或终止订单”仲裁操作；提供平台级成交与活跃度统计看板。
+  \item \textbf{三级准入审批（UC-ADM-01）：} 集中处理“用户申请成为商家”“商家申请新开店铺”“用户申请成为骑手”三类审批流；通过或驳回时强制关联状态流转并自动向申请人发送站内通知。
+  \item \textbf{账号、评价与配送异常治理（UC-ADM-02）：} 支持按状态检索用户账号并执行启用/停用治理（停用后立即阻断认证与访问）；支持查看全平台评价并对恶意或违规评价执行“隐藏”操作；针对骑手上报的异常配送任务，执行“恢复配送”“改派其他在线骑手”或“终止订单并全额退款”三类仲裁操作。
+  \item \textbf{平台全局数据看板与导出（UC-ADM-03）：} 聚合展示平台注册用户数、在营店铺数、累计成交总额（GMV）、日/周订单趋势折线图与商家营收排行，支持按起止日期过滤及一键导出 CSV 统计表。
 \end{enumerate}
 
-\begin{figure}[H]
-  \centering
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.34\textheight,keepaspectratio]{figures/srs/13-rider-use-case.png}\\[-2pt]
-    \small（a）骑手端详细用例图
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.34\textheight,keepaspectratio]{figures/srs/14-admin-use-case.png}\\[-2pt]
-    \small（b）管理员端详细用例图
-  \end{minipage}
-  \caption{骑手端与管理员端详细用例图}\label{fig:def-uc-rider-admin}
-\end{figure}
+\srsfig[0.95\linewidth]{figures/srs/14-admin-use-case.png}{管理员端详细用例图（准入审核、账号/评价/异常治理与全局看板）}{fig:def-uc-admin}
 
 \subsection{核心业务活动图、状态机与时序图}
 
-为保证多端状态协同严谨无歧义，项目组绘制了完整履约活动图（图~\ref{fig:def-activity-seq}(a)）、下单结算时序图（图~\ref{fig:def-activity-seq}(b)）、订单与配送状态机图（图~\ref{fig:def-states}）及 AI 助手交互时序图（图~\ref{fig:def-ai-seq}）。表~\ref{tab:state-mapping} 明确了源码枚举中 0–9 订单状态编码与业务含义的统一口径。
+为保证多端状态协同严谨无歧义，项目组绘制了完整履约活动图（图~\ref{fig:def-activity}）、下单结算时序图（图~\ref{fig:def-settlement-seq}）、订单主状态机图（图~\ref{fig:def-order-state}）、骑手配送状态机图（图~\ref{fig:def-delivery-state}）及 AI 智能助手交互时序图（图~\ref{fig:def-ai-seq}）。表~\ref{tab:state-mapping} 明确了源码枚举中 0--9 订单状态编码与业务含义的统一口径。
 
-\begin{figure}[H]
-  \centering
-  \begin{minipage}[t]{.49\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.36\textheight,keepaspectratio]{figures/srs/04-fulfillment-activity.png}\\[-2pt]
-    \small（a）多端订单与履约活动图
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.49\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.36\textheight,keepaspectratio]{figures/srs/07-settlement-sequence.png}\\[-2pt]
-    \small（b）下单计价与结算时序图
-  \end{minipage}
-  \caption{核心业务履约活动图与下单结算时序图}\label{fig:def-activity-seq}
-\end{figure}
+\srsfig[0.96\linewidth]{figures/srs/04-fulfillment-activity.png}{跨角色多端订单创建、履约与结算全流程泳道活动图}{fig:def-activity}
 
-\begin{figure}[H]
-  \centering
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.32\textheight,keepaspectratio]{figures/srs/05-order-state.png}\\[-2pt]
-    \small（a）订单主状态机图
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.32\textheight,keepaspectratio]{figures/srs/06-delivery-state.png}\\[-2pt]
-    \small（b）骑手配送任务状态机图
-  \end{minipage}
-  \caption{订单与配送任务状态机设计}\label{fig:def-states}
-\end{figure}
+\srsfig[0.96\linewidth]{figures/srs/07-settlement-sequence.png}{下单试算、防重幂等提交与混合资产结算核心时序图}{fig:def-settlement-seq}
+
+\srsfig[0.94\linewidth]{figures/srs/05-order-state.png}{平台订单主状态机（0--9 状态编码与合法跃迁条件）}{fig:def-order-state}
+
+\srsfig[0.94\linewidth]{figures/srs/06-delivery-state.png}{骑手配送任务状态机与异常挂起仲裁状态流转图}{fig:def-delivery-state}
 
 \begin{longtable}{C{.10\linewidth}L{.20\linewidth}L{.20\linewidth}L{.41\linewidth}}
 \caption{源码订单状态编码（0--9）与跨端业务口径映射表}\label{tab:state-mapping}\\
@@ -385,13 +389,9 @@ US020 & 顾客/骑手 & 作为顾客和骑手，我希望使用高德地图选�
 9 & 配送异常 & 挂起仲裁 & 骑手上报异常触发；等待管理员决定恢复原状态、改派骑手或终止取消。 \\
 \end{longtable}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=.82\linewidth,height=.42\textheight,keepaspectratio]{figures/srs/08-ai-assistant-sequence.png}
-  \caption{AI 智能助手与多模态点餐交互时序图}\label{fig:def-ai-seq}
-\end{figure}
+\srsfig[0.94\linewidth]{figures/srs/08-ai-assistant-sequence.png}{AI 智能客服与多模态点餐（问答/识菜/语音/推荐）交互时序图}{fig:def-ai-seq}
 
-以顾客下单结算为例，\code{OrderPricingService} 与 \code{OrderSettlementService} 严格按以下顺序执行算价（所有金额均使用 \code{BigDecimal} 精确运算）：
+以顾客下单结算为例，\code{OrderPricingService} 与 \code{OrderSettlementService} 严格按以下顺序执行算价（所有金额均使用 \code{BigDecimal} 精确运算，舍入模式为 \code{HALF_UP} 保留两位小数）：
 \begin{align}
   \text{提交金额} &= (\text{商品小计} - \text{商家满减}) \times \text{会员折扣} + \text{外送费（自取为 0）} \\
   \text{券后金额} &= \max(0,\; \text{提交金额} - \text{单张可用优惠券面额}) \\
@@ -404,85 +404,68 @@ US020 & 顾客/骑手 & 作为顾客和骑手，我希望使用高德地图选�
 
 \begin{enumerate}
   \item \textbf{RESTful 路径与版本规范：} 新增演进模块（资产、偏好、骑手、配送、评价、结构化 AI 助手）统一采用 \code{/api/v1/...} 前缀；同时在 \code{OrderController}、\code{CartController}、\code{BusinessController} 等模块保留兼容入口 \code{/api/...}，内部均委托至统一 Service，避免业务逻辑分叉。
+  \item \textbf{统一响应封装（\code{HttpResult<T>}）：} 绝大多数接口返回标准化 JSON 包络体，结构如下：
+\begin{lstlisting}[language=Java,caption={后端统一响应包装结构 HttpResult<T> 示例}]
+{
+  "success": true,          // 请求业务是否成功（true / false）
+  "code": "OK",             // 业务状态码（ResultCodeEnum 枚举值）
+  "data": { ... },          // 响应业务负载（DTO / VO / List）
+  "message": null           // 失败时的可读错误提示信息
+}
+\end{lstlisting}
   \item \textbf{认证与身份边界：} 受保护接口通过 HTTP Header \code{Authorization: Bearer <JWT>} 校验；后端严格从 Spring Security 认证上下文解析当前 \code{userId} 与角色，禁止信任前端传入的 \code{customerId} 或 \code{riderId} 进行越权操作。
-  \item \textbf{幂等与状态码语义：} 订单提交接口支持请求参数或头部携带 \code{idempotencyKey}，在同一用户范围内按幂等键去重；资源不存在返回 404，越权返回 403，库存不足或状态冲突返回明确的 4xx 业务失败语义与可读消息。
+  \item \textbf{HTTP 状态码与业务错误映射：} \code{GlobalExceptionHandler} 杜绝将异常吞没为 HTTP 200，而是依据 \code{ResultCodeEnum} 返回标准 RESTful 状态码，详细映射见表~\ref{tab:http-error-map}。
+  \item \textbf{幂等防重约束：} 订单提交接口支持请求参数或头部携带 \code{idempotencyKey}，在同一用户范围内通过数据库唯一索引与事务去重，弱网重试不会生成重复订单。
 \end{enumerate}
 
-\subsection{核心接口详情}
-
-后端共包含 22 个 Controller（覆盖认证、用户、地址、店铺、商品、购物车、订单、履约、骑手、配送、异常、评价、通知、资产、偏好、AI 对话、结构化助手、高德地图、管理员及文件上传）。表~\ref{tab:api-details} 列出代表性核心接口的详细契约。
-
-\begin{longtable}{L{.10\linewidth}L{.31\linewidth}L{.13\linewidth}L{.37\linewidth}}
-\caption{核心 RESTful API 接口契约详情表}\label{tab:api-details}\\
+\begin{longtable}{C{.14\linewidth}L{.34\linewidth}L{.43\linewidth}}
+\caption{GlobalExceptionHandler HTTP 状态码与业务错误码映射规范表}\label{tab:http-error-map}\\
 \toprule
-\textbf{方法} & \textbf{接口路径} & \textbf{鉴权角色} & \textbf{请求核心入参与响应语义} \\
+\textbf{HTTP 状态码} & \textbf{对应业务错误码（code）} & \textbf{触发场景与客户端处理建议} \\
 \midrule
 \endfirsthead
-\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{方法} & \textbf{接口路径} & \textbf{鉴权角色} & \textbf{请求核心入参与响应语义} \\
+\textbf{HTTP 状态码} & \textbf{对应业务错误码（code）} & \textbf{触发场景与客户端处理建议} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-POST & \code{/api/auth} & 公开 & 入参 \code{username, password}；校验激活态与密码后签发 JWT 与角色集合。 \\
-POST & \code{/api/register} & 公开 & 支持 JSON 与头像表单注册，校验用户名/手机号唯一性并初始化基础权限。 \\
-GET & \code{/api/businesses/list} & 公开 & 支持分类、关键字、排序与用户坐标入参；返回店铺列表、满减及直线距离。 \\
-GET & \code{/api/foods/list} & 公开 & 按 \code{businessId} 返回在售菜品、实时库存、分类及单笔限购。 \\
-POST & \code{/api/carts/items} & 顾客 & 入参 \code{businessId, foodId, quantity}；校验上架与库存后增改购物车条目。 \\
-PUT & \code{/api/carts/remarks} & 顾客 & 批量同步顾客对指定店铺购物车的口味/餐具备注。 \\
-POST & \code{/api/orders/quote} & 顾客 & 入参店铺、选中条目、\code{serviceMode}、优惠券与抵扣积分；返回服务端算价明细。 \\
-POST & \code{/api/orders/submit} & 顾客 & 入参 \code{idempotencyKey} 与结算选项；原子完成扣库存、建单快照与清理勾选条目。 \\
-POST & \code{/api/orders/{id}/pay} & 顾客 & 执行模拟钱包或模拟渠道支付，核销优惠券与积分并推进至待商家接单。 \\
-POST & \code{/api/orders/{id}/cancel} & 顾客 & 仅允许取消本人待支付/待接单订单，事务内恢复库存与退还已扣资产。 \\
-POST & \code{/api/v1/orders/{id}/merchant-accept} & 商家 & 校验店铺归属与旧状态后接单，推进至备餐阶段（2）并记录状态历史。 \\
-POST & \code{/api/v1/orders/{id}/merchant-ready} & 商家 & 备餐出餐；外送创建 \code{delivery_task}（3），自取转为待取餐（4）。 \\
-POST & \code{/api/v1/orders/{id}/confirm-receipt} & 顾客 & 校验订单归属与已送达状态，推进至已完成（7）并按实付整数发放积分。 \\
-POST & \code{/api/v1/riders/applications} & 登录用户 & 提交实名、手机号与车辆类型入驻骑手申请。 \\
-PATCH & \code{/api/v1/riders/me/online} & 骑手 & 切换骑手在线接单/休息状态。 \\
-POST & \code{/api/v1/delivery-tasks/{id}/accept} & 骑手 & 条件更新抢单（预期状态 + \code{version}），失败返回任务已被领取提示。 \\
-POST & \code{/api/v1/delivery-tasks/{id}/arrive-store} & 骑手 & 标记骑手已到店，写入 \code{arrived_store_time}。 \\
-POST & \code{/api/v1/delivery-tasks/{id}/pickup} & 骑手 & 标记已取餐，同步更新任务与主订单至配送中（5）。 \\
-POST & \code{/api/v1/delivery-tasks/{id}/deliver} & 骑手 & 确认送达并更新任务收入里程，主订单推进至已送达（6）。 \\
-POST & \code{/api/v1/delivery-tasks/{id}/exceptions} & 骑手 & 上报配送异常原因与说明，挂起任务并同步订单至异常态（9）。 \\
-GET & \code{/api/v1/assets/me} & 顾客 & 查询钱包余额、积分、会员到期日及可用状态。 \\
-POST & \code{/api/v1/assets/recharge} & 顾客 & 课程演示模拟钱包充值并写入 \code{user_asset_ledger} 流水。 \\
-PUT & \code{/api/v1/preferences/me} & 顾客 & 持久化更新当前用户视觉主题与辣度/口味/忌口标签。 \\
-POST & \code{/api/v1/reviews} & 顾客 & 校验订单已完成且未评价后写入评分、内容与图片。 \\
-POST & \code{/api/v1/assistant/messages} & 顾客 & 结构化 AI 助手对话：返回意图标签、答复文本及可加购候选商品列表。 \\
-POST & \code{/api/v1/dish-recognitions} & 顾客 & 上传菜品图片（multipart），校验大小格式后返回识别结果与店铺候选菜品。 \\
-POST & \code{/api/v1/voice-order-drafts} & 顾客 & 上传语音音频，转为结构化点餐草稿供顾客确认。 \\
-GET & \code{/api/maps/search} & 公开/登录 & 高德 POI 关键词搜索 proxy（含短期缓存与限流），返回地址与 GCJ-02 坐标。 \\
-POST & \code{/api/permission/audit-shop} & 管理员 & 审批开店申请，更新店铺 \code{status} 并推送站内审核通知。 \\
-POST & \code{/api/v1/admin/delivery-exceptions/{id}/resolve} & 管理员 & 仲裁配送异常（恢复、改派新骑手或终止取消）。 \\
+200 OK & \code{OK} & 业务执行成功，读取 \code{data} 渲染视图。 \\
+400 Bad Request & \code{PARAM_VERIFIED_FAILED}、\code{PARAM_NOT_MATCHED} & 请求体 Bean Validation 校验失败或缺少必填参数，前端逐字段展示提示。 \\
+401 Unauthorized & \code{AUTHENTICATION_FAILED} & 用户名密码错误、账号未激活或 JWT 过期失效，前端清理会话并跳转登录页。 \\
+403 Forbidden & \code{UNAUTHORIZED}、\code{NOT_ENOUGH_PERMISSION}、\code{USER_DENIED} & 角色权限不足或企图越权访问他人地址/订单/店铺资源。 \\
+404 Not Found & \code{NOT_FOUND}、\code{BUSINESS_MISSED}、\code{ORDER_MISSED}、\code{FOOD_MISSED} & 目标店铺、菜品、地址或订单 ID 不存在或已被逻辑删除。 \\
+409 Conflict & \code{WITHOUT_ERROR_CODE}（订单/任务状态冲突） & 并发抢单已被他人抢走、重复支付或订单处于不可取消阶段。 \\
+422 Unprocessable & \code{QUANTITY_ILLEGAL}、\code{CART_EMPTY}、\code{ORDER_SUBMIT_FAILED} & 店铺休息、超限购、库存不足、优惠券不可用等业务规则拦截。 \\
+503 Unavailable & \code{FEATURE_UNAVAILABLE} & 未配置外部高德地图或 DashScope 多模态密钥，前端进入降级模式。 \\
 \end{longtable}
+
+\input{body/ch2_api_specs}
 
 \section{用户界面 (UI) 设计}
 
 \subsection{用户角色与界面映射}
 
-前端共包含 33 个页面视图组件，并通过 \code{elmclient/src/router/index.js} 的路由元信息 \code{meta.role} 与 \code{meta.public} 实现四端访问隔离。除首页、分类列表、店铺详情、搜索与登录注册页允许游客访问外，其余页面均受路由守卫保护并在切换身份时清理上一角色的私有状态。图~\ref{fig:def-page-ia} 为四端页面信息架构图，表~\ref{tab:ui-mapping} 列出角色与页面路由映射。
+前端共包含 33 个页面视图组件，并通过 \code{elmclient/src/router/index.js} 的路由元信息 \code{meta.role} 与 \code{meta.public} 实现四端访问隔离。除首页、分类列表、店铺详情、搜索与登录注册页允许游客访问外，其余页面均受路由守卫保护并在切换身份时清理上一角色的私有状态。图~\ref{fig:def-page-ia} 为四端页面信息架构图，表~\ref{tab:ui-mapping} 列出角色与全量页面路由映射。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=.92\linewidth,height=.48\textheight,keepaspectratio]{figures/srs/15-page-information-architecture.png}
-  \caption{四端页面信息架构与导航路径图}\label{fig:def-page-ia}
-\end{figure}
+\srsfig[0.96\linewidth]{figures/srs/15-page-information-architecture.png}{四端页面信息架构与核心导航路径图}{fig:def-page-ia}
 
 \begin{longtable}{L{.15\linewidth}L{.38\linewidth}L{.38\linewidth}}
 \caption{四端角色页面视图与路由映射表}\label{tab:ui-mapping}\\
 \toprule
-\textbf{角色端} & \textbf{核心路由与视图文件} & \textbf{主要交互职责} \\
+\textbf{角色/端} & \textbf{核心路由与页面组件} & \textbf{主要交互职责} \\
 \midrule
 \endfirsthead
 \multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{角色端} & \textbf{核心路由与视图文件} & \textbf{主要交互职责} \\
+\textbf{角色/端} & \textbf{核心路由与页面组件} & \textbf{主要交互职责} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-公共/顾客端 & \code{/index} (\code{Index.vue})、\code{/businessList} (\code{BusinessList.vue})、\code{/businessInfo} (\code{BusinessInfo.vue})、\code{/search} (\code{Search.vue})、\code{/cart} (\code{Cart.vue})、\code{/payment} (\code{Payment.vue})、\code{/successfulPayment} (\code{SuccessfulPayment.vue})、\code{/orderList} (\code{OrderList.vue})、\code{/listDetail} (\code{ListDetail.vue})、\code{/userAddress}、\code{/myInformation}、\code{/favorites}、\code{/notifications}、\code{/assets}、\code{/preferences} & 店铺浏览、搜索、加购备注、外送/自取结算、订单跟踪与评价、地址选址、钱包积分、个人偏好主题、AI 入口悬浮球跳转。 \\
+公共与认证 & \code{/login} (\code{Login.vue})、\code{/register} (\code{Register.vue})、\code{/notifications} (\code{Notifications.vue}) & 四角色登录切换、头像与密码强校验注册、全端共享站内审核与业务通知。 \\
+顾客端 & \code{/index}、\code{/businessList}、\code{/businessInfo}、\code{/search}、\code{/cart}、\code{/payment}、\code{/successfulPayment}、\code{/orderList}、\code{/listDetail}、\code{/userAddress}、\code{/addUserAddress}、\code{/editUserAddress}、\code{/myInformation}、\code{/favorites}、\code{/assets}、\code{/preferences} & 店铺浏览、搜索、加购备注、外送/自取结算、订单跟踪与评价、地址选址、钱包积分、个人偏好主题、AI 入口悬浮球跳转。 \\
 AI 智能点餐 & \code{/ai-chat}、\code{/ai-chat/recommend}、\code{/ai-chat/voice}、\code{/ai-chat/image} (\code{AiChat.vue}) & 智能客服问答、条件推荐候选卡片一键加购、语音识别草稿与图片识菜入口。 \\
 商家端 & \code{/merchant/apply}、\code{/merchant/profile}、\code{/merchant/business}、\code{/merchant/businessInfo}、\code{/merchant/orders}、\code{/merchant/reviews} & 商家入驻、店铺资料/营业配置、菜品分类库存管理、订单接单出餐、评价回复与经营看板。 \\
 骑手端 & \code{/rider/apply}、\code{/rider/dashboard} & 骑手入驻申请、在线切换、可接任务抢单、到店/取餐/送达操作、高德外部导航及异常上报。 \\
@@ -492,48 +475,58 @@ AI 智能点餐 & \code{/ai-chat}、\code{/ai-chat/recommend}、\code{/ai-chat/v
 \subsection{页面风格与布局}
 
 \begin{enumerate}
-  \item \textbf{CSS 变量多主题体系：} 系统内置“清爽蓝白”“深海夜色”“薄荷青”和“暖阳橙”4 套主题，通过全局 CSS 自定义属性统一管理主色调、卡片背景、边框与文字对比度，切换后即时生效并持久化至用户偏好接口。
+  \item \textbf{CSS 变量多主题体系：} 系统内置“清爽蓝白”“深海夜色”“薄荷青”和“暖阳橙”4 套主题，通过全局 CSS 自定义属性统一管理主色调、卡片背景、边框与文字对比度（详见表~\ref{tab:theme-tokens}），切换后即时生效并持久化至用户偏好接口。
   \item \textbf{响应式双端壳层与统一反馈：} 统一页面壳层同时适配桌面端宽屏与 375~px 移动端窄屏，防止登录表单或底部导航溢出；加载态、空状态、提交禁用态及字段级报错反馈均遵循统一视觉规范。
   \item \textbf{分层动效与无障碍适配：} 店铺进入详情采用浏览器 View Transitions 共享元素转场，AI 浮窗与看板数字采用轻量微动效，同时针对系统 \code{prefers-reduced-motion} 设置自动收敛动效，图标按钮与地图弹窗支持完整键盘聚焦与文字标签。
 \end{enumerate}
 
+\begin{longtable}{L{.18\linewidth}L{.22\linewidth}L{.22\linewidth}L{.29\linewidth}}
+\caption{系统内置四套视觉主题配色与适用场景规范表}\label{tab:theme-tokens}\\
+\toprule
+\textbf{主题标识} & \textbf{显示名称} & \textbf{主色调特征} & \textbf{适用场景与无障碍对比度保障} \\
+\midrule
+\code{default} & 清爽蓝白 & 天青蓝（\code{\#0097FF}）配纯白卡片 & 默认校园外卖风格，信息层级分明，适合日间高频点餐。 \\
+\code{dark} & 深海夜色 & 深石板蓝底配高对比浅字 & 夜间低光环境护眼阅读，保证卡片边框与关键操作按钮对比度达标。 \\
+\code{mint} & 薄荷青 & 清新低饱和翠绿色调 & 轻食/饮品浏览氛围，已在实际浏览器环境中完成状态持久化验证。 \\
+\code{warm} & 暖阳橙 & 温暖明亮琥珀橙色调 & 增强餐饮食欲感，配合高辨识度价格标签与行动号召按钮。 \\
+\end{longtable}
+
 \subsection{UI 设计原型与运行界面展示}
 
-图~\ref{fig:def-wireframe} 展示了需求阶段绘制的核心页面线框原型，图~\ref{fig:def-ui-four-roles} 汇总了当前平台顾客端、商家端、骑手端与管理员端的实际运行界面截图。图~\ref{fig:def-ui-placeholders} 为 2026 年 11 月 16 日在服务器启动原项目与独立 MySQL 演示库后，由 Chrome 浏览器实际截取的钱包与偏好页面。
+图~\ref{fig:def-wireframe} 展示了需求阶段绘制的核心页面线框原型。为直观呈现项目最终的四端交付成色，以下图~\ref{fig:def-ui-auth} 至图~\ref{fig:def-ui-amap} 展示了在独立 MySQL 8.0.46 演示库环境下通过 Chrome 浏览器实际运行并截取的全平台高清界面（涵盖认证注册、顾客全链路、商家端、骑手端、管理员桌面看板以及地图选址降级提示）。
+
+\srsfig[0.95\linewidth]{figures/srs/16-key-page-wireframes.png}{需求设计阶段核心业务页面线框原型图}{fig:def-wireframe}
+
+\uitwofig{figures/screenshots/ui-login.png}{（a）四端角色统一登录页（\code{/login}）}{figures/screenshots/ui-register.png}{（b）支持头像与强密码校验的注册页（\code{/register}）}{平台公共认证与注册运行界面实景截图}{fig:def-ui-auth}
+
+\uitwofig{figures/screenshots/ui-customer-home.png}{（a）顾客端首页：分类、推荐与 AI 悬浮入口（\code{/index}）}{figures/screenshots/ui-customer-shop.png}{（b）店铺详情与实时库存菜单页（\code{/businessInfo}）}{顾客端首页发现与店铺选餐界面实景截图}{fig:def-ui-cust-browse}
+
+\uitwofig{figures/screenshots/ui-customer-cart.png}{（a）购物车跨店管理与去结算视图（\code{/cart}）}{figures/screenshots/ui-customer-orders.png}{（b）顾客历史与进行中订单列表（\code{/orderList}）}{顾客端购物车与订单列表界面实景截图}{fig:def-ui-cust-cart-orders}
+
+\uitwofig{figures/screenshots/ui-customer-order-detail.png}{（a）订单明细快照与状态流转时间线（\code{/listDetail}）}{figures/report/customer.png}{（b）顾客个人中心与功能导航入口（\code{/myInformation}）}{顾客端订单详情与个人中心界面实景截图}{fig:def-ui-cust-detail-profile}
+
+\uitwofig{figures/screenshots/ui-customer-wallet.png}{（a）钱包余额、积分、红包与消费流水（\code{/assets}）}{figures/screenshots/ui-customer-preferences.png}{（b）薄荷青主题与点餐口味忌口偏好（\code{/preferences}）}{顾客端钱包资产中心与多主题偏好界面实景截图（\code{demo\_user} 演示数据）}{fig:def-ui-placeholders}
+
+\uitwofig{figures/screenshots/ui-merchant-workbench.png}{（a）商家经营工作台与店铺状态开关（\code{/merchant/business}）}{figures/screenshots/ui-merchant-foods.png}{（b）店铺菜品分类、库存与上下架管理（\code{/merchant/businessInfo}）}{商家端工作台与商品库存管理界面实景截图（\code{demo\_merchant} 演示数据）}{fig:def-ui-merchant-biz}
+
+\uitwofig{figures/screenshots/ui-merchant-orders.png}{（a）商家实时接单、拒单与出餐面板（\code{/merchant/orders}）}{figures/screenshots/ui-merchant-reviews.png}{（b）商家查看顾客评价与官方回复面板（\code{/merchant/reviews}）}{商家端订单履约与评价回复界面实景截图}{fig:def-ui-merchant-orders}
+
+\uifig[0.52\linewidth]{figures/screenshots/ui-rider-dashboard.png}{骑手端配送工作台：在线开关、待抢任务池与收益里程统计（\code{/rider/dashboard}）}{fig:def-ui-rider}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=.92\linewidth,height=.45\textheight,keepaspectratio]{figures/srs/16-key-page-wireframes.png}
-  \caption{核心业务页面线框原型设计图}\label{fig:def-wireframe}
+  \fbox{\includegraphics[width=0.96\linewidth,height=0.58\textheight,keepaspectratio]{figures/screenshots/ui-admin-home.png}}
+  \caption{管理员端平台全局统计看板桌面运行界面（\code{/admin/home}，支持时间区间检索与 CSV 导出）}\label{fig:def-ui-admin-home}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \begin{minipage}[t]{.24\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.40\textheight,keepaspectratio]{figures/report/home.png}\\[-2pt]
-    \small（a）顾客端首页
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.24\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.40\textheight,keepaspectratio]{figures/report/merchant.png}\\[-2pt]
-    \small（b）商家端工作台
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.24\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.40\textheight,keepaspectratio]{figures/report/rider.png}\\[-2pt]
-    \small（c）骑手端工作台
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.24\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.40\textheight,keepaspectratio]{figures/report/admin.png}\\[-2pt]
-    \small（d）管理员端看板
-  \end{minipage}
-  \caption{四端核心运行界面实景截图（演示数据）}\label{fig:def-ui-four-roles}
+  \fbox{\includegraphics[width=0.96\linewidth,height=0.58\textheight,keepaspectratio]{figures/screenshots/ui-admin-businesses.png}}
+  \caption{管理员端商铺入驻审批与营业状态治理界面（\code{/admin/business}）}\label{fig:def-ui-admin-biz}
 \end{figure}
 
-\placeholderfig{figures/screenshots/ui-assets-preferences.png}{顾客端钱包资产中心与主题偏好切换界面}{请在本地启动项目后，使用 \texttt{demo\_user} 登录，分别打开“我的 $\rightarrow$ 钱包与优惠”（\texttt{/assets}）及“偏好与外观”（\texttt{/preferences}，切换深海夜色或薄荷青主题）并拼图或截取主界面保存至此路径。}{fig:def-ui-placeholders}
+\uitwofig{figures/screenshots/ui-admin-users.png}{（a）平台用户账号启停与角色治理（\code{/admin/user}）}{figures/screenshots/ui-admin-riders.png}{（b）骑手入驻审核与配送异常仲裁（\code{/admin/riders}）}{管理员端账号治理与骑手/异常审核界面实景截图}{fig:def-ui-admin-users-riders}
 
 \note{本次服务器未配置高德地图所需的 \code{AMAP_WEB_KEY}、\code{AMAP_JS_KEY} 与 \code{AMAP_SECURITY_CODE}。图~\ref{fig:def-ui-amap} 记录实际打开选址弹窗后出现的“地图服务尚未配置，仍可填写地址”提示，用于展示未配置时的降级状态；该图不作为地图瓦片、POI 搜索或真实定位成功的验证证据。}
 
-\placeholderfig{figures/screenshots/ui-amap-picker.png}{高德地图选址入口与服务未配置时的实际提示}{配置高德 Web 服务 Key、JS Key 与安全码后，可在收货地址编辑页补充验证地图加载、POI 搜索与地点选择。}{fig:def-ui-amap}
+\uifig[0.52\linewidth]{figures/screenshots/ui-amap-picker.png}{高德地图选址入口与服务未配置时的实际降级提示界面（\code{/addUserAddress}）}{fig:def-ui-amap}

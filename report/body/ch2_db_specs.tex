@@ -1,0 +1,610 @@
+% Auto-generated grounded database schema specification for all 23 tables in elm_v2.sql
+\subsubsection{全量 23 张数据表字段与约束明细}
+为保障数据持久化设计的完备性与可追溯性，表~\ref{tab:db-constraints} 先给出下文约束简写标识说明，随后逐一列出平台 23 张核心数据表的完整字段、数据类型、默认值、约束属性与业务语义（依据 \code{elm_bk/db/schema/elm_v2.sql} 与 \code{001}--\code{006} 迁移脚本整理）。
+\begin{longtable}{L{.14\linewidth}L{.26\linewidth}L{.51\linewidth}}
+\caption{数据库字段约束标识说明表}\label{tab:db-constraints}\\
+\toprule
+\textbf{约束标识} & \textbf{英文全称} & \textbf{约束语义说明} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{约束标识} & \textbf{英文全称} & \textbf{约束语义说明} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+PK & Primary Key & 主键，唯一标识一条记录（多配合自增策略）。 \\
+FK & Foreign Key & 外键，引用关联主表主键以维护参照完整性。 \\
+NN & Not Null & 非空约束，写入时必须提供明确值或由默认值填充。 \\
+UQ & Unique Index & 唯一索引，防止用户名、手机号、幂等键等核心业务标识重复。 \\
+AI & Auto Increment & 自增长列，由 MySQL 存储引擎自动递增分配。 \\
+DEL & Soft Delete & 逻辑删除标记（\code{is_deleted}：0 正常 / 1 删除），保障审计与历史追溯。 \\
+\end{longtable}
+
+\paragraph{1. \code{ai_chat_history}（AI 智能助手会话历史表）} 按 session\_id 存储用户与智能客服的多轮问答文本、意图类型与耗时。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{ai\_chat\_history（AI 智能助手会话历史表）字段设计表}\label{tab:tbl-ai-chat-history}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 主键ID \\
+2 & \code{create_time} & \code{timestamp} & NULL & - & 创建时间 \\
+3 & \code{creator} & \code{bigint} & NULL & - & 创建者ID \\
+4 & \code{is_deleted} & \code{tinyint(1)} & 0 & DEL & 是否删除(0:否,1:是) \\
+5 & \code{update_time} & \code{timestamp} & NULL & - & 更新时间 \\
+6 & \code{updater} & \code{bigint} & NULL & - & 更新者ID \\
+7 & \code{user_id} & \code{bigint} & - & NN,FK & 用户ID \\
+8 & \code{session_id} & \code{varchar(64)} & - & NN & 会话ID \\
+9 & \code{user_message} & \code{text} & - & NN & 用户消息 \\
+10 & \code{ai_response} & \code{text} & - & NN & AI回复 \\
+11 & \code{chat_type} & \code{varchar(20)} & 'general' & - & 对话类型 \\
+12 & \code{processing_time} & \code{bigint} & NULL & - & 处理耗时(毫秒) \\
+13 & \code{context_data} & \code{json} & - & - & 上下文数据 \\
+\end{longtable}
+
+\paragraph{2. \code{authority}（角色权限字典表）} 定义平台全部角色权限标识（USER、BUSINESS、BUSINESS\_APPLICANT、RIDER、RIDER\_APPLICANT、ADMIN）。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{authority（角色权限字典表）字段设计表}\label{tab:tbl-authority}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{name} & \code{varchar(50)} & - & PK,NN & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{3. \code{business}（商铺信息表）} 存储店铺名称、地址、起送费、配送费、满减规则、营业状态、审核状态及高德经纬度坐标。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{business（商铺信息表）字段设计表}\label{tab:tbl-business}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{longitude} & \code{DECIMAL(10,6),} & - & - & 业务属性字段 \\
+2 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+3 & \code{create_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+4 & \code{creator} & \code{bigint} & NULL & - & 业务属性字段 \\
+5 & \code{is_deleted} & \code{tinyint(1) UNSIGNED} & NULL & DEL & 逻辑删除标记 \\
+6 & \code{update_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+7 & \code{updater} & \code{bigint} & NULL & - & 业务属性字段 \\
+8 & \code{business_address} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+9 & \code{business_explain} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+10 & \code{business_img} & \code{text} & - & - & 业务属性字段 \\
+11 & \code{business_name} & \code{varchar(255)} & - & NN & 业务属性字段 \\
+12 & \code{delivery_price} & \code{decimal(10,2)} & NULL & - & 业务属性字段 \\
+13 & \code{order_type_id} & \code{int} & NULL & - & 业务属性字段 \\
+14 & \code{remarks} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+15 & \code{start_price} & \code{decimal(10,2)} & NULL & - & 业务属性字段 \\
+16 & \code{dine_in_available} & \code{tinyint(1)} & 0 & NN & 是否支持堂食 \\
+17 & \code{promotion_threshold} & \code{decimal(10,2)} & NULL & - & 满减门槛 \\
+18 & \code{promotion_discount} & \code{decimal(10,2)} & NULL & - & 满减优惠金额 \\
+19 & \code{demo_rating} & \code{decimal(3,2)} & NULL & - & 演示用评分快照，真实业务由评价聚合计算 \\
+20 & \code{demo_sales_count} & \code{int} & NULL & - & 演示用近30日销量快照，真实业务由订单聚合计算 \\
+21 & \code{user_id} & \code{bigint} & - & NN,FK & 外键关联 users.id \\
+22 & \code{status} & \code{tinyint} & 0 & NN & 0-待审核 1-已上线 2-被拒绝 \\
+23 & \code{operating_status} & \code{tinyint(1)} & 1 & NN & 营业状态：1营业中，0休息中 \\
+\end{longtable}
+
+\paragraph{4. \code{cart}（购物车明细表）} 按顾客与商铺维度保存待下单商品数量、选中/删除状态及口味备注。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{cart（购物车明细表）字段设计表}\label{tab:tbl-cart}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{create_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+3 & \code{creator} & \code{bigint} & NULL & - & 业务属性字段 \\
+4 & \code{is_deleted} & \code{tinyint(1)} & NULL & DEL & 逻辑删除标记 \\
+5 & \code{update_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+6 & \code{updater} & \code{bigint} & NULL & - & 业务属性字段 \\
+7 & \code{quantity} & \code{int} & NULL & - & 业务属性字段 \\
+8 & \code{business_id} & \code{bigint} & - & NN,FK & 外键关联 business.id \\
+9 & \code{customer_id} & \code{bigint} & - & NN,FK & 外键关联 users.id \\
+10 & \code{food_id} & \code{bigint} & - & NN,FK & 外键关联 food.id \\
+11 & \code{remarks} & \code{varchar(255)} & NULL & - & 同一商家的备注（口味/餐具等） \\
+\end{longtable}
+
+\paragraph{5. \code{delivery_address}（收货地址表）} 存储顾客联系人、手机号、详细地址、默认标识及高德 POI/坐标字段。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{delivery\_address（收货地址表）字段设计表}\label{tab:tbl-delivery-address}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{longitude} & \code{DECIMAL(10,6),} & - & - & 业务属性字段 \\
+2 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+3 & \code{is_default} & \code{tinyint(1)} & 0 & NN & 是否默认收货地址 \\
+4 & \code{create_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+5 & \code{creator} & \code{bigint} & NULL & - & 业务属性字段 \\
+6 & \code{is_deleted} & \code{tinyint(1)} & NULL & DEL & 逻辑删除标记 \\
+7 & \code{update_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+8 & \code{updater} & \code{bigint} & NULL & - & 业务属性字段 \\
+9 & \code{address} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+10 & \code{contact_name} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+11 & \code{contact_sex} & \code{int} & NULL & - & 业务属性字段 \\
+12 & \code{contact_tel} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+13 & \code{user_id} & \code{bigint} & - & NN,FK & 外键关联 users.id \\
+\end{longtable}
+
+\paragraph{6. \code{food}（商品（菜品）表）} 存储菜品名称、单价、简介、分类、库存、单笔限购与上下架状态。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{food（商品（菜品）表）字段设计表}\label{tab:tbl-food}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{create_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+3 & \code{creator} & \code{bigint} & NULL & - & 业务属性字段 \\
+4 & \code{is_deleted} & \code{tinyint(1)} & NULL & DEL & 逻辑删除标记 \\
+5 & \code{update_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+6 & \code{updater} & \code{bigint} & NULL & - & 业务属性字段 \\
+7 & \code{food_explain} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+8 & \code{food_img} & \code{text} & - & - & 业务属性字段 \\
+9 & \code{food_name} & \code{varchar(255)} & - & NN & 业务属性字段 \\
+10 & \code{food_price} & \code{decimal(10,2)} & - & NN & 业务属性字段 \\
+11 & \code{remarks} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+12 & \code{business_id} & \code{bigint} & - & NN,FK & 外键关联 business.id \\
+13 & \code{shelve_status} & \code{tinyint} & 1 & - & 0-已下架 1-已上架 \\
+14 & \code{stock} & \code{int} & 100 & NN & 可售库存 \\
+15 & \code{category} & \code{varchar(32)} & '其他' & NN & 商家自定义商品分类 \\
+16 & \code{purchase_limit} & \code{int} & NULL & - & 单笔限购数量，空表示不限购 \\
+\end{longtable}
+
+\paragraph{7. \code{merchant_interaction}（用户商铺互动表）} 记录顾客对商铺的点赞（liked）与收藏（collected）状态。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{merchant\_interaction（用户商铺互动表）字段设计表}\label{tab:tbl-merchant-interaction}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 主键ID \\
+2 & \code{user_id} & \code{bigint} & - & NN,FK & 用户ID \\
+3 & \code{merchant_id} & \code{bigint} & - & NN,FK & 商铺ID \\
+4 & \code{liked} & \code{tinyint(1)} & 0 & - & 是否点赞(0:否,1:是) \\
+5 & \code{collected} & \code{tinyint(1)} & 0 & - & 是否收藏(0:否,1:是) \\
+6 & \code{create_time} & \code{datetime} & NOW() & - & 创建时间 \\
+7 & \code{update_time} & \code{datetime} & NOW() & - & 更新时间 \\
+\end{longtable}
+
+\paragraph{8. \code{notification}（站内消息通知表）} 记录审核结果、订单变动与配送通知，支持未读/已读状态切换。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{notification（站内消息通知表）字段设计表}\label{tab:tbl-notification}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 消息唯一ID \\
+2 & \code{user_id} & \code{bigint} & - & NN & 接收用户ID（关联users表id） \\
+3 & \code{notification_type} & \code{tinyint} & - & NN & 消息类型：0=商家申请审核，1=开店申请审核 \\
+4 & \code{notification_content} & \code{varchar(500)} & - & NN & 消息内容 \\
+5 & \code{audit_result} & \code{tinyint} & - & NN & 审核结果：1=通过，2=拒绝 \\
+6 & \code{is_read} & \code{tinyint} & 0 & NN & 阅读状态：0=未读，1=已读 \\
+7 & \code{create_time} & \code{datetime} & - & NN & 消息创建时间 \\
+8 & \code{read_time} & \code{datetime} & NULL & - & 消息阅读时间 \\
+9 & \code{is_deleted} & \code{tinyint} & 0 & NN,DEL & 逻辑删除：0=未删除，1=已删除 \\
+\end{longtable}
+
+\paragraph{9. \code{orderdetailet}（订单商品明细表）} 保存下单商品数量、成交单价及下单瞬间菜名快照（food\_name\_snapshot）。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{orderdetailet（订单商品明细表）字段设计表}\label{tab:tbl-orderdetailet}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{create_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+3 & \code{creator} & \code{bigint} & NULL & - & 业务属性字段 \\
+4 & \code{is_deleted} & \code{tinyint(1)} & NULL & DEL & 逻辑删除标记 \\
+5 & \code{update_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+6 & \code{updater} & \code{bigint} & NULL & - & 业务属性字段 \\
+7 & \code{quantity} & \code{int} & NULL & - & 业务属性字段 \\
+8 & \code{food_id} & \code{bigint} & - & NN,FK & 外键关联 food.id \\
+9 & \code{order_id} & \code{bigint} & - & NN,FK & 外键关联 orders.id \\
+10 & \code{food_price} & \code{decimal(10,2)} & - & NN & 业务属性字段 \\
+11 & \code{food_name_snapshot} & \code{varchar(100)} & NULL & - & 下单时商品名称，历史记录不回填 \\
+\end{longtable}
+
+\paragraph{10. \code{orders}（订单主表）} 记录下单金额、履约方式、地址快照、支付渠道、优惠抵扣、幂等键与状态编码（0--9）。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{orders（订单主表）字段设计表}\label{tab:tbl-orders}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{create_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+3 & \code{creator} & \code{bigint} & NULL & - & 业务属性字段 \\
+4 & \code{is_deleted} & \code{tinyint(1)} & NULL & DEL & 逻辑删除标记 \\
+5 & \code{update_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+6 & \code{updater} & \code{bigint} & NULL & - & 业务属性字段 \\
+7 & \code{order_date} & \code{timestamp} & NULL & - & 业务属性字段 \\
+8 & \code{order_state} & \code{int} & NULL & - & 业务属性字段 \\
+9 & \code{order_total} & \code{decimal(10,2)} & - & NN & 业务属性字段 \\
+10 & \code{business_id} & \code{bigint} & - & NN,FK & 外键关联 business.id \\
+11 & \code{customer_id} & \code{bigint} & - & NN,UQ,FK & 外键关联 users.id \\
+12 & \code{address_id} & \code{bigint} & - & FK & 外送地址；自取订单为空 \\
+13 & \code{delivery_price} & \code{decimal(10,2)} & - & NN & 业务属性字段 \\
+14 & \code{payment_method} & \code{varchar(20)} & 'SIMULATED' & NN & 支付方式 \\
+15 & \code{points_used} & \code{int} & 0 & NN & 本单抵扣积分 \\
+16 & \code{wallet_paid} & \code{tinyint(1)} & 0 & NN & 是否钱包支付 \\
+17 & \code{payment_status} & \code{varchar(20)} & 'PENDING' & NN & 支付状态 \\
+18 & \code{idempotency_key} & \code{varchar(64)} & NULL & UQ & 顾客提交订单幂等键 \\
+19 & \code{service_mode} & \code{varchar(16)} & 'DELIVERY' & NN & 履约方式：外送或自取 \\
+20 & \code{address_snapshot} & \code{varchar(255)} & NULL & - & 下单地址快照 \\
+21 & \code{contact_name_snapshot} & \code{varchar(80)} & NULL & - & 业务属性字段 \\
+22 & \code{contact_sex_snapshot} & \code{tinyint} & NULL & - & 业务属性字段 \\
+23 & \code{contact_tel_snapshot} & \code{varchar(30)} & NULL & - & 业务属性字段 \\
+24 & \code{remarks} & \code{varchar(255)} & NULL & - & 顾客备注（口味/餐具等） \\
+\end{longtable}
+
+\paragraph{11. \code{permission_application}（商家入驻权限申请表）} 记录普通用户申请开通商家权限的审批状态与时间。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{permission\_application（商家入驻权限申请表）字段设计表}\label{tab:tbl-permission-application}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{userId} & \code{bigint} & - & NN & 业务属性字段 \\
+3 & \code{status} & \code{tinyint} & 0 & NN & 审核状态 0-未审核 1-同意 2-拒绝 \\
+4 & \code{is_deleted} & \code{tinyint} & 0 & DEL & 逻辑删除标记 \\
+5 & \code{update_time} & \code{timestamp} & NOW() & - & 业务属性字段 \\
+6 & \code{create_time} & \code{timestamp} & NOW() & - & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{12. \code{person}（自然人基础信息表）} 存储用户姓名、性别、手机号、邮箱与头像等基础资料，手机号全局唯一。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{person（自然人基础信息表）字段设计表}\label{tab:tbl-person}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{email} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+2 & \code{first_name} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+3 & \code{gender} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+4 & \code{last_name} & \code{varchar(255)} & NULL & - & 业务属性字段 \\
+5 & \code{phone} & \code{varchar(255)} & NULL & UQ & 业务属性字段 \\
+6 & \code{photo} & \code{text} & - & - & 业务属性字段 \\
+7 & \code{id} & \code{bigint} & - & PK,NN,FK & 外键关联 users.id \\
+\end{longtable}
+
+\paragraph{13. \code{user_authority}（用户角色关联表）} 维护用户与角色权限的多对多关联，支持单账号按场景申请与切换权限。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{user\_authority（用户角色关联表）字段设计表}\label{tab:tbl-user-authority}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{user_id} & \code{bigint} & - & PK,NN,FK & 外键关联 users.id \\
+2 & \code{authority_name} & \code{varchar(50)} & - & PK,NN,FK & 外键关联 authority.name \\
+\end{longtable}
+
+\paragraph{14. \code{users}（用户登录表）} 存储平台统一登录账号、BCrypt 加密密码及账号启停状态。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{users（用户登录表）字段设计表}\label{tab:tbl-users}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{create_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+3 & \code{creator} & \code{bigint} & NULL & - & 业务属性字段 \\
+4 & \code{is_deleted} & \code{tinyint(1)} & NULL & DEL & 逻辑删除标记 \\
+5 & \code{update_time} & \code{timestamp} & NULL & - & 业务属性字段 \\
+6 & \code{updater} & \code{bigint} & NULL & - & 业务属性字段 \\
+7 & \code{activated} & \code{tinyint(1)} & - & NN & 业务属性字段 \\
+8 & \code{password} & \code{varchar(100)} & - & NN & 业务属性字段 \\
+9 & \code{username} & \code{varchar(100)} & - & NN,UQ & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{15. \code{rider_profile}（骑手档案与审核表）} 记录骑手实名信息、配送工具、审核状态、在线开关与累计里程收益。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{rider\_profile（骑手档案与审核表）字段设计表}\label{tab:tbl-rider-profile}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{user_id} & \code{bigint} & - & NN,UQ,FK & 外键关联 users.id \\
+3 & \code{real_name} & \code{varchar(50)} & - & NN & 业务属性字段 \\
+4 & \code{phone} & \code{varchar(20)} & - & NN & 业务属性字段 \\
+5 & \code{vehicle_type} & \code{varchar(20)} & - & NN & 业务属性字段 \\
+6 & \code{audit_status} & \code{tinyint} & 0 & NN & 0-待审核 1-已通过 2-已拒绝 \\
+7 & \code{online} & \code{tinyint(1)} & 0 & NN & 业务属性字段 \\
+8 & \code{reject_reason} & \code{varchar(255)} & - & - & 业务属性字段 \\
+9 & \code{completed_orders} & \code{int} & 0 & NN & 业务属性字段 \\
+10 & \code{total_distance} & \code{decimal(10,2)} & 0 & NN & 业务属性字段 \\
+11 & \code{total_income} & \code{decimal(10,2)} & 0 & NN & 业务属性字段 \\
+12 & \code{create_time} & \code{datetime} & NOW() & NN & 业务属性字段 \\
+13 & \code{update_time} & \code{datetime} & NOW() & NN & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{16. \code{delivery_task}（配送任务表）} 维护骑手抢单/到店/取餐/送达各节点时间戳及防并发抢单乐观锁 version。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{delivery\_task（配送任务表）字段设计表}\label{tab:tbl-delivery-task}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{order_id} & \code{bigint} & - & NN,UQ,FK & 外键关联 orders.id \\
+3 & \code{rider_user_id} & \code{bigint} & - & FK & 外键关联 users.id \\
+4 & \code{task_status} & \code{varchar(32)} & - & NN & 业务属性字段 \\
+5 & \code{version} & \code{int} & 0 & NN & 抢单与状态流转的乐观锁版本 \\
+6 & \code{distance_km} & \code{decimal(10,2)} & 0 & NN & 业务属性字段 \\
+7 & \code{rider_fee} & \code{decimal(10,2)} & 0 & NN & 业务属性字段 \\
+8 & \code{accepted_time} & \code{datetime} & - & - & 业务属性字段 \\
+9 & \code{arrived_store_time} & \code{datetime} & - & - & 业务属性字段 \\
+10 & \code{pickup_time} & \code{datetime} & - & - & 业务属性字段 \\
+11 & \code{delivered_time} & \code{datetime} & - & - & 业务属性字段 \\
+12 & \code{completed_time} & \code{datetime} & - & - & 业务属性字段 \\
+13 & \code{create_time} & \code{datetime} & NOW() & NN & 业务属性字段 \\
+14 & \code{update_time} & \code{datetime} & NOW() & NN & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{17. \code{delivery_exception}（配送异常上报与仲裁表）} 记录骑手或顾客触发的配送异常类型、描述、处理结果与赔付金额。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{delivery\_exception（配送异常上报与仲裁表）字段设计表}\label{tab:tbl-delivery-exception}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{task_id} & \code{bigint} & - & NN,FK & 外键关联 delivery\_task.id \\
+3 & \code{rider_user_id} & \code{bigint} & - & NN,FK & 外键关联 users.id \\
+4 & \code{exception_type} & \code{varchar(40)} & - & NN & 业务属性字段 \\
+5 & \code{description} & \code{varchar(500)} & - & NN & 业务属性字段 \\
+6 & \code{previous_task_status} & \code{varchar(32)} & - & NN & 业务属性字段 \\
+7 & \code{status} & \code{tinyint} & 0 & NN & 0-待处理 1-已处理 \\
+8 & \code{resolution_action} & \code{varchar(20)} & - & - & 业务属性字段 \\
+9 & \code{resolution_note} & \code{varchar(500)} & - & - & 业务属性字段 \\
+10 & \code{resolver_user_id} & \code{bigint} & - & FK & 外键关联 users.id \\
+11 & \code{create_time} & \code{datetime} & NOW() & NN & 业务属性字段 \\
+12 & \code{resolved_time} & \code{datetime} & - & - & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{18. \code{order_status_history}（订单状态变更审计表）} 按时间线留存每次订单状态跃迁的来源状态、目标状态与操作人。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{order\_status\_history（订单状态变更审计表）字段设计表}\label{tab:tbl-order-status-history}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{order_id} & \code{bigint} & - & NN,FK & 外键关联 orders.id \\
+3 & \code{from_status} & \code{int} & - & - & 业务属性字段 \\
+4 & \code{to_status} & \code{int} & - & NN & 业务属性字段 \\
+5 & \code{operator_user_id} & \code{bigint} & - & FK & 外键关联 users.id \\
+6 & \code{reason} & \code{varchar(255)} & - & NN & 业务属性字段 \\
+7 & \code{create_time} & \code{datetime} & NOW() & NN & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{19. \code{review}（订单评价与商家回复表）} 支持一单一评、1--5 星评分、图片地址、商家回复及管理员隐藏治理。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{review（订单评价与商家回复表）字段设计表}\label{tab:tbl-review}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{business_id} & \code{bigint} & '' & NN,FK & 外键关联 business.id \\
+3 & \code{images} & \code{varchar(1000)} & NULL & - & 业务属性字段 \\
+4 & \code{create_time} & \code{datetime} & NOW() & NN & 管理员隐藏标记 \\
+\end{longtable}
+
+\paragraph{20. \code{user_asset}（用户钱包与会员资产表）} 保存账户可用余额、可用积分与会员到期时间。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{user\_asset（用户钱包与会员资产表）字段设计表}\label{tab:tbl-user-asset}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{balance} & \code{decimal(10,2)} & 0 & NN & 业务属性字段 \\
+3 & \code{membership_expire} & \code{datetime} & NULL & - & 业务属性字段 \\
+4 & \code{update_time} & \code{datetime} & NOW() & NN & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{21. \code{user_coupon}（用户优惠券持有表）} 记录优惠券名称、门槛金额、面额、有效期及核销关联订单。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{user\_coupon（用户优惠券持有表）字段设计表}\label{tab:tbl-user-coupon}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{discount_amount} & \code{decimal(10,2)} & 0 & NN & 业务属性字段 \\
+3 & \code{expires_at} & \code{datetime} & 0 & NN & 业务属性字段 \\
+4 & \code{create_time} & \code{datetime} & NOW() & NN & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{22. \code{user_preference}（用户主题与点餐偏好表）} 持久化外观主题（4 套）、辣度偏好、偏好口味、忌口及常选品类。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{user\_preference（用户主题与点餐偏好表）字段设计表}\label{tab:tbl-user-preference}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{theme} & \code{varchar(16)} & 'light' & NN & 业务属性字段 \\
+3 & \code{taste_tags} & \code{varchar(200)} & '' & NN & 业务属性字段 \\
+4 & \code{category_tags} & \code{varchar(200)} & '' & NN & 业务属性字段 \\
+5 & \code{update_time} & \code{datetime} & NOW() & NN & 业务属性字段 \\
+\end{longtable}
+
+\paragraph{23. \code{user_asset_ledger}（用户资产变动流水表）} 以只增不改账本形式记录充值、下单扣款、取消退款与积分变动。
+\begin{longtable}{C{.05\linewidth}L{.21\linewidth}L{.17\linewidth}L{.13\linewidth}L{.12\linewidth}L{.24\linewidth}}
+\caption{user\_asset\_ledger（用户资产变动流水表）字段设计表}\label{tab:tbl-user-asset-ledger}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{序号} & \textbf{字段名} & \textbf{类型} & \textbf{默认值} & \textbf{约束} & \textbf{业务含义} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & \code{id} & \code{bigint} & - & PK,AI,NN & 业务属性字段 \\
+2 & \code{type} & \code{varchar(32)} & 0 & NN & 业务属性字段 \\
+3 & \code{points_delta} & \code{int} & 0 & NN & 业务属性字段 \\
+4 & \code{reference_id} & \code{bigint} & NULL & NN & 业务属性字段 \\
+\end{longtable}

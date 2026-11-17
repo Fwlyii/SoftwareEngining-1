@@ -1,117 +1,319 @@
 \chapter{项目管理}
 
-高效的项目管理是确保 4 人敏捷团队在紧凑周期内实现高质量交付的根本保障。本章从工作分解结构（WBS）、PERT 三点工时估算、甘特图与整体燃尽监控四个维度说明任务计划安排，并建立覆盖需求、技术、外部依赖与质量风险的识别与闭环追踪机制。
+本章面向“范围可控、进度可视、成本可估、风险可防”的软件项目管理目标，围绕工作分解结构（WBS 三级分解）、三点工时估算（PERT）、全周期甘特图与燃尽曲线以及 12 项核心风险的全周期闭环管理展开详细阐述。
 
 \section{任务计划安排}
 
 \subsection{工作分解（WBS）}
 
-本组以可交付业务价值为导向，遵循“Product Backlog（大需求）$\rightarrow$ Sprint Backlog（中模块）$\rightarrow$ 具体工程任务（小任务）”的三层结构开展工作分解（如图~\ref{fig:mgmt-wbs} 所示），并建立完整映射表（表~\ref{tab:wbs-table}），使每项工程任务均能回溯至具体用户故事与责任人。
+遵循“100\% 规则”与“最小可交付任务不超过 4--8 小时”的敏捷拆分原则，团队将《软件工程 1》与轻量级外卖平台全量工作自顶向下分解为三层结构（如图~\ref{fig:mgmt-wbs-tree} 所示）：
+\begin{enumerate}
+  \item \textbf{第一层（Product Backlog 需求域）：} 对应 22 项核心用户故事（\code{US001}--\code{US022}）及项目过程基础设施。
+  \item \textbf{第二层（Sprint Backlog 工程模块）：} 按迭代节奏归集为前后端接口、数据库演进、界面集成与质量验收子模块（\code{T101}--\code{T308}）。
+  \item \textbf{第三层（可执行原子任务）：} 具体到控制器端点、SQL 迁移文件、Vue 组件及自动化测试类的最小交付单元（\code{T101-1}--\code{T308-4}），每项均明确责任人、估算工时与完成定义（DoD）。
+\end{enumerate}
 
 \begin{figure}[H]
   \centering
-  \resizebox{\linewidth}{!}{%
-  \begin{tikzpicture}[
-    root/.style={rectangle,rounded corners=4pt,draw=tjublue,fill=tjublue,text=white,font=\small\bfseries,minimum height=0.85cm,text width=4.6cm,align=center},
-    lvl1/.style={rectangle,rounded corners=3pt,draw=tjublue,fill=lightblue,font=\scriptsize\bfseries,minimum height=0.75cm,text width=2.2cm,align=center},
-    lvl2/.style={rectangle,rounded corners=2pt,draw=mutedgray,fill=white,font=\scriptsize,minimum height=0.65cm,text width=2.2cm,align=left,inner sep=3pt},
-    edge/.style={draw=tjublue,thick}
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.7cm and 0.45cm,
+    root/.style={rectangle,rounded corners=4pt,draw=tjublue,very thick,fill=tjublue,text=white,font=\small\bfseries,minimum width=5.6cm,minimum height=0.9cm,align=center},
+    l1/.style={rectangle,rounded corners=3pt,draw=tjublue,thick,fill=lightblue,font=\scriptsize\bfseries,minimum width=2.8cm,minimum height=0.9cm,align=center},
+    l2/.style={rectangle,rounded corners=2pt,draw=mutedgray,fill=white,font=\scriptsize,minimum width=2.7cm,minimum height=1.55cm,align=left,inner sep=4pt},
+    edge/.style={-{Stealth[length=1.8mm]},thick,tjublue!80}
   ]
-    \node[root] (r) {轻量级外卖服务平台 WBS};
-    \node[lvl1,below left=0.85cm and 3.9cm of r] (b1) {1. 需求与基线\\(Sprint 1)};
-    \node[lvl1,below left=0.85cm and 1.1cm of r] (b2) {2. 核心交易闭环\\(Sprint 1--2)};
-    \node[lvl1,below right=0.85cm and 1.1cm of r] (b3) {3. 商家骑手治理\\(Sprint 2--3)};
-    \node[lvl1,below right=0.85cm and 3.9cm of r] (b4) {4. AI 地图与交付\\(Sprint 3)};
+    \node[root] (top) {轻量级外卖服务平台项目（230 h 基准 / 118 故事点）};
+    \node[l1,below left=1.0cm and 2.5cm of top] (s1) {WBS-1.0 基础设施与\\Sprint 1 核心下单（80 h）};
+    \node[l1,below=1.0cm of top] (s2) {WBS-2.0 履约、配送\\与资产闭环（68 h）};
+    \node[l1,below right=1.0cm and 2.5cm of top] (s3) {WBS-3.0 管理、AI、地图\\与质量交付（82 h）};
 
-    \node[lvl2,below=0.45cm of b1] (l1) {1.1 SRS 与 UML\\1.2 MySQL 表设计\\1.3 增量迁移脚本\\1.4 Docker 基线};
-    \node[lvl2,below=0.45cm of b2] (l2) {2.1 认证与 JWT\\2.2 店铺与购物车\\2.3 下单快照事务\\2.4 钱包积分算价};
-    \node[lvl2,below=0.45cm of b3] (l3) {3.1 商家接单商品\\3.2 骑手抢单履约\\3.3 管理审核仲裁\\3.4 四套主题看板};
-    \node[lvl2,below=0.45cm of b4] (l4) {4.1 多模态 AI 点餐\\4.2 高德选址导航\\4.3 TDD 与交叉测试\\4.4 报告规范交付};
+    \draw[edge] (top.south) -- ++(0,-0.45) -| (s1.north);
+    \draw[edge] (top.south) -- (s2.north);
+    \draw[edge] (top.south) -- ++(0,-0.45) -| (s3.north);
 
-    \draw[edge] (r.south) -- ++(0,-0.35) -| (b1.north);
-    \draw[edge] (r.south) -- ++(0,-0.35) -| (b2.north);
-    \draw[edge] (r.south) -- ++(0,-0.35) -| (b3.north);
-    \draw[edge] (r.south) -- ++(0,-0.35) -| (b4.north);
-    \draw[edge] (b1) -- (l1);
-    \draw[edge] (b2) -- (l2);
-    \draw[edge] (b3) -- (l3);
-    \draw[edge] (b4) -- (l4);
+    \node[l2,below=0.55cm of s1] (s1d) {1.1 SRS 与 17 张建模图\\1.2 \code{elm_v2.sql} 与迁移\\1.3 认证、店铺与菜品\\1.4 购物车与幂等下单\\1.5 顾客主链路与单测};
+    \node[l2,below=0.55cm of s2] (s2d) {2.1 商家接单出餐管理\\2.2 骑手乐观锁抢单\\2.3 钱包积分券流水账\\2.4 评价、收藏与通知\\2.5 登录视觉与首次联调};
+    \node[l2,below=0.55cm of s3] (s3d) {3.1 管理员审核与仲裁\\3.2 多模态 AI 与熔断\\3.3 高德地图与坐标距离\\3.4 四套主题与数据看板\\3.5 575 项回归与容器交付};
+
+    \draw[edge] (s1) -- (s1d);
+    \draw[edge] (s2) -- (s2d);
+    \draw[edge] (s3) -- (s3d);
   \end{tikzpicture}
-  }
-  \caption{项目三层工作分解结构（WBS）示意图}\label{fig:mgmt-wbs}
+}
+  \caption{项目三级工作分解结构（WBS）顶层树状图}\label{fig:mgmt-wbs-tree}
 \end{figure}
 
-\begin{longtable}{L{.21\linewidth}L{.24\linewidth}L{.35\linewidth}L{.11\linewidth}}
-\caption{三层 WBS 工作分解详表}\label{tab:wbs-table}\\
+表~\ref{tab:wbs-s1}、表~\ref{tab:wbs-s2} 与表~\ref{tab:wbs-s3} 分别给出了 Sprint 1、Sprint 2 与 Sprint 3 的完整三级任务分解明细表。
+
+\begin{longtable}{L{.12\linewidth}L{.24\linewidth}L{.38\linewidth}L{.10\linewidth}C{.07\linewidth}}
+\caption{Sprint 1 工作任务三级分解表（WBS-1.0：9 月 1 日--9 月 7 日）}\label{tab:wbs-s1}\\
 \toprule
-\textbf{Product Backlog} & \textbf{Sprint Backlog} & \textbf{具体工程任务} & \textbf{责任人} \\
+\textbf{层级 / 编号} & \textbf{任务 / 模块名称} & \textbf{拆解说明与可交付产物} & \textbf{负责人} & \textbf{估算(h)} \\
 \midrule
 \endfirsthead
-\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\multicolumn{5}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{Product Backlog} & \textbf{Sprint Backlog} & \textbf{具体工程任务} & \textbf{责任人} \\
+\textbf{层级 / 编号} & \textbf{任务 / 模块名称} & \textbf{拆解说明与可交付产物} & \textbf{负责人} & \textbf{估算(h)} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-工程底座与建模（P0） & 需求建模与表结构（S1） & SRS 编制、draw.io 建模、\code{elm_v2.sql} 及 \code{001}–\code{003} 迁移编写 & 赵紫怡 \\
-US001--002 认证与角色（P0） & 认证鉴权与资料（S1） & JWT 签发校验、注册唯一性、角色切换、登录/注册/个人页 & 李承文/范文丽 \\
-US003--005 浏览与加购（P0） & 店铺检索与购物车（S1） & 分类筛选、详情菜单、跨店购物车、备注持久化 \code{005}、部分勾选 & 范文丽/李承文 \\
-US006--007 下单与订单（P0） & 下单事务与取消（S1） & 幂等下单、条件扣库存、订单快照、外送/自取路径与取消回退 & 李承文/仲禹潼 \\
-US008--010 资产互动（P1） & 钱包积分偏好评价（S2） & 余额充值、会员折扣、优惠券核销、积分发放、4 套主题与评价 & 李承文/范文丽 \\
-US011--014 商家管理（P0/P1） & 商家工作台与看板（S2） & 店铺营业配置、商品分类限购、接单出餐、评价回复与经营看板 & 范文丽/李承文 \\
-US015--016 骑手配送（P0） & 骑手入驻与抢单（S2） & 实名申请、在线切换、乐观锁抢单、到店/取餐/送达、异常上报 & 李承文/仲禹潼 \\
-US017--018 管理治理（P0/P1） & 审核与平台看板（S3） & 商家/店铺/骑手审核、账号启停、异常仲裁、隐藏评价与平台看板 & 李承文/范文丽 \\
-US019 AI 智能点餐（P1/P2） & 多模态 AI 助手（S3） & 意图分流、授权订单上下文、识菜/语音草稿、熔断降级与 \code{AiChat.vue} & 赵紫怡/范文丽 \\
-US020 高德地图（P1） & 地图选址与导航（S3） & \code{006} 坐标迁移、POI 搜索代理、直线距离与骑手导航跳转 & 仲禹潼/李承文 \\
-全链路质量交付（P0） & 测试回归与部署（S1--S3） & 后端 340 项单测、前端 235 项测试、WPS 缺陷跟踪、交叉验收与 Docker 编排 & 仲禹潼/全体 \\
+L1: US001--22 & 需求基线与领域建模 & 形成覆盖四端业务流与异常边界的 SRS 规范 & 赵紫怡 & 10.0 \\
+L2: T101 & SRS 编写与 UML 建模 & 统筹用例图、领域类图与状态机建模 & 赵紫怡 & (10.0) \\
+L3: T101-1 & 参与者与系统上下文界定 & 绘制上下文边界图与参与者分析图（draw.io） & 赵紫怡 & 3.0 \\
+L3: T101-2 & 四端详细用例规约撰写 & 编写 \code{UC-COM/CUS/MER/RID/ADM} 正常与异常流 & 赵紫怡 & 4.0 \\
+L3: T101-3 & 活动、时序与状态机导出 & 绘制履约活动图、结算时序图并导出高清 PNG & 赵紫怡 & 3.0 \\
+\midrule
+L1: US001/4/6 & 数据库架构与版本基线 & 建立 MySQL 8 表结构与初始增量迁移机制 & 赵紫怡 & 8.0 \\
+L2: T102 & 核心数据表与迁移脚本 & 定义 23 张核心业务表并确保幂等执行 & 赵紫怡 & (8.0) \\
+L3: T102-1 & \code{elm_v2.sql} 建表设计 & 编写用户、店铺、菜品、订单、配送与资产 DDL & 赵紫怡 & 4.0 \\
+L3: T102-2 & \code{001/002} 唯一性与默认地址 & 落地用户名/手机号唯一约束与默认地址迁移 & 赵紫怡 & 2.0 \\
+L3: T102-3 & \code{003} 订单菜名快照迁移 & 为 \code{orderdetailet} 增加 \code{food_name_snapshot} 列 & 李承文 & 2.0 \\
+\midrule
+L1: US001/02 & 统一认证与角色权限基线 & 支撑四端账号注册、登录与权限校验 & 李承文 & 8.0 \\
+L2: T103 & 认证鉴权与角色网关 & 实现无状态 JWT 认证与多角色登录策略 & 李承文 & (8.0) \\
+L3: T103-1 & 注册与密码加密校验 & 实现 \code{UserRestController} 注册与 BCrypt 存储 & 李承文 & 2.5 \\
+L3: T103-2 & 登录签发 JWT 与策略校验 & 实现 \code{AuthenticationRestController} 及角色权限匹配 & 李承文 & 3.0 \\
+L3: T103-3 & 认证安全边界单测（TDD） & 编写 \code{AuthenticationHardeningTest} 等边界用例 & 李承文 & 2.5 \\
+\midrule
+L1: US003/05 & 店铺检索与购物车服务 & 提供公开浏览、分类筛选与购物车增删改查 & 李承文 & 10.0 \\
+L2: T104 & 店铺商品与购物车接口 & 完成高并发读与购物车跨店隔离校验 & 李承文 & (10.0) \\
+L3: T104-1 & 店铺分页、分类与搜索接口 & 实现 \code{BusinessController} 公开检索与营业状态过滤 & 李承文 & 3.5 \\
+L3: T104-2 & 菜品上架、库存与限购校验 & 实现 \code{FoodController} 与库存/限购校验逻辑 & 李承文 & 3.5 \\
+L3: T104-3 & 购物车增改删与清店逻辑 & 实现 \code{CartController} 跨店提示与同品合并 & 李承文 & 3.0 \\
+\midrule
+L1: US006/07 & 顾客下单事务与订单生命周期 & 实现服务端算价、幂等建单与取消回退 & 李承文 & 12.0 \\
+L2: T105 & 订单计价与提交事务核心 & 保证高并发零超卖与外送/自取双模计价 & 李承文 & (12.0) \\
+L3: T105-1 & \code{OrderPricingService} 算价 & 实现满减、会员折扣、配送费与自取豁免逻辑 & 李承文 & 4.0 \\
+L3: T105-2 & \code{OrderSubmissionService} 建单 & 原子扣库存、写订单快照、校验 \code{idempotencyKey} & 李承文 & 4.5 \\
+L3: T105-3 & 订单取消恢复与权限隔离 & 校验本人待处理订单并原子恢复库存资产 & 李承文 & 3.5 \\
+\midrule
+L1: US003 & 顾客首页与店铺浏览界面 & 构建顾客发现店铺与选购菜品的交互视图 & 范文丽 & 10.0 \\
+L2: T106 & 首页、列表与店铺详情页 & 实现游客浏览、分类导航与商品加购交互 & 范文丽 & (10.0) \\
+L3: T106-1 & \code{Index.vue} 与分类导航区 & 开发轮播、美食分类宫格与搜索跳转 & 范文丽 & 3.5 \\
+L3: T106-2 & \code{BusinessList.vue} 筛选展示 & 支持分类筛选、休息状态徽标与排序展示 & 范文丽 & 3.0 \\
+L3: T106-3 & \code{BusinessInfo.vue} 选餐加购 & 实现菜品列表、限购提示与底部实时购物车栏 & 范文丽 & 3.5 \\
+\midrule
+L1: US004--07 & 地址、结算与订单前端视图 & 串联登录、地址、结算支付与订单详情 & 范文丽 & 14.0 \\
+L2: T107 & 顾客下单链路页面集成 & 打通前置守卫与后端结算/取消接口联调 & 范文丽 & (14.0) \\
+L3: T107-1 & \code{Login.vue} 与路由守卫 & 实现四角色登录切换与 \code{authGuard.js} 隔离 & 范文丽 & 3.5 \\
+L3: T107-2 & 地址列表与增改页面 & 开发 \code{UserAddress/AddUserAddress/EditUserAddress} & 范文丽 & 3.5 \\
+L3: T107-3 & \code{Cart.vue} 与 \code{Payment.vue} & 实现部分勾选、自取切换、模拟支付与幂等防重 & 范文丽 & 4.0 \\
+L3: T107-4 & \code{OrderList.vue} 与详情页 & 实现订单列表、状态流转展示与自助取消按钮 & 范文丽 & 3.0 \\
+\midrule
+L1: QA-S1 & Sprint 1 自动化与容器基线 & 建立测试数据库与容器化启动验证环境 & 仲禹潼 & 8.0 \\
+L2: T108 & Docker 基础与 S1 回归用例 & 验证认证与下单主流程无退化缺陷 & 仲禹潼 & (8.0) \\
+L3: T108-1 & Docker Compose 基础编排 & 配置 MySQL、后端与前端基础容器启动脚本 & 仲禹潼 & 3.0 \\
+L3: T108-2 & 认证与下单 H2 集成测试 & 验证越权访问、库存不足回滚与快照稳定性 & 仲禹潼 & 3.0 \\
+L3: T108-3 & 前端 \code{checkout.js} 单测 & 验证自取判断与结算前端计算逻辑 & 仲禹潼 & 2.0 \\
+\end{longtable}
+
+\begin{longtable}{L{.12\linewidth}L{.24\linewidth}L{.38\linewidth}L{.10\linewidth}C{.07\linewidth}}
+\caption{Sprint 2 工作任务三级分解表（WBS-2.0：9 月 8 日--9 月 12 日）}\label{tab:wbs-s2}\\
+\toprule
+\textbf{层级 / 编号} & \textbf{任务 / 模块名称} & \textbf{拆解说明与可交付产物} & \textbf{负责人} & \textbf{估算(h)} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{层级 / 编号} & \textbf{任务 / 模块名称} & \textbf{拆解说明与可交付产物} & \textbf{负责人} & \textbf{估算(h)} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+L1: US011/12 & 商家店铺与商品供给管理 & 支撑商家入驻、店铺配置与菜品库存维护 & 李承文 & 8.0 \\
+L2: T201 & 商家权限、店铺与菜品服务 & 隔离跨商家读写权限并支持自定义分类 & 李承文 & (8.0) \\
+L3: T201-1 & 商家入驻与新店申请接口 & 实现 \code{PermissionApplicationController} 申请逻辑 & 李承文 & 2.5 \\
+L3: T201-2 & 店铺信息与营业状态切换 & 支持起送费、满减规则及营业/休息切换 & 李承文 & 2.5 \\
+L3: T201-3 & 菜品增改、库存与限购接口 & 支持菜品批量分类查询、库存调整与上下架 & 李承文 & 3.0 \\
+\midrule
+L1: US013/15/16 & 商家履约与骑手配送状态机 & 实现接单出餐、乐观锁抢单与配送三步曲 & 李承文 & 12.0 \\
+L2: T202 & 跨端订单与配送状态服务 & 联动 \code{orders}、\code{delivery_task} 与历史日志表 & 李承文 & (12.0) \\
+L3: T202-1 & 商家接单、拒单退款与出餐 & 实现 \code{DeliveryOrderController} 商家侧流转 & 李承文 & 4.0 \\
+L3: T202-2 & 骑手申请、上线与可接任务池 & 实现 \code{RiderController} 与外送待抢任务查询 & 李承文 & 3.5 \\
+L3: T202-3 & 乐观锁抢单与到店/取餐/送达 & 基于 \code{version} 防并发撞单并同步主订单 & 李承文 & 4.5 \\
+\midrule
+L1: US009 & 钱包、积分、优惠券与会员 & 构建精确结算与反向冲正资产流水体系 & 李承文 & 10.0 \\
+L2: T203 & \code{AssetService} 资产核心 & 实现 BigDecimal 算价与只增不改账本 & 李承文 & (10.0) \\
+L3: T203-1 & 模拟钱包充值与流水记录 & 开发 \code{AssetController} 充值与账本分页查询 & 李承文 & 3.0 \\
+L3: T203-2 & 新人券幂等领取与核销回退 & 解决重复领取漏洞并支持取消订单退券 & 李承文 & 3.5 \\
+L3: T203-3 & 会员折扣与积分累计抵扣 & 实现 95 折、20\% 积分抵扣上限与收货发积分 & 李承文 & 3.5 \\
+\midrule
+L1: US011--14 & 商家工作台四端核心界面 & 为入驻商家提供一站式营业与履约操作台 & 范文丽 & 12.0 \\
+L2: T204 & 商家管理前端视图集 & 完成工作台、菜品、订单与评价回复页面 & 范文丽 & (12.0) \\
+L3: T204-1 & \code{MerchantApply} 与工作台 & 开发店铺列表卡片与营业开关面板 & 范文丽 & 3.5 \\
+L3: T204-2 & \code{MerchantBusinessInfo.vue} & 实现菜品分类维护、新增编辑与库存调拨弹窗 & 范文丽 & 3.5 \\
+L3: T204-3 & \code{MerchantOrders.vue} & 实现待接单/备餐/历史分栏与 WebSocket 提醒 & 范文丽 & 3.0 \\
+L3: T204-4 & \code{MerchantReviews.vue} & 实现顾客晒图评价展示与商家官方回复 & 范文丽 & 2.0 \\
+\midrule
+L1: US015/16 & 骑手入驻与配送工作台 & 提供在线切换、任务抢单与履约动作页面 & 仲禹潼/范文丽 & 10.0 \\
+L2: T205 & 骑手端视图与状态联动 & 保证任务状态实时同步与异常快捷上报 & 仲禹潼/范文丽 & (10.0) \\
+L3: T205-1 & \code{RiderApply.vue} 申请页 & 收集实名、手机、工具类型并展示审核状态 & 仲禹潼 & 3.0 \\
+L3: T205-2 & \code{RiderDashboard.vue} 任务池 & 开发上线开关、抢单广场与收益里程看板 & 范文丽/仲禹潼 & 4.5 \\
+L3: T205-3 & 履约推进与异常上报弹窗 & 实现到店/取餐/送达按钮与异常说明表单 & 仲禹潼 & 2.5 \\
+\midrule
+L1: US005/08 & 备注迁移、评价与站内通知 & 补齐订单备注传递、评价与跨角色消息 & 赵紫怡 & 8.0 \\
+L2: T206 & 增量数据与互动服务开发 & 完成 \code{005} 迁移及评价、通知 CRUD & 赵紫怡 & (8.0) \\
+L3: T206-1 & \code{005_cart_order_remarks.sql} & 实现购物车备注列及下单透传至 \code{orders.remarks} & 赵紫怡 & 2.0 \\
+L3: T206-2 & \code{ReviewController} 评价闭环 & 校验已完成订单一单一评与图片地址保存 & 赵紫怡 & 3.5 \\
+L3: T206-3 & \code{NotificationController} 通知 & 推送审核/配送通知并支持标记已读 & 赵紫怡 & 2.5 \\
+\midrule
+L1: QA-S2 & 登录重构、AI 初版与集中联调 & 推进品牌化视觉并启用 WPS 缺陷跟踪台账 & 范文丽/仲禹潼 & 8.0 \\
+L2: T207 & 体验升级与全链路初筛 & 登记首批联调缺陷并验证并发抢单/快照 & 仲禹潼 & (8.0) \\
+L3: T207-1 & 登录页品牌落地与 AI 迁移 & 重构 \code{Login.vue} 视觉并导入 AI 交互原型 & 范文丽 & 3.5 \\
+L3: T207-2 & 建立 WPS 缺陷台账与走查 & 组织第 6 次联调走查，登记 11+ 类问题 & 仲禹潼 & 2.5 \\
+L3: T207-3 & 骑手并发抢单与快照 TDD 测试 & 固化并发互斥与历史商品名不变回归测试 & 仲禹潼 & 2.0 \\
+\end{longtable}
+
+\begin{longtable}{L{.12\linewidth}L{.24\linewidth}L{.38\linewidth}L{.10\linewidth}C{.07\linewidth}}
+\caption{Sprint 3 工作任务三级分解表（WBS-3.0：9 月 13 日--9 月 19 日）}\label{tab:wbs-s3}\\
+\toprule
+\textbf{层级 / 编号} & \textbf{任务 / 模块名称} & \textbf{拆解说明与可交付产物} & \textbf{负责人} & \textbf{估算(h)} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{层级 / 编号} & \textbf{任务 / 模块名称} & \textbf{拆解说明与可交付产物} & \textbf{负责人} & \textbf{估算(h)} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+L1: US017/18/21 & 平台准入审批与异常处理 & 实现管理员审核流、账号评价治理与仲裁 & 李承文 & 10.0 \\
+L2: T301 & 管理端后台核心控制器 & 严格通过 \code{@PreAuthorize("ADMIN")} 隔离 & 李承文 & (10.0) \\
+L3: T301-1 & 商家/开店/骑手审批流接口 & 审批通过自动授权角色并写入站内通知 & 李承文 & 3.5 \\
+L3: T301-2 & 账号启停与评价隐藏治理 & 开发 \code{AdminAccountController} 与评价隐藏 & 李承文 & 3.0 \\
+L3: T301-3 & 配送异常仲裁服务 & 实现异常恢复、改派新骑手或终止订单退款 & 李承文 & 3.5 \\
+\midrule
+L1: US022 & 平台与消费统计看板接口 & 提供多时间维度聚合统计与 CSV 导出 & 李承文/范文丽 & 8.0 \\
+L2: T302 & 统计聚合查询与导出引擎 & 避免慢查询影响交易事务 & 李承文/范文丽 & (8.0) \\
+L3: T302-1 & 平台全局统计与趋势 SQL & 实现 \code{/api/admin/statistics} 按区间汇总 & 李承文 & 3.0 \\
+L3: T302-2 & 商家经营看板与导出接口 & 实现 CSV 报表生成与个人消费月度/年度统计 & 李承文 & 2.5 \\
+L3: T302-3 & 管理员看板前端图表集成 & 在 \code{AdminHome.vue} 渲染折线趋势与导出交互 & 范文丽 & 2.5 \\
+\midrule
+L1: US019/20 & 受控多模态 AI 点餐服务 & 实现文字、推荐、识菜与语音四重安全边界 & 赵紫怡 & 12.0 \\
+L2: T303 & AI 服务与熔断适配器 & 外部网络调用完全脱离数据库事务 & 赵紫怡 & (12.0) \\
+L3: T303-1 & \code{StructuredAssistant} 意图分流 & 区分帮助、订单查询、推荐与通用聊天 & 赵紫怡 & 4.0 \\
+L3: T303-2 & DeepSeek 超时重试与熔断器 & 实现 \code{AiCircuitBreaker} 与本地帮助降级 & 赵紫怡 & 3.5 \\
+L3: T303-3 & DashScope 识菜与语音接口 & 处理 multipart 上传大小校验与未配置 503 降级 & 赵紫怡 & 3.0 \\
+L3: T303-4 & 真实菜单关联与历史清理 & 基于数据库库存返回候选商品并清理聊天记录 & 赵紫怡 & 1.5 \\
+\midrule
+L1: US004/16 & 高德地图代理与坐标距离 & 集成高德选址、GCJ-02 距离与离线回退 & 仲禹潼 & 10.0 \\
+L2: T304 & 高德地图全链路适配 & 保护密钥不泄露至客户端并支持无 Key 降级 & 仲禹潼 & (10.0) \\
+L3: T304-1 & \code{006_map_coordinates.sql} 迁移 & 增设商铺与地址经纬度、\code{poi_id} 与 \code{adcode} & 仲禹潼 & 2.0 \\
+L3: T304-2 & \code{MapController} 代理与限流 & 封装 POI 搜索、逆地理编码与短期缓存 & 仲禹潼 & 3.5 \\
+L3: T304-3 & \code{MapLocationPicker} 选址弹窗 & 实现地图选址弹窗及未配置离线地址回退提示 & 仲禹潼 & 2.5 \\
+L3: T304-4 & 距离估算与骑手外部导航 & 计算直线距离/送达时长并拼接高德导航链接 & 仲禹潼 & 2.0 \\
+\midrule
+L1: US010/19/20 & 多主题偏好、动效与 AI 前端 & 打造统一响应式的视觉体验与 AI 交互台 & 范文丽 & 14.0 \\
+L2: T305 & 主题体系、动效与智能交互 & 满足桌面/375 px 适配及减弱动效无障碍规范 & 范文丽 & (14.0) \\
+L3: T305-1 & 4 套 CSS 变量主题与 \code{Preferences} & 实现主题即时切换与口味忌口表单持久化 & 范文丽 & 3.5 \\
+L3: T305-2 & View Transitions 与交互动效 & 为首页分类、店铺卡片与 AI 浮窗增加转场动效 & 范文丽 & 3.5 \\
+L3: T305-3 & \code{AiChat.vue} 四 Tab 集成 & 实现问答、智能筛选卡片、语音与识菜上传 UI & 范文丽 & 4.5 \\
+L3: T305-4 & 语音麦克风生命周期保护 & 关闭抽屉或授权延迟时安全释放媒体流轨道 & 范文丽 & 2.5 \\
+\midrule
+L1: US014/22 & 管理端治理视图与壳层统一 & 统一全平台 33 个页面的响应式边界 & 范文丽 & 10.0 \\
+L2: T306 & 管理端页集与跨端布局对齐 & 解决窄屏登录溢出、头部粘性对齐与切换白屏 & 范文丽 & (10.0) \\
+L3: T306-1 & \code{AdminUser/Business/Shop/Riders} & 完成用户启停、商家与骑手审核及异常处置页面 & 范文丽 & 5.5 \\
+L3: T306-2 & 统一壳层与窄屏响应式修复 & 修复 375~px 窄屏表单溢出与连切白屏问题 & 范文丽 & 4.5 \\
+\midrule
+L1: NFR-DEP & 导航 TDD 修复与云端解耦 & 消除返回死循环并解除云端本机部署绑定 & 李承文 & 8.0 \\
+L2: T307 & 架构加固与部署脚本定稿 & 确保测试环境与 Docker 演示一键可复现 & 李承文 & (8.0) \\
+L3: T307-1 & TDD 修复 AI 与页面返回循环 & 执行 \code{06780ac} RED $\rightarrow$ \code{12c3d6e} GREEN $\rightarrow$ \code{d319c5e} & 李承文 & 3.5 \\
+L3: T307-2 & 云端解耦与 \code{DEPLOYMENT.md} & 抽离环境变量、随机 JWT 生成脚本与 Nginx 代理 & 李承文 & 4.5 \\
+\midrule
+L1: QA-S3 & 全量自动化回归与交叉验收 & 验证全部 575 项测试并输出交叉测试报告 & 仲禹潼/全体 & 10.0 \\
+L2: T308 & 全链路测试与验收归档 & 形成可审计的测试、部署与差异演进证据链 & 仲禹潼/全体 & (10.0) \\
+L3: T308-1 & 后端 53 类（340 项）回归验证 & 执行全部 JUnit/MockMvc 测试确保 100\% 通过 & 仲禹潼 & 3.0 \\
+L3: T308-2 & 前端 28 文件（235 项）契约验证 & 执行 \code{node --test} 覆盖导航、计价与契约清理 & 仲禹潼 & 2.5 \\
+L3: T308-3 & 9 月 16 日跨组交叉验收 & 按对手组 SRS 核验 25 项截图与边界隔离用例 & 仲禹潼/全体 & 2.5 \\
+L3: T308-4 & WPS 台账复测清零与文档汇总 & 复核修复全部 11+ 类体验缺陷并归档实验报告 & 全体 & 2.0 \\
 \end{longtable}
 
 \subsection{任务估算与偏差分析}
 
-为克服单点拍脑袋估算的主观偏差，团队针对所有任务采用三点估算（PERT）方法：先给出乐观工时 $O$、最可能工时 $M$ 与悲观工时 $P$，再依式~(\ref{eq:pert}) 计算期望工时 $E$：
+为克服单点拍脑袋估算的主观偏差，团队针对所有任务采用三点估算（PERT）方法：先由任务主责人与 SM 共同给出乐观工时 $O$、最可能工时 $M$ 与悲观工时 $P$，再依式~(\ref{eq:pert}) 计算期望工时 $E$ 与标准差 $\sigma$：
 \begin{equation}\label{eq:pert}
   E = \frac{O + 4M + P}{6}, \qquad \sigma = \frac{P - O}{6}
 \end{equation}
-表~\ref{tab:pert-estimation} 给出了核心任务模块的 PERT 工时估算与实际消耗对比（总计划基准工时 230~h，实际消耗 238~h，整体偏差率仅 $+3.48\%$，处于敏捷可控区间）。
+表~\ref{tab:pert-estimation} 给出了核心任务模块的 PERT 工时估算与实际消耗对比（总计划基准工时 230.0~h，实际消耗 238.0~h，整体偏差率仅 $+3.48\%$，处于敏捷可控区间）。表~\ref{tab:member-workload} 与图~\ref{fig:mgmt-workload} 进一步按成员与阶段统计了实际工时分布。
 
-\begin{longtable}{L{.09\linewidth}L{.26\linewidth}C{.08\linewidth}C{.08\linewidth}C{.08\linewidth}C{.10\linewidth}C{.10\linewidth}C{.11\linewidth}}
+\begin{longtable}{L{.10\linewidth}L{.26\linewidth}C{.07\linewidth}C{.07\linewidth}C{.07\linewidth}C{.09\linewidth}C{.08\linewidth}C{.08\linewidth}C{.09\linewidth}}
 \caption{核心任务三点估算（PERT）与实际工时偏差对照表}\label{tab:pert-estimation}\\
 \toprule
-\textbf{任务} & \textbf{模块摘要} & \textbf{乐观$O$} & \textbf{最可能$M$} & \textbf{悲观$P$} & \textbf{期望$E$(h)} & \textbf{实际(h)} & \textbf{偏差} \\
+\textbf{任务} & \textbf{模块摘要} & \textbf{乐观$O$} & \textbf{可能$M$} & \textbf{悲观$P$} & \textbf{期望$E$(h)} & \textbf{标准差$\sigma$} & \textbf{实际(h)} & \textbf{偏差} \\
 \midrule
 \endfirsthead
-\multicolumn{8}{c}{{\tablename\ \thetable{} 续表}}\\
+\multicolumn{9}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{任务} & \textbf{模块摘要} & \textbf{乐观$O$} & \textbf{最可能$M$} & \textbf{悲观$P$} & \textbf{期望$E$(h)} & \textbf{实际(h)} & \textbf{偏差} \\
+\textbf{任务} & \textbf{模块摘要} & \textbf{乐观$O$} & \textbf{可能$M$} & \textbf{悲观$P$} & \textbf{期望$E$(h)} & \textbf{标准差$\sigma$} & \textbf{实际(h)} & \textbf{偏差} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-T101--102 & SRS 建模与数据库基线 & 14 & 18 & 22 & 18.0 & 19.0 & +5.6\% \\
-T103--105 & 认证、检索、购物车与下单事务 & 24 & 30 & 36 & 30.0 & 31.5 & +5.0\% \\
-T106--107 & 顾客首页、详情、地址与结算页 & 18 & 24 & 30 & 24.0 & 24.5 & +2.1\% \\
-T108 & Sprint 1 认证与下单测试用例 & 6 & 8 & 10 & 8.0 & 7.5 & -6.3\% \\
-T201--203 & 商家履约、骑手抢单与资产服务 & 24 & 30 & 36 & 30.0 & 31.0 & +3.3\% \\
-T204--205 & 商家端页面与骑手工作台 & 17 & 22 & 27 & 22.0 & 22.5 & +2.3\% \\
-T206--207 & 备注/评价接口与集中联调缺陷单 & 12 & 16 & 20 & 16.0 & 16.5 & +3.1\% \\
-T301--303 & 管理治理与多模态 AI 服务 & 22 & 28 & 34 & 28.0 & 29.0 & +3.6\% \\
-T304 & 高德地图代理与坐标距离适配 & 8 & 10 & 12 & 10.0 & 10.5 & +5.0\% \\
-T305--306 & AI 前端、主题动效与管理看板 & 19 & 24 & 29 & 24.0 & 25.0 & +4.2\% \\
-T307--308 & TDD 导航修复与全链路交叉验收 & 15 & 20 & 25 & 20.0 & 21.0 & +5.0\% \\
+T101--102 & SRS 建模与数据库基线 & 14 & 18 & 22 & 18.0 & 1.33 & 19.0 & +5.6\% \\
+T103--105 & 认证、检索、购物车与下单事务 & 24 & 30 & 36 & 30.0 & 2.00 & 31.5 & +5.0\% \\
+T106--107 & 顾客首页、详情、地址与结算页 & 18 & 24 & 30 & 24.0 & 2.00 & 24.5 & +2.1\% \\
+T108 & Sprint 1 认证与下单测试用例 & 6 & 8 & 10 & 8.0 & 0.67 & 7.5 & -6.3\% \\
+T201--203 & 商家履约、骑手抢单与资产服务 & 24 & 30 & 36 & 30.0 & 2.00 & 31.0 & +3.3\% \\
+T204--205 & 商家端页面与骑手工作台 & 17 & 22 & 27 & 22.0 & 1.67 & 22.5 & +2.3\% \\
+T206--207 & 备注/评价接口与集中联调缺陷单 & 12 & 16 & 20 & 16.0 & 1.33 & 16.5 & +3.1\% \\
+T301--303 & 管理治理与多模态 AI 服务 & 22 & 28 & 34 & 28.0 & 2.00 & 29.0 & +3.6\% \\
+T304 & 高德地图代理与坐标距离适配 & 8 & 10 & 12 & 10.0 & 0.67 & 10.5 & +5.0\% \\
+T305--306 & AI 前端、主题动效与管理看板 & 19 & 24 & 29 & 24.0 & 1.67 & 25.0 & +4.2\% \\
+T307--308 & TDD 导航修复与全链路交叉验收 & 15 & 20 & 25 & 20.0 & 1.67 & 21.0 & +5.0\% \\
 \midrule
-\textbf{合计} & \textbf{三大 Sprint 全周期汇总} & \textbf{179} & \textbf{230} & \textbf{281} & \textbf{230.0} & \textbf{238.0} & \textbf{+3.48\%} \\
+\textbf{合计} & \textbf{三大 Sprint 全周期汇总} & \textbf{179} & \textbf{230} & \textbf{281} & \textbf{230.0} & \textbf{---} & \textbf{238.0} & \textbf{+3.48\%} \\
 \end{longtable}
 
-从成员工时分布看：李承文承担后端核心与工程协同共约 68~h；范文丽承担四端界面、主题与看板共约 63~h；赵紫怡承担 SRS 建模、数据库设计与 AI 后端服务共约 56~h；仲禹潼承担测试体系、WPS 缺陷闭环、交叉验收与高德地图模块共约 51~h。工时分配均衡且与个人技能高度匹配。
-
-\subsection{项目甘特图}
-
-图~\ref{fig:mgmt-gantt} 以项目实际推进周期为时间轴，绘制了三大 Sprint 内部主要并行任务条与关键里程碑节点。
+\begin{longtable}{L{.14\linewidth}C{.15\linewidth}C{.15\linewidth}C{.15\linewidth}C{.15\linewidth}L{.17\linewidth}}
+\caption{团队成员各迭代实际投入工时统计表（单位：小时）}\label{tab:member-workload}\\
+\toprule
+\textbf{成员姓名} & \textbf{Sprint 1} & \textbf{Sprint 2} & \textbf{Sprint 3} & \textbf{全周期合计} & \textbf{核心工时重心} \\
+\midrule
+李承文 & 23.0 & 22.0 & 23.0 & 68.0（28.6\%） & 后端核心、资产事务与部署 \\
+范文丽 & 21.0 & 19.0 & 23.0 & 63.0（26.5\%） & 四端界面、主题与数据看板 \\
+赵紫怡 & 21.5 & 15.0 & 19.5 & 56.0（23.5\%） & SRS 建模、数据库与 AI 后端 \\
+仲禹潼 & 17.0 & 14.0 & 20.0 & 51.0（21.4\%） & 高德地图、自动化与交叉验收 \\
+\midrule
+\textbf{总计} & \textbf{82.5} & \textbf{70.0} & \textbf{85.5} & \textbf{238.0（100\%）} & \textbf{人均 59.5 h，负载均衡} \\
+\end{longtable}
 
 \begin{figure}[H]
   \centering
-  \begin{tikzpicture}[x=0.58cm,y=0.52cm]
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[x=1.6cm,y=0.075cm]
+    \draw[->] (0,0) -- (5.2,0);
+    \draw[->] (0,0) -- (0,78) node[above,font=\scriptsize] {工时 (h)};
+    \foreach \y in {0,20,40,60}
+      {\draw[gray!25] (0,\y) -- (4.8,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
+    % 李承文
+    \fill[tjublue] (0.6,0) rectangle (1.1,68); \node[above,font=\scriptsize] at (0.85,68) {68.0 h};
+    \node[below,font=\scriptsize] at (0.85,0) {李承文};
+    % 范文丽
+    \fill[accentgreen!80!black] (1.6,0) rectangle (2.1,63); \node[above,font=\scriptsize] at (1.85,63) {63.0 h};
+    \node[below,font=\scriptsize] at (1.85,0) {范文丽};
+    % 赵紫怡
+    \fill[accentorange] (2.6,0) rectangle (3.1,56); \node[above,font=\scriptsize] at (2.85,56) {56.0 h};
+    \node[below,font=\scriptsize] at (2.85,0) {赵紫怡};
+    % 仲禹潼
+    \fill[tjublue!55] (3.6,0) rectangle (4.1,51); \node[above,font=\scriptsize] at (3.85,51) {51.0 h};
+    \node[below,font=\scriptsize] at (3.85,0) {仲禹潼};
+  \end{tikzpicture}
+}
+  \caption{项目全周期四位成员实际工时投入对比图}\label{fig:mgmt-workload}
+\end{figure}
+
+偏差原因归因分析：实际工时较基线多出 8.0~h，主要来自三处主动增设的质量加固项：一是 Sprint 1 为解决菜品改价导致的历史订单失真，新增 \code{003} 订单菜名快照迁移与 TDD 测试（+2.0~h）；二是 Sprint 2 修复新人券并发重复领取与登录页全局样式隔离（+2.0~h）；三是 Sprint 3 为覆盖 AI 返回死循环与 375~px 窄屏溢出引入了自动化回归测试（+4.0~h）。
+
+\subsection{项目甘特图}
+
+图~\ref{fig:mgmt-gantt} 以项目实际推进周期为时间轴，绘制了三大 Sprint 内部主要并行任务条与关键里程碑节点，表~\ref{tab:milestones} 给出了四个核心里程碑的达成验收记录。
+
+\begin{figure}[H]
+  \centering
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[x=0.60cm,y=0.62cm]
     % 背景网格与日期刻度 (Day 1 = 9/1 ... Day 19 = 9/19)
     \foreach \d/\lbl in {1/9.1,3/9.3,5/9.5,7/9.7,9/9.9,11/9.11,13/9.13,15/9.15,17/9.17,19/9.19}
       {\draw[gray!25] (\d,0.5) -- (\d,12.5); \node[above,font=\scriptsize] at (\d,12.5) {\lbl};}
@@ -119,9 +321,9 @@ T307--308 & TDD 导航修复与全链路交叉验收 & 15 & 20 & 25 & 20.0 & 21.
     \fill[blue!4] (0.5,0.5) rectangle (7.5,12.5);
     \fill[orange!4] (7.5,0.5) rectangle (12.5,12.5);
     \fill[green!4] (12.5,0.5) rectangle (19.5,12.5);
-    \node[font=\scriptsize\bfseries,tjublue] at (4.0,14.0) {Sprint 1};
-    \node[font=\scriptsize\bfseries,accentorange] at (10.0,14.0) {Sprint 2};
-    \node[font=\scriptsize\bfseries,accentgreen] at (16.0,14.0) {Sprint 3};
+    \node[font=\scriptsize\bfseries,tjublue] at (4.0,14.8) {Sprint 1（核心闭环）};
+    \node[font=\scriptsize\bfseries,accentorange] at (10.0,14.8) {Sprint 2（履约与资产）};
+    \node[font=\scriptsize\bfseries,accentgreen] at (16.0,14.8) {Sprint 3（智能治理与验收）};
 
     % 任务条
     \node[left,font=\scriptsize] at (0.3,11.8) {SRS 建模与表结构};
@@ -139,85 +341,158 @@ T307--308 & TDD 导航修复与全链路交叉验收 & 15 & 20 & 25 & 20.0 & 21.
     \fill[accentorange] (8,6.55) rectangle (11.5,7.05);
     \node[left,font=\scriptsize] at (0.3,5.8) {钱包积分优惠券体系};
     \fill[accentorange!75] (8.5,5.55) rectangle (12,6.05);
-    \node[left,font=\scriptsize] at (0.3,4.8) {首次联调与缺陷登记};
-    \fill[accentorange!55] (11,4.55) rectangle (12.5,5.05);
+    \node[left,font=\scriptsize] at (0.3,4.8) {集中联调与 WPS 缺陷单};
+    \fill[accentorange!55] (10.5,4.55) rectangle (12.5,5.05);
 
-    \node[left,font=\scriptsize] at (0.3,3.8) {管理端治理与数据看板};
-    \fill[accentgreen] (12.5,3.55) rectangle (15.5,4.05);
-    \node[left,font=\scriptsize] at (0.3,2.8) {AI 多模态点餐与降级};
-    \fill[accentgreen] (12.5,2.55) rectangle (16,3.05);
-    \node[left,font=\scriptsize] at (0.3,1.8) {高德选址与 TDD 修复};
-    \fill[accentgreen!75] (14,1.55) rectangle (16.5,2.05);
-    \node[left,font=\scriptsize] at (0.3,0.8) {全链路测试与交叉验收};
-    \fill[accentred!80] (15.5,0.55) rectangle (19,1.05);
+    \node[left,font=\scriptsize] at (0.3,3.8) {管理端审核与统计看板};
+    \fill[accentgreen] (12.5,3.55) rectangle (16.5,4.05);
+    \node[left,font=\scriptsize] at (0.3,2.8) {多模态 AI 与高德地图};
+    \fill[accentgreen!80] (13,2.55) rectangle (16.5,3.05);
+    \node[left,font=\scriptsize] at (0.3,1.8) {TDD 修复与四套主题动效};
+    \fill[accentgreen!65] (14.5,1.55) rectangle (17.5,2.05);
+    \node[left,font=\scriptsize] at (0.3,0.8) {575 项回归与交叉验收};
+    \fill[accentred!75] (16,0.55) rectangle (19.5,1.05);
 
-    \draw[thick] (0.5,0.5) -- (19.5,0.5);
+    % 里程碑菱形
+    \draw[fill=tjublue] (3.5,13.55) -- (3.72,13.80) -- (3.5,14.05) -- (3.28,13.80) -- cycle;
+    \node[right,font=\scriptsize] at (3.75,13.80) {M1: SRS 2.0};
+    \draw[fill=accentorange] (7.5,13.55) -- (7.72,13.80) -- (7.5,14.05) -- (7.28,13.80) -- cycle;
+    \node[right,font=\scriptsize] at (7.75,13.80) {M2: MVP};
+    \draw[fill=accentgreen] (12.5,13.55) -- (12.72,13.80) -- (12.5,14.05) -- (12.28,13.80) -- cycle;
+    \node[right,font=\scriptsize] at (12.75,13.80) {M3: 联调封板};
+    \draw[fill=accentred] (19.0,13.55) -- (19.22,13.80) -- (19.0,14.05) -- (18.78,13.80) -- cycle;
+    \node[left,font=\scriptsize] at (18.75,13.80) {M4: 交付};
   \end{tikzpicture}
-  \caption{项目三大迭代周期任务甘特图}\label{fig:mgmt-gantt}
+}
+  \caption{轻量级外卖服务平台项目实施甘特图与里程碑节点}\label{fig:mgmt-gantt}
 \end{figure}
+
+\begin{longtable}{C{.10\linewidth}L{.22\linewidth}C{.13\linewidth}L{.46\linewidth}}
+\caption{项目核心里程碑（M1--M4）检查与达成结果表}\label{tab:milestones}\\
+\toprule
+\textbf{里程碑} & \textbf{里程碑名称} & \textbf{计划/实际日} & \textbf{标志性准出交付物} \\
+\midrule
+M1 & SRS 2.0 需求冻结 & 9.6 / 9.6 & 17 张 UML/draw.io 建模图、23 张表 DDL 与 22 项用户故事基线。 \\
+M2 & MVP 核心链路贯通 & 9.7 / 9.7 & 游客/顾客浏览、购物车、防重提交、取消回滚与登录鉴权跑通。 \\
+M3 & 四端全链路联调封板 & 9.15 / 9.15 & 商家/骑手/管理端协同、资产积分体系、AI 多模态与统一壳层合入 \code{main}。 \\
+M4 & 验收交付与文档归档 & 9.19 / 9.19 & 575 项全量回归通过、25 项交叉验收证据归档、Docker 一键演示就绪。 \\
+\end{longtable}
 
 \subsection{项目整体燃尽图}
 
-图~\ref{fig:mgmt-overall-burndown} 汇总了全部 230~h 计划工作量在 9 月 1 日至 9 月 19 日期间的整体燃尽趋势。可以看出，整体实际曲线在前中期（Sprint~1 末至 Sprint~2 联调）略高于理想基线，反映出历史订单快照与骑手并发抢单补丁带来的额外工时；进入 Sprint~3 后随着自动化测试与并行分支合并提速，剩余工时快速收敛并于 9 月 19 日前如期清零。
+项目全部 22 项用户故事共计 118 个故事点（P0 占 78 点、P1 占 31 点、P2 占 9 点）。图~\ref{fig:mgmt-overall-burndown} 描绘了自 9 月 1 日立项至 9 月 19 日总交付期的故事点整体燃尽情况。前期因 SRS 2.0 建模返修及订单菜名快照规则补充略微滞后于理想基准线；随着后端认证、商品与履约主线在 Sprint 2 集中交付，团队在 9 月 15 日封板节点迅速追平并如期完成全部 118 故事点清零。表~\ref{tab:sprint-velocity} 总结了三大 Sprint 的速率（Velocity）指标。
 
 \begin{figure}[H]
   \centering
-  \begin{tikzpicture}[x=0.62cm,y=0.022cm]
-    \draw[->,thick] (0,0) -- (19.5,0) node[right,font=\scriptsize]{日期};
-    \draw[->,thick] (0,0) -- (0,255) node[above,font=\scriptsize]{累计剩余工时(h)};
-    \foreach \x/\d in {0/9.1,3/9.4,6/9.7,9/9.10,12/9.13,15/9.16,18/9.19}
-      \node[below,font=\scriptsize] at (\x,0) {\d};
-    \foreach \y in {0,50,100,150,200,230}
-      {\draw[gray!25] (0,\y) -- (18.5,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
-    \draw[dashed,thick,mutedgray] (0,230) -- (18,0);
-    \draw[thick,tjublue] plot coordinates {
-      (0,230) (2,212) (4,188) (6,162) (7,150)
-      (9,126) (11,98) (12,82)
-      (14,58) (15,36) (16,20) (17,8) (18,0)
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[x=0.62cm,y=0.055cm]
+    \draw[->] (0,0) -- (20.2,0) node[right,font=\scriptsize] {研发日 (9.1--9.19)};
+    \draw[->] (0,0) -- (0,130) node[above,font=\scriptsize] {剩余故事点};
+    \foreach \d/\lbl in {1/9.1,3/9.3,5/9.5,7/9.7,9/9.9,11/9.11,13/9.13,15/9.15,17/9.17,19/9.19}
+      {\draw[gray!25] (\d,0) -- (\d,120); \node[below,font=\scriptsize] at (\d,0) {\lbl};}
+    \foreach \y in {0,30,60,90,118}
+      {\draw[gray!25] (0,\y) -- (19.5,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
+    % 理想燃尽线
+    \draw[dashed,mutedgray,thick] (1,118) -- (19,0);
+    % 实际剩余故事点折线
+    \draw[thick,tjublue,mark=*] plot coordinates {
+      (1,118) (2,115) (3,108) (4,104) (5,96) (6,88) (7,76)
+      (8,68) (9,60) (10,54) (11,45) (12,36) (13,30) (14,22)
+      (15,12) (16,6) (17,3) (18,1) (19,0)
     };
-    \node[font=\scriptsize,tjublue] at (14.5,205) {— 实际累计剩余工时};
-    \node[font=\scriptsize,mutedgray] at (14.5,182) {- - 理想燃尽基线};
+    \node[font=\scriptsize,tjublue] at (13.5,95) {— 实际剩余故事点};
+    \node[font=\scriptsize,mutedgray] at (13.5,108) {- - 理想燃尽基准线};
   \end{tikzpicture}
-  \caption{项目整体工时燃尽图（9 月 1 日--9 月 19 日，基线 230~h）}\label{fig:mgmt-overall-burndown}
+}
+  \caption{项目全周期整体故事点燃尽图（总计 118 故事点，9 月 1 日--9 月 19 日）}\label{fig:mgmt-overall-burndown}
 \end{figure}
+
+\begin{longtable}{L{.18\linewidth}C{.16\linewidth}C{.16\linewidth}C{.16\linewidth}L{.25\linewidth}}
+\caption{三大 Sprint 敏捷速率（Velocity）与完成率统计表}\label{tab:sprint-velocity}\\
+\toprule
+\textbf{迭代周期} & \textbf{计划故事点} & \textbf{实际交付点数} & \textbf{迭代完成率} & \textbf{主要交付增量} \\
+\midrule
+Sprint 1（7 天） & 42 点 & 42 点 & 100\% & SRS 2.0、23 张表基线、认证与下单 MVP \\
+Sprint 2（5 天） & 40 点 & 40 点 & 100\% & 商家履约、骑手抢单、资产流水与评价 \\
+Sprint 3（7 天） & 36 点 & 36 点 & 100\% & 管理治理、多模态 AI、高德适配与回归 \\
+\midrule
+\textbf{合计（19 天）} & \textbf{118 点} & \textbf{118 点} & \textbf{100\%} & \textbf{全部 P0/P1/P2 目标交付完毕} \\
+\end{longtable}
 
 \section{风险评估与规避}
 
 \subsection{风险识别与评估清单}
 
-项目组结合技术复杂度与团队协作特点，识别了 10 项核心工程风险（R001--R010），从可能性、影响程度和综合等级三个维度进行评估并制定预防规避措施，见表~\ref{tab:risk-register}。
+结合外卖多端协同、并发交易与第三方 AI/地图集成特点，团队在项目策划与迭代监控阶段持续维护风险台账，依据“发生概率（高/中/低）$\times$ 影响程度（高/中/低）”评定风险等级（矩阵分布见图~\ref{fig:risk-heatmap}），并针对 12 项关键风险制定规避与缓解预案（见表~\ref{tab:risk-register}）。
 
-\begin{longtable}{L{.07\linewidth}L{.10\linewidth}L{.26\linewidth}C{.07\linewidth}C{.07\linewidth}C{.07\linewidth}L{.27\linewidth}}
-\caption{项目风险评估与规避措施清单}\label{tab:risk-register}\\
+\begin{figure}[H]
+  \centering
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[scale=1.0]
+    % 3x3 风险热力网格
+    \fill[yellow!20] (0,0) rectangle (2.6,1.2);
+    \fill[orange!20] (2.6,0) rectangle (5.2,1.2);
+    \fill[red!18]   (5.2,0) rectangle (7.8,1.2);
+    \fill[green!12] (0,1.2) rectangle (2.6,2.4);
+    \fill[yellow!22] (2.6,1.2) rectangle (5.2,2.4);
+    \fill[orange!25] (5.2,1.2) rectangle (7.8,2.4);
+    \fill[red!18]   (2.6,2.4) rectangle (5.2,3.6);
+    \fill[red!30]   (5.2,2.4) rectangle (7.8,3.6);
+    \fill[yellow!20] (0,2.4) rectangle (2.6,3.6);
+
+    \draw[gray!60] (0,0) grid[xstep=2.6,ystep=1.2] (7.8,3.6);
+
+    % 轴标签
+    \node[left,font=\scriptsize\bfseries] at (-0.1,3.0) {概率：高};
+    \node[left,font=\scriptsize\bfseries] at (-0.1,1.8) {概率：中};
+    \node[left,font=\scriptsize\bfseries] at (-0.1,0.6) {概率：低};
+    \node[below,font=\scriptsize\bfseries] at (1.3,-0.1) {影响：低};
+    \node[below,font=\scriptsize\bfseries] at (3.9,-0.1) {影响：中};
+    \node[below,font=\scriptsize\bfseries] at (6.5,-0.1) {影响：高};
+
+    % 风险编号分布
+    \node[align=center,font=\scriptsize\bfseries,accentred] at (6.5,3.0) {极高风险\\R001};
+    \node[align=center,font=\scriptsize\bfseries,accentorange] at (3.9,3.0) {高风险\\R005, R009};
+    \node[align=center,font=\scriptsize\bfseries,accentred] at (6.5,1.8) {高风险\\R002, R003, R004\\R007, R010, R011};
+    \node[align=center,font=\scriptsize,tjublue] at (3.9,1.8) {中风险\\R006, R008, R012};
+  \end{tikzpicture}
+}
+  \caption{项目 12 项关键风险概率--影响评估矩阵图}\label{fig:risk-heatmap}
+\end{figure}
+
+\begin{longtable}{L{.07\linewidth}L{.10\linewidth}L{.24\linewidth}C{.06\linewidth}C{.06\linewidth}C{.06\linewidth}L{.31\linewidth}}
+\caption{项目风险评估与规避措施清单（R001--R012）}\label{tab:risk-register}\\
 \toprule
-\textbf{编号} & \textbf{类别} & \textbf{风险描述} & \textbf{概率} & \textbf{影响} & \textbf{等级} & \textbf{规避与缓解策略} \\
+\textbf{编号} & \textbf{类别} & \textbf{风险描述} & \textbf{概率} & \textbf{影响} & \textbf{等级} & \textbf{触发阈值与规避缓解策略} \\
 \midrule
 \endfirsthead
 \multicolumn{7}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{编号} & \textbf{类别} & \textbf{风险描述} & \textbf{概率} & \textbf{影响} & \textbf{等级} & \textbf{规避与缓解策略} \\
+\textbf{编号} & \textbf{类别} & \textbf{风险描述} & \textbf{概率} & \textbf{影响} & \textbf{等级} & \textbf{触发阈值与规避缓解策略} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-R001 & 集成风险 & 前后端接口字段或状态枚举理解不一致导致联调返工 & 高 & 高 & 高 & 制定共享接口约定与 0--9 状态映射表，PR 合并前核对前端请求与后端 DTO。 \\
-R002 & 数据风险 & 商家改价或下架商品导致历史订单金额与名称失真 & 中 & 高 & 高 & 订单明细强制冗余写入 \code{food_name_snapshot} 与下单单价，历史查询不回查商品表。 \\
-R003 & 并发风险 & 高并发抢单或重复下单引发骑手撞单、库存超卖 & 中 & 高 & 高 & 数据库使用条件扣减与乐观锁 \code{version}；提交接口引入 \code{idempotencyKey} 防重。 \\
-R004 & 安全风险 & 前端伪造 \code{userId}/\code{merchantId} 产生越权读写 & 中 & 高 & 高 & 服务端统一从 JWT 认证上下文提取身份，补充跨用户与跨商家隔离自动化测试。 \\
-R005 & 外部依赖 & DeepSeek/DashScope 模型超时、密钥缺失或费用失控 & 高 & 中 & 高 & 外部调用移出数据库事务，内置意图分流、重试上限、熔断器与本地帮助降级。 \\
-R006 & 外部依赖 & 高德地图 Key 未配置或定位失败阻塞下单选址 & 中 & 中 & 中 & 增加离线区域选择回退、保留文本地址展示，“距离暂无”降级不影响下单。 \\
-R007 & 业务规则 & 外送与到店自取计价混淆、优惠券重复核销 & 中 & 高 & 高 & 在 \code{OrderPricingService} 拆分履约路径，自取免地址与配送费；券核销加事务锁。 \\
-R008 & 前端体验 & 多分支合并引发页面返回死循环或窄屏表单溢出 & 中 & 中 & 中 & 集中路由返回规则，采用 TDD 编写回归测试，覆盖 375~px 窄屏检查。 \\
-R009 & 协作风险 & 多人同时修改视图与接口导致 Git 合并冲突 & 高 & 中 & 中 & 实行特性分支隔离与高频小步 PR 合并，重要整合由 SM 统筹冲突解决。 \\
+R001 & 集成风险 & 前后端接口字段或状态枚举理解不一致导致联调返工 & 高 & 高 & 高 & 制定共享接口约定与 0--9 状态映射表，PR 合并前核对前端请求与后端 DTO 并运行契约测试。 \\
+R002 & 数据风险 & 商家改价或下架商品导致历史订单金额与名称失真 & 中 & 高 & 高 & 订单明细强制冗余写入 \code{food_name_snapshot} 与下单单价，历史查询禁止回查可变商品表。 \\
+R003 & 并发风险 & 高并发抢单或重复下单引发骑手撞单、库存超卖 & 中 & 高 & 高 & 数据库使用条件扣减与乐观锁 \code{version}；提交接口引入 \code{idempotencyKey} 联合唯一键防重。 \\
+R004 & 安全风险 & 前端伪造 \code{userId}/\code{merchantId} 产生越权读写 & 中 & 高 & 高 & 服务端统一从 JWT 认证上下文提取身份，标记 \code{READ_ONLY} 字段，补充跨用户与跨商家隔离自动化测试。 \\
+R005 & 外部依赖 & DeepSeek/DashScope 模型超时、密钥缺失或费用失控 & 高 & 中 & 高 & 外部调用移出数据库事务，内置意图分流、重试上限、\code{AiCircuitBreaker} 熔断器与本地帮助降级。 \\
+R006 & 外部依赖 & 高德地图 Key 未配置或定位失败阻塞下单选址 & 中 & 中 & 中 & 增加离线区域选择回退、保留文本地址展示，“距离暂无”降级提示不阻断主流程下单。 \\
+R007 & 业务规则 & 外送与到店自取计价混淆、优惠券重复核销 & 中 & 高 & 高 & 在 \code{OrderPricingService} 拆分履约路径，自取免地址与配送费；券核销加事务状态锁。 \\
+R008 & 前端体验 & 多分支合并引发页面返回死循环或窄屏表单溢出 & 中 & 中 & 中 & 集中路由返回规则，采用 TDD 编写导航回归测试，覆盖 375~px 窄屏与减弱动效检查。 \\
+R009 & 协作风险 & 多人同时修改视图与接口导致 Git 合并冲突 & 高 & 中 & 高 & 实行特性分支隔离与高频小步 PR 合并，重要整合由 SM 统筹冲突解决与构建检查。 \\
 R010 & 进度风险 & 需求范围膨胀（如复杂支付清算）挤占核心验收时间 & 中 & 高 & 高 & 严格执行 MoSCoW 分级，将真实支付清算与实时 GPS 轨迹划出本期基线。 \\
+R011 & 权限风险 & 多角色账号（顾客/商家/骑手/管理员）串端或路由越权访问 & 中 & 高 & 高 & 后端 \code{LoginRolePolicy} 与前端 \code{authGuard.js} 双重校验登录端权限，切端清理私有缓存。 \\
+R012 & 运维风险 & 本地与云端容器数据库配置、上传目录或字体环境不一致 & 中 & 中 & 中 & 抽离 \code{.env} 环境变量与 Docker 持久化卷挂载，提供 \code{ensure-demo-env.sh} 自动初始化脚本。 \\
 \end{longtable}
 
 \subsection{风险跟踪与闭环}
 
-截至项目交付与报告汇编阶段，上述 10 项风险均已完成工程处置或纳入持续监控，形成可验证的风险闭环记录（见表~\ref{tab:risk-closure}）。
+截至项目交付与报告汇编阶段，上述 12 项风险均已完成工程处置或纳入持续监控，形成可验证的风险闭环记录（见表~\ref{tab:risk-closure}）。
 
 \begin{longtable}{L{.08\linewidth}L{.10\linewidth}L{.13\linewidth}L{.34\linewidth}L{.26\linewidth}}
-\caption{项目风险跟踪与闭环处置结果表}\label{tab:risk-closure}\\
+\caption{项目风险跟踪与闭环处置结果表（R001--R012）}\label{tab:risk-closure}\\
 \toprule
 \textbf{编号} & \textbf{状态} & \textbf{处置节点} & \textbf{实际处理与落地依据} & \textbf{后续监控机制} \\
 \midrule
@@ -232,11 +507,13 @@ R010 & 进度风险 & 需求范围膨胀（如复杂支付清算）挤占核心�
 R001 & 已解决 & 9 月 15 日 & 通过 PR 审查与 \code{api-contract-cleanup.test.mjs}、\code{ApiContractCleanupTest} 固化契约。 & 新增接口同步更新测试断言。 \\
 R002 & 已解决 & 9 月 5 日 & 落地 \code{003_order_name_snapshot.sql} 与 \code{OrderNameSnapshotJourneyTest} 验证通过。 & 订单查询禁止关联可变菜品名。 \\
 R003 & 已解决 & 9 月 8 日 & 落地库存条件更新、\code{delivery_task.version} 及订单幂等唯一索引。 & 压测关注行锁冲突率。 \\
-R004 & 已解决 & 9 月 15 日 & 通过 \code{RequestIdentityBoundaryTest}、\code{SecurityHardeningTest} 及跨用户截图验证。 & 每次新增接口必查鉴权上下文。 \\
-R005 & 已缓解 & 9 月 15 日 & 实现 \code{AiCircuitBreaker} 与 \code{DeepSeekDeadlineTest}；本地帮助兜底可用。 & 后续补充调用预算与限流监控。 \\
-R006 & 已解决 & 9 月 16 日 & 提交 \code{74e8dbc} 修复离线选址，\code{17f80ab} 完善坐标计算与“距离暂无”提示。 & 未配 Key 时默认走离线降级路径。 \\
+R004 & 已解决 & 9 月 15 日 & 通过 \code{RequestIdentityBoundaryTest}、\code{SecurityHardeningTest} 及跨用户测试验证。 & 每次新增接口必查鉴权上下文。 \\
+R005 & 已缓解 & 9 月 15 日 & 实现 \code{AiCircuitBreaker} 与 \code{DeepSeekDeadlineTest}；本地帮助与筛选兜底可用。 & 后续补充调用预算与限流监控。 \\
+R006 & 已解决 & 9 月 16 日 & 提交 \code{74e8dbc} 修复离线选址，\code{17f80ab} 完善坐标计算与未配置降级提示。 & 未配 Key 时默认走离线降级路径。 \\
 R007 & 已解决 & 9 月 15 日 & 提交 \code{076b45a} 修复自取判断，\code{OrderPricingServiceTest} 覆盖算价分支。 & 资产流水保持只增不改原则。 \\
 R008 & 已解决 & 9 月 15 日 & 提交 \code{06780ac}--\code{d319c5e} 与 \code{061e7f3} 修复导航循环、白屏与窄屏溢出。 & 构建前必跑 \code{npm test} 回归。 \\
 R009 & 已解决 & 9 月 16 日 & 累计完成 34 个 PR 审查合并，\code{e06d806} 平稳整合 UI 与安全基线。 & 保持主干分支受保护门禁。 \\
 R010 & 已关闭 & 9 月 19 日 & 明确模拟支付与范围边界并写入 SRS 与差异清单，保障核心功能如期验收。 & 后续演进单独立项排期。 \\
+R011 & 已解决 & 9 月 15 日 & 通过 \code{LoginRolePolicyTest} 与前端角色守卫测试确认串端立即拦截并重定向。 & 路由新增页面强制声明 \code{meta.role}。 \\
+R012 & 已解决 & 9 月 15 日 & 提交 \code{5418af1} 解除云端本机路径依赖，编写 \code{DEPLOYMENT.md} 验证可复现部署。 & 容器启动后必查健康检查端点。 \\
 \end{longtable}

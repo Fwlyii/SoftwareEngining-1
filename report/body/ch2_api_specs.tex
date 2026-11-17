@@ -1,0 +1,3289 @@
+% Auto-generated grounded REST API specifications for all 24 controllers
+\subsection{核心接口详情与测试契约（按业务模块分组）}
+本节依据后端 \code{elm_bk/src/main/java/elm_bk/controller/} 目录下的全部 24 个控制器（共 135 个映射端点）逐模块整理接口契约，涵盖请求路径、权限边界、输入参数、响应模型以及基于 \code{GlobalExceptionHandler} 状态语义的正/异常测试用例。
+
+\subsubsection{认证、注册与个人资料接口}
+\paragraph{控制器：\code{AuthenticationRestController.java}} 基础路径为 \code{/api}，共包含 1 个映射端点。
+
+\noindent\textbf{(1) POST \code{/api/auth}}（方法：\code{authorize}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestBody AuthenticationDTO request；请求体 \code{AuthenticationDTO} 核心字段包括：username(String), password(String), role(String), rememberMe(Boolean)
+  \item \textbf{响应结构：} ResponseEntity<JWTToken>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/auth} 用例验证表}\label{tab:api-1}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{JWTToken} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+\paragraph{控制器：\code{UserRestController.java}} 基础路径为 \code{/api}，共包含 5 个映射端点。
+
+\noindent\textbf{(2) POST \code{/api/user/avatar}}（方法：\code{updateAvatar}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestPart("avatar") MultipartFile avatar
+  \item \textbf{响应结构：} PersonVO
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/user/avatar} 用例验证表}\label{tab:api-2}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{PersonVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(3) PUT \code{/api/user}}（方法：\code{updateProfile}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestBody ProfileUpdateDTO request；请求体 \code{ProfileUpdateDTO} 核心字段包括：phone(String), email(String), firstName(String), lastName(String), gender(String)
+  \item \textbf{响应结构：} PersonVO
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/user} 用例验证表}\label{tab:api-3}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{PersonVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(4) GET \code{/api/user}}（方法：\code{currentUser}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} PersonVO
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/user} 用例验证表}\label{tab:api-4}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{PersonVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(5) POST \code{/api/register}}（方法：\code{register}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestBody PersonCreateDTO request；请求体 \code{PersonCreateDTO} 核心字段包括：username(String), password(String), phone(String), email(String)
+  \item \textbf{响应结构：} HttpResult<PersonVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/register} 用例验证表}\label{tab:api-5}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{PersonVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(6) POST \code{/api/register}}（方法：\code{registerWithAvatar}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestPart("user") PersonCreateDTO request, @RequestPart(value = "avatar", required = false) MultipartFile avatar；请求体 \code{PersonCreateDTO} 核心字段包括：username(String), password(String), phone(String), email(String)
+  \item \textbf{响应结构：} HttpResult<PersonVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/register} 用例验证表}\label{tab:api-6}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{PersonVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+\paragraph{控制器：\code{PermissionApplicationController.java}} 基础路径为 \code{/api/permission}，共包含 6 个映射端点。
+
+\noindent\textbf{(7) POST \code{/api/permission/apply-merchant}}（方法：\code{applyMerchant}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('BUSINESS\_APPLICANT')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<PermissionApplication>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/permission/apply-merchant} 用例验证表}\label{tab:api-7}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{PermissionApplication} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(8) POST \code{/api/permission/audit}}（方法：\code{auditApplication}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @Valid @RequestBody AuditPermissionDTO auditDTO；请求体 \code{AuditPermissionDTO} 核心字段包括：id(Long), auditResult(Integer)
+  \item \textbf{响应结构：} HttpResult<PermissionApplication>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/permission/audit} 用例验证表}\label{tab:api-8}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{PermissionApplication} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(9) POST \code{/api/permission/apply-shop}}（方法：\code{applyShop}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('BUSINESS')
+  \item \textbf{请求参数：} @RequestBody BusinessPermissionDTO businessPermissionDTO；请求体 \code{BusinessPermissionDTO} 核心字段包括：id(Long), businessName(String), businessAddress(String), businessExplain(String), businessImg(String), deliveryPrice(BigDecimal), startPrice(BigDecimal), orderTypeId(Integer)
+  \item \textbf{响应结构：} HttpResult<BusinessPermissionVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/permission/apply-shop} 用例验证表}\label{tab:api-9}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessPermissionVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(10) POST \code{/api/permission/audit-shop}}（方法：\code{auditShop}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @RequestBody BusinessPermissionDTO businessPermissionDTO；请求体 \code{BusinessPermissionDTO} 核心字段包括：id(Long), businessName(String), businessAddress(String), businessExplain(String), businessImg(String), deliveryPrice(BigDecimal), startPrice(BigDecimal), orderTypeId(Integer)
+  \item \textbf{响应结构：} HttpResult<BusinessPermissionVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/permission/audit-shop} 用例验证表}\label{tab:api-10}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessPermissionVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(11) GET \code{/api/permission/merchant-applications}}（方法：\code{getMerchantApplications}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<MerchantApplicationsVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/permission/merchant-applications} 用例验证表}\label{tab:api-11}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{MerchantApplicationsVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(12) GET \code{/api/permission/shop-applications}}（方法：\code{getShopApplications}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<BusinessPermissionVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/permission/shop-applications} 用例验证表}\label{tab:api-12}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessPermissionVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\subsubsection{店铺浏览、管理与互动接口}
+\paragraph{控制器：\code{BusinessController.java}} 基础路径为 \code{/api/businesses}，共包含 17 个映射端点。
+
+\noindent\textbf{(13) GET \code{/api/businesses/{id}}}（方法：\code{getBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable("id") Long id
+  \item \textbf{响应结构：} HttpResult<BusinessVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/\{id\}} 用例验证表}\label{tab:api-13}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(14) GET \code{/api/businesses/{id}/summary}}（方法：\code{getBusinessSummary}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable("id") Long id
+  \item \textbf{响应结构：} HttpResult<BusinessSearchVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/\{id\}/summary} 用例验证表}\label{tab:api-14}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessSearchVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(15) PUT \code{/api/businesses/{id}}}（方法：\code{updateBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @PathVariable("id") Long id,@RequestBody BusinessUpdateDTO updateDto；请求体 \code{BusinessUpdateDTO} 核心字段包括：id(Long), creator(Long), updater(Long), deleted(Boolean), businessName(String), businessOwner(BusinessOwnerDTO), businessAddress(String), businessExplain(String)
+  \item \textbf{响应结构：} HttpResult<BusinessVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/businesses/\{id\}} 用例验证表}\label{tab:api-15}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(16) DELETE \code{/api/businesses/{id}}}（方法：\code{deleteBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @PathVariable("id") Long id
+  \item \textbf{响应结构：} HttpResult<BusinessVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{DELETE /api/businesses/\{id\}} 用例验证表}\label{tab:api-16}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(17) PATCH \code{/api/businesses/{id}}}（方法：\code{patchBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @PathVariable("id") Long id,@RequestBody BusinessUpdateDTO updateDto；请求体 \code{BusinessUpdateDTO} 核心字段包括：id(Long), creator(Long), updater(Long), deleted(Boolean), businessName(String), businessOwner(BusinessOwnerDTO), businessAddress(String), businessExplain(String)
+  \item \textbf{响应结构：} HttpResult<BusinessVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PATCH /api/businesses/\{id\}} 用例验证表}\label{tab:api-17}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(18) GET \code{/api/businesses}}（方法：\code{getBusinesses}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<BusinessVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses} 用例验证表}\label{tab:api-18}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(19) POST \code{/api/businesses}}（方法：\code{addBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @RequestBody BusinessDTO businessDTO；请求体 \code{BusinessDTO} 核心字段包括：id(Long), creator(Long), updater(Long), deleted(Boolean), businessName(String), businessOwner(BusinessOwnerDTO), businessAddress(String), businessExplain(String)
+  \item \textbf{响应结构：} HttpResult<BusinessVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/businesses} 用例验证表}\label{tab:api-19}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(20) GET \code{/api/businesses/search}}（方法：\code{searchBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam(required = false)String keyword, @RequestParam(required = false)boolean isScore, @RequestParam(required = false)boolean isSales
+  \item \textbf{响应结构：} HttpResult<List<BusinessSearchVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/search} 用例验证表}\label{tab:api-20}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessSearchVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(21) POST \code{/api/businesses/apply}}（方法：\code{applyForAddBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @RequestBody Business business
+  \item \textbf{响应结构：} HttpResult<Integer>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/businesses/apply} 用例验证表}\label{tab:api-21}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Integer} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(22) GET \code{/api/businesses/merchant}}（方法：\code{getMerchantBusinesses}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @RequestParam(required = false) Long userId, @RequestParam(required = false) Integer status
+  \item \textbf{响应结构：} HttpResult<List<Business>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/merchant} 用例验证表}\label{tab:api-22}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Business} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(23) GET \code{/api/businesses/active}}（方法：\code{getAllActiveBusinesses}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} List<BusinessInfoDTO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/active} 用例验证表}\label{tab:api-23}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessInfoDTO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(24) GET \code{/api/businesses/type}}（方法：\code{listBusinessByOrderTypeId}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam(required = false) Integer type
+  \item \textbf{响应结构：} HttpResult<List<Business>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/type} 用例验证表}\label{tab:api-24}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Business} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(25) GET \code{/api/businesses/public/{id}}}（方法：\code{publicBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<elm\_bk.vo.PublicBusinessVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/public/\{id\}} 用例验证表}\label{tab:api-25}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{elm_bk.vo.PublicBusinessVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(26) GET \code{/api/businesses/type/presentations}}（方法：\code{categoryPresentations}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam(required = false) Integer type
+  \item \textbf{响应结构：} HttpResult<List<BusinessSearchVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/type/presentations} 用例验证表}\label{tab:api-26}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessSearchVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(27) GET \code{/api/businesses/id_list}}（方法：\code{getBusinessIdList}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<MerchantStatsVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/id\_list} 用例验证表}\label{tab:api-27}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{MerchantStatsVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(28) GET \code{/api/businesses/carousel}}（方法：\code{searchBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<BusinessSearchVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/businesses/carousel} 用例验证表}\label{tab:api-28}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessSearchVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(29) PATCH \code{/api/businesses/own/{id}}}（方法：\code{patchBusinessOwn}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @PathVariable("id") Long id,@RequestBody BusinessUpdateDTO updateDto；请求体 \code{BusinessUpdateDTO} 核心字段包括：id(Long), creator(Long), updater(Long), deleted(Boolean), businessName(String), businessOwner(BusinessOwnerDTO), businessAddress(String), businessExplain(String)
+  \item \textbf{响应结构：} HttpResult<BusinessVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PATCH /api/businesses/own/\{id\}} 用例验证表}\label{tab:api-29}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+\paragraph{控制器：\code{MerchantInteractionController.java}} 基础路径为 \code{/api/merchant/interaction}，共包含 7 个映射端点。
+
+\noindent\textbf{(30) POST \code{/api/merchant/interaction/update}}（方法：\code{updateInteraction}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestBody MerchantInteractionDTO dto；请求体 \code{MerchantInteractionDTO} 核心字段包括：userId(Long), merchantId(Long), liked(Boolean), collected(Boolean)
+  \item \textbf{响应结构：} HttpResult<?>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/merchant/interaction/update} 用例验证表}\label{tab:api-30}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{?} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(31) GET \code{/api/merchant/interaction/collections/{userId}}}（方法：\code{getUserCollections}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long userId
+  \item \textbf{响应结构：} HttpResult<List<BusinessSearchVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/merchant/interaction/collections/\{userId\}} 用例验证表}\label{tab:api-31}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessSearchVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(32) GET \code{/api/merchant/interaction/collections/me}}（方法：\code{getCurrentUserCollections}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<BusinessSearchVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/merchant/interaction/collections/me} 用例验证表}\label{tab:api-32}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{BusinessSearchVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(33) GET \code{/api/merchant/interaction/stats/{merchantId}}}（方法：\code{getMerchantStats}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long merchantId
+  \item \textbf{响应结构：} HttpResult<MerchantStatsVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/merchant/interaction/stats/\{merchantId\}} 用例验证表}\label{tab:api-33}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{MerchantStatsVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(34) GET \code{/api/merchant/interaction/statsByUserId/{userId}}}（方法：\code{getMerchantStatsByUserId}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long userId
+  \item \textbf{响应结构：} HttpResult<List<MerchantStatsVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/merchant/interaction/statsByUserId/\{userId\}} 用例验证表}\label{tab:api-34}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{MerchantStatsVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(35) GET \code{/api/merchant/interaction/status}}（方法：\code{getUserMerchantInteraction}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam Long userId, @RequestParam Long merchantId
+  \item \textbf{响应结构：} HttpResult<MerchantInteractionVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/merchant/interaction/status} 用例验证表}\label{tab:api-35}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{MerchantInteractionVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(36) GET \code{/api/merchant/interaction/status/me}}（方法：\code{getCurrentUserMerchantInteraction}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam Long merchantId
+  \item \textbf{响应结构：} HttpResult<MerchantInteractionVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/merchant/interaction/status/me} 用例验证表}\label{tab:api-36}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{MerchantInteractionVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\subsubsection{菜品、分类与库存管理接口}
+\paragraph{控制器：\code{FoodController.java}} 基础路径为 \code{/api/foods}，共包含 10 个映射端点。
+
+\noindent\textbf{(37) GET \code{/api/foods}}（方法：\code{getAllFoods}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam(required = false) Integer business, @RequestParam(required = false) Integer order
+  \item \textbf{响应结构：} HttpResult<List<FoodVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/foods} 用例验证表}\label{tab:api-37}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{FoodVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(38) GET \code{/api/foods/{id}}}（方法：\code{getAllFoods}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<FoodVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/foods/\{id\}} 用例验证表}\label{tab:api-38}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{FoodVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(39) POST \code{/api/foods}}（方法：\code{addFood}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @RequestBody FoodDTO foodDTO；请求体 \code{FoodDTO} 核心字段包括：id(Long), createTime(LocalDateTime), updateTime(LocalDateTime), creator(Long), updater(Long), deleted(Boolean), foodName(String), foodExplain(String)
+  \item \textbf{响应结构：} HttpResult<FoodVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/foods} 用例验证表}\label{tab:api-39}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{FoodVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(40) PATCH \code{/api/foods/{id}}}（方法：\code{modifyFood}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @RequestBody FoodDTO foodDTO,@PathVariable Long id；请求体 \code{FoodDTO} 核心字段包括：id(Long), createTime(LocalDateTime), updateTime(LocalDateTime), creator(Long), updater(Long), deleted(Boolean), foodName(String), foodExplain(String)
+  \item \textbf{响应结构：} HttpResult<FoodVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PATCH /api/foods/\{id\}} 用例验证表}\label{tab:api-40}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{FoodVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(41) GET \code{/api/foods/list}}（方法：\code{getAllFoods}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam Long businessId, @RequestParam(required = false) Integer shelveStatus
+  \item \textbf{响应结构：} HttpResult<List<FoodItemVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/foods/list} 用例验证表}\label{tab:api-41}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{FoodItemVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(42) POST \code{/api/foods/addItem}}（方法：\code{addFoodItem}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @RequestBody FoodCreateDTO foodCreateDTO；请求体 \code{FoodCreateDTO} 核心字段包括：foodName(String), foodPrice(BigDecimal), foodExplain(String), foodImg(String), remarks(String), businessId(Long), stock(Integer), category(String)
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/foods/addItem} 用例验证表}\label{tab:api-42}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(43) PATCH \code{/api/foods/{foodId}/status}}（方法：\code{setFoodShelveStatus}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @PathVariable Long foodId,@RequestParam Integer shelveStatus
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PATCH /api/foods/\{foodId\}/status} 用例验证表}\label{tab:api-43}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(44) POST \code{/api/foods/modifyItem}}（方法：\code{modifyFoodItem}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @RequestBody FoodUpdateDTO foodUpdateDTO；请求体 \code{FoodUpdateDTO} 核心字段包括：foodId(Long), foodName(String), foodPrice(BigDecimal), foodExplain(String), foodImg(String), remarks(String), stock(Integer), category(String)
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/foods/modifyItem} 用例验证表}\label{tab:api-44}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(45) PUT \code{/api/foods/{id}/stock}}（方法：\code{updateStock}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @PathVariable Long id, @RequestBody FoodStockUpdateDTO dto；请求体 \code{FoodStockUpdateDTO} 核心字段包括：stock(Integer)
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/foods/\{id\}/stock} 用例验证表}\label{tab:api-45}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(46) DELETE \code{/api/foods/{foodId}}}（方法：\code{deleteFood}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('BUSINESS','ADMIN')
+  \item \textbf{请求参数：} @PathVariable Long foodId
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{DELETE /api/foods/\{foodId\}} 用例验证表}\label{tab:api-46}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+\paragraph{控制器：\code{FileUploadController.java}} 基础路径为 \code{/}，共包含 1 个映射端点。
+
+\noindent\textbf{(47) POST \code{/upload}}（方法：\code{uploadFile}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} MultipartFile file
+  \item \textbf{响应结构：} HttpResult<String>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /upload} 用例验证表}\label{tab:api-47}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{String} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\subsubsection{购物车与收货地址接口}
+\paragraph{控制器：\code{CartController.java}} 基础路径为 \code{/api/carts}，共包含 7 个映射端点。
+
+\noindent\textbf{(48) POST \code{/api/carts}}（方法：\code{addCartItem}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestBody CartItemCreateDTO cartItemCreateDTO；请求体 \code{CartItemCreateDTO} 核心字段包括：id(Long), createTime(LocalDateTime), updateTime(LocalDateTime), creator(Long), updater(Long), isDeleted(Boolean), customer(UserVO), business(BusinessVO)
+  \item \textbf{响应结构：} HttpResult<CartVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/carts} 用例验证表}\label{tab:api-48}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{CartVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(49) POST \code{/api/carts/items}}（方法：\code{addItem}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestBody CartItemAddDTO request；请求体 \code{CartItemAddDTO} 核心字段包括：foodId(Long), quantity(Integer)
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/carts/items} 用例验证表}\label{tab:api-49}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(50) GET \code{/api/carts/list}}（方法：\code{listItems}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam(required = false) Long businessId
+  \item \textbf{响应结构：} HttpResult<List<CartItemVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/carts/list} 用例验证表}\label{tab:api-50}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{CartItemVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(51) PUT \code{/api/carts/{cartId}}}（方法：\code{updateItemQuantityRestful}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long cartId, @RequestParam Integer quantity
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/carts/\{cartId\}} 用例验证表}\label{tab:api-51}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(52) PUT \code{/api/carts/remarks}}（方法：\code{updateRemarks}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam Long businessId, @RequestParam(required = false) String remarks
+  \item \textbf{响应结构：} HttpResult<Integer>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/carts/remarks} 用例验证表}\label{tab:api-52}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Integer} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(53) DELETE \code{/api/carts}}（方法：\code{clearCart}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam Long businessId
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{DELETE /api/carts} 用例验证表}\label{tab:api-53}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(54) DELETE \code{/api/carts/{cartId}}}（方法：\code{removeItemRestful}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long cartId
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{DELETE /api/carts/\{cartId\}} 用例验证表}\label{tab:api-54}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+\paragraph{控制器：\code{AddressController.java}} 基础路径为 \code{/api/addresses}，共包含 6 个映射端点。
+
+\noindent\textbf{(55) GET \code{/api/addresses/me}}（方法：\code{list}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<AddressVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/addresses/me} 用例验证表}\label{tab:api-55}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AddressVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(56) POST \code{/api/addresses / /api/addresses/me}}（方法：\code{create}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestBody AddressCreateDTO request；请求体 \code{AddressCreateDTO} 核心字段包括：contactName(String), contactSex(Integer), contactTel(String), address(String)
+  \item \textbf{响应结构：} HttpResult<AddressVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/addresses / /api/addresses/me} 用例验证表}\label{tab:api-56}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AddressVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(57) GET \code{/api/addresses/{id}}}（方法：\code{get}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<AddressVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/addresses/\{id\}} 用例验证表}\label{tab:api-57}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AddressVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(58) PUT \code{/api/addresses/{id}}}（方法：\code{update}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id, @Valid @RequestBody AddressCreateDTO request；请求体 \code{AddressCreateDTO} 核心字段包括：contactName(String), contactSex(Integer), contactTel(String), address(String)
+  \item \textbf{响应结构：} HttpResult<AddressVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/addresses/\{id\}} 用例验证表}\label{tab:api-58}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AddressVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(59) DELETE \code{/api/addresses/{id}}}（方法：\code{delete}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<Void>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{DELETE /api/addresses/\{id\}} 用例验证表}\label{tab:api-59}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Void} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(60) PUT \code{/api/addresses/{id}/default}}（方法：\code{setDefault}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<AddressVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/addresses/\{id\}/default} 用例验证表}\label{tab:api-60}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AddressVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\subsubsection{订单提交、定价与生命周期接口}
+\paragraph{控制器：\code{OrderController.java}} 基础路径为 \code{/api/orders}，共包含 8 个映射端点。
+
+\noindent\textbf{(61) GET \code{/api/orders}}（方法：\code{listOrdersByUserId}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} Long userId
+  \item \textbf{响应结构：} HttpResult<List<OrderVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/orders} 用例验证表}\label{tab:api-61}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{OrderVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(62) GET \code{/api/orders/{id}}}（方法：\code{getOrderById}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<OrderVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/orders/\{id\}} 用例验证表}\label{tab:api-62}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{OrderVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(63) POST \code{/api/orders}}（方法：\code{addOrders}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestBody OrderDTO orderDTO；请求体 \code{OrderDTO} 核心字段包括：id(Long), createTime(LocalDateTime), updateTime(LocalDateTime), creator(Long), updater(Long), isDeleted(Boolean), customer(UserVO), business(BusinessVO)
+  \item \textbf{响应结构：} HttpResult<OrderVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/orders} 用例验证表}\label{tab:api-63}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{OrderVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(64) GET \code{/api/orders/list/business}}（方法：\code{listOrdersByBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam(required = false) Long businessId, @RequestParam(required = false) Integer orderState
+  \item \textbf{响应结构：} HttpResult<List<OrderItemDetailVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/orders/list/business} 用例验证表}\label{tab:api-64}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{OrderItemDetailVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(65) GET \code{/api/orders/list/user}}（方法：\code{listOrdersByUser}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam(required = false) Integer orderState
+  \item \textbf{响应结构：} HttpResult<List<OrderItemVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/orders/list/user} 用例验证表}\label{tab:api-65}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{OrderItemVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(66) GET \code{/api/orders/detail}}（方法：\code{listOrdersByUser}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam Long orderId
+  \item \textbf{响应结构：} HttpResult<OrderItemDetailVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/orders/detail} 用例验证表}\label{tab:api-66}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{OrderItemDetailVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(67) PUT \code{/api/orders/status}}（方法：\code{setOrderStatus}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam Integer orderState, @RequestParam Long orderId, @RequestParam(required = false) String paymentMethod, @RequestParam(required = false, defaultValue = "0") Integer pointsToUse, @RequestParam(required = false) Long couponId
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/orders/status} 用例验证表}\label{tab:api-67}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(68) POST \code{/api/orders/submit}}（方法：\code{orderSubmit}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam Long businessId, @RequestParam(required = false) Long addressId, @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey, @RequestParam(required = false) String requestId, @RequestParam(required = false, defaultValue = "delivery") String serviceMode, @RequestParam(required = false) String foodIds
+  \item \textbf{响应结构：} HttpResult<Long>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/orders/submit} 用例验证表}\label{tab:api-68}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Long} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+\paragraph{控制器：\code{DeliveryOrderController.java}} 基础路径为 \code{/api/v1/orders}，共包含 6 个映射端点。
+
+\noindent\textbf{(69) POST \code{/api/v1/orders/{id}/merchant-accept}}（方法：\code{merchantAccept}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('BUSINESS')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/orders/\{id\}/merchant-accept} 用例验证表}\label{tab:api-69}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(70) POST \code{/api/v1/orders/{id}/merchant-ready}}（方法：\code{merchantReady}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('BUSINESS')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/orders/\{id\}/merchant-ready} 用例验证表}\label{tab:api-70}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(71) POST \code{/api/v1/orders/{id}/merchant-reject}}（方法：\code{merchantReject}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('BUSINESS')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<Void>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/orders/\{id\}/merchant-reject} 用例验证表}\label{tab:api-71}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Void} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(72) POST \code{/api/v1/orders/{id}/confirm-receipt}}（方法：\code{confirmReceipt}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('USER')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/orders/\{id\}/confirm-receipt} 用例验证表}\label{tab:api-72}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(73) GET \code{/api/v1/orders/{id}/delivery}}（方法：\code{delivery}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/orders/\{id\}/delivery} 用例验证表}\label{tab:api-73}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(74) GET \code{/api/v1/orders/{id}/status-history}}（方法：\code{statusHistory}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<List<OrderStatusHistory>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/orders/\{id\}/status-history} 用例验证表}\label{tab:api-74}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{OrderStatusHistory} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\subsubsection{骑手入驻与配送任务接口}
+\paragraph{控制器：\code{RiderController.java}} 基础路径为 \code{/api/v1/riders}，共包含 5 个映射端点。
+
+\noindent\textbf{(75) POST \code{/api/v1/riders/applications}}（方法：\code{apply}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER\_APPLICANT')
+  \item \textbf{请求参数：} @Valid @RequestBody RiderApplicationDTO dto；请求体 \code{RiderApplicationDTO} 核心字段包括：realName(String), phone(String), vehicleType(String)
+  \item \textbf{响应结构：} HttpResult<RiderProfile>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/riders/applications} 用例验证表}\label{tab:api-75}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{RiderProfile} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(76) GET \code{/api/v1/riders/me}}（方法：\code{me}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAnyAuthority('RIDER\_APPLICANT','RIDER')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<RiderProfile>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/riders/me} 用例验证表}\label{tab:api-76}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{RiderProfile} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(77) PATCH \code{/api/v1/riders/me/online}}（方法：\code{setOnline}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} @Valid @RequestBody RiderOnlineDTO dto；请求体 \code{RiderOnlineDTO} 核心字段包括：online(Boolean)
+  \item \textbf{响应结构：} HttpResult<RiderProfile>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PATCH /api/v1/riders/me/online} 用例验证表}\label{tab:api-77}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{RiderProfile} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(78) GET \code{/api/v1/riders/me/tasks}}（方法：\code{myTasks}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} @RequestParam(required = false) Boolean active
+  \item \textbf{响应结构：} HttpResult<List<DeliveryTaskVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/riders/me/tasks} 用例验证表}\label{tab:api-78}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(79) GET \code{/api/v1/riders/available-tasks}}（方法：\code{availableTasks}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<DeliveryTaskVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/riders/available-tasks} 用例验证表}\label{tab:api-79}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+\paragraph{控制器：\code{DeliveryTaskController.java}} 基础路径为 \code{/api/v1/delivery-tasks}，共包含 7 个映射端点。
+
+\noindent\textbf{(80) GET \code{/api/v1/delivery-tasks/{id}}}（方法：\code{get}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/delivery-tasks/\{id\}} 用例验证表}\label{tab:api-80}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(81) GET \code{/api/v1/delivery-tasks/{id}/navigation}}（方法：\code{navigation}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<NavigationVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/delivery-tasks/\{id\}/navigation} 用例验证表}\label{tab:api-81}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{NavigationVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(82) POST \code{/api/v1/delivery-tasks/{id}/accept}}（方法：\code{accept}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/delivery-tasks/\{id\}/accept} 用例验证表}\label{tab:api-82}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(83) POST \code{/api/v1/delivery-tasks/{id}/arrive-store}}（方法：\code{arriveStore}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/delivery-tasks/\{id\}/arrive-store} 用例验证表}\label{tab:api-83}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(84) POST \code{/api/v1/delivery-tasks/{id}/pickup}}（方法：\code{pickup}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/delivery-tasks/\{id\}/pickup} 用例验证表}\label{tab:api-84}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(85) POST \code{/api/v1/delivery-tasks/{id}/deliver}}（方法：\code{deliver}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/delivery-tasks/\{id\}/deliver} 用例验证表}\label{tab:api-85}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(86) POST \code{/api/v1/delivery-tasks/{id}/exceptions}}（方法：\code{reportException}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('RIDER')
+  \item \textbf{请求参数：} @PathVariable Long id, @Valid @RequestBody DeliveryExceptionCreateDTO dto；请求体 \code{DeliveryExceptionCreateDTO} 核心字段包括：exceptionType(String), description(String)
+  \item \textbf{响应结构：} HttpResult<DeliveryException>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/delivery-tasks/\{id\}/exceptions} 用例验证表}\label{tab:api-86}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryException} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\subsubsection{钱包资产、优惠券与偏好接口}
+\paragraph{控制器：\code{AssetController.java}} 基础路径为 \code{/api/v1/assets}，共包含 7 个映射端点。
+
+\noindent\textbf{(87) GET \code{/api/v1/assets/me}}（方法：\code{me}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<AssetVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/assets/me} 用例验证表}\label{tab:api-87}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AssetVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(88) POST \code{/api/v1/assets/recharge}}（方法：\code{recharge}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam BigDecimal amount
+  \item \textbf{响应结构：} HttpResult<AssetVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/assets/recharge} 用例验证表}\label{tab:api-88}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AssetVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(89) POST \code{/api/v1/assets/welcome-coupon}}（方法：\code{welcomeCoupon}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<AssetVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/assets/welcome-coupon} 用例验证表}\label{tab:api-89}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AssetVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(90) GET \code{/api/v1/assets/coupons}}（方法：\code{coupons}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<UserCoupon>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/assets/coupons} 用例验证表}\label{tab:api-90}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{UserCoupon} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(91) POST \code{/api/v1/assets/membership}}（方法：\code{membership}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<AssetVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/assets/membership} 用例验证表}\label{tab:api-91}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AssetVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(92) GET \code{/api/v1/assets/ledger}}（方法：\code{ledger}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam(required = false, defaultValue = "20") Integer limit
+  \item \textbf{响应结构：} HttpResult<List<AssetLedgerVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/assets/ledger} 用例验证表}\label{tab:api-92}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AssetLedgerVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(93) GET \code{/api/v1/assets/spending-stats}}（方法：\code{spendingStats}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<CustomerStatsVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/assets/spending-stats} 用例验证表}\label{tab:api-93}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{CustomerStatsVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+\paragraph{控制器：\code{PreferenceController.java}} 基础路径为 \code{/api/v1/preferences}，共包含 3 个映射端点。
+
+\noindent\textbf{(94) GET \code{/api/v1/preferences/me}}（方法：\code{me}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<PreferenceVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/preferences/me} 用例验证表}\label{tab:api-94}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{PreferenceVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(95) PUT \code{/api/v1/preferences/me}}（方法：\code{update}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestBody PreferenceUpdateDTO dto；请求体 \code{PreferenceUpdateDTO} 核心字段包括：theme(String), spicyLevel(Integer), tasteTags(String), avoidTags(String), categoryTags(String)
+  \item \textbf{响应结构：} HttpResult<PreferenceVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/v1/preferences/me} 用例验证表}\label{tab:api-95}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{PreferenceVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(96) DELETE \code{/api/v1/preferences/me}}（方法：\code{clear}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<Void>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{DELETE /api/v1/preferences/me} 用例验证表}\label{tab:api-96}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Void} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\subsubsection{评价与站内通知接口}
+\paragraph{控制器：\code{ReviewController.java}} 基础路径为 \code{/api/v1/reviews}，共包含 5 个映射端点。
+
+\noindent\textbf{(97) GET \code{/api/v1/reviews/public/business/{businessId}}}（方法：\code{publicReviews}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long businessId
+  \item \textbf{响应结构：} HttpResult<List<elm\_bk.vo.PublicReviewVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/reviews/public/business/\{businessId\}} 用例验证表}\label{tab:api-97}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{elm_bk.vo.PublicReviewVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(98) POST \code{/api/v1/reviews}}（方法：\code{create}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('USER')
+  \item \textbf{请求参数：} @Valid @RequestBody ReviewCreateDTO dto；请求体 \code{ReviewCreateDTO} 核心字段包括：orderId(Long), rating(Integer), content(String), images(String)
+  \item \textbf{响应结构：} HttpResult<ReviewVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/reviews} 用例验证表}\label{tab:api-98}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{ReviewVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(99) GET \code{/api/v1/reviews/order/{orderId}}}（方法：\code{getByOrder}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('USER')
+  \item \textbf{请求参数：} @PathVariable Long orderId
+  \item \textbf{响应结构：} HttpResult<ReviewVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/reviews/order/\{orderId\}} 用例验证表}\label{tab:api-99}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{ReviewVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(100) GET \code{/api/v1/reviews/business/{businessId}}}（方法：\code{listByBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long businessId
+  \item \textbf{响应结构：} HttpResult<List<ReviewVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/reviews/business/\{businessId\}} 用例验证表}\label{tab:api-100}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{ReviewVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(101) PUT \code{/api/v1/reviews/{reviewId}/reply}}（方法：\code{reply}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('BUSINESS')
+  \item \textbf{请求参数：} @PathVariable Long reviewId, @RequestBody java.util.Map<String,String> body
+  \item \textbf{响应结构：} HttpResult<Void>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/v1/reviews/\{reviewId\}/reply} 用例验证表}\label{tab:api-101}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Void} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+\paragraph{控制器：\code{NotificationController.java}} 基础路径为 \code{/api}，共包含 2 个映射端点。
+
+\noindent\textbf{(102) GET \code{/api/notifications}}（方法：\code{getNotifications}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} Long userId
+  \item \textbf{响应结构：} HttpResult<List<Notification>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/notifications} 用例验证表}\label{tab:api-102}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Notification} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(103) PUT \code{/api/notifications/{id}/read}}（方法：\code{readNotification}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/notifications/\{id\}/read} 用例验证表}\label{tab:api-103}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{HttpResult} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\subsubsection{平台管理与合规治理接口}
+\paragraph{控制器：\code{AdminController.java}} 基础路径为 \code{/api/admin}，共包含 5 个映射端点。
+
+\noindent\textbf{(104) GET \code{/api/admin/countUser}}（方法：\code{countUser}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<Integer>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/admin/countUser} 用例验证表}\label{tab:api-104}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Integer} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(105) GET \code{/api/admin/countBusiness}}（方法：\code{countBusiness}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<Integer>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/admin/countBusiness} 用例验证表}\label{tab:api-105}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Integer} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(106) GET \code{/api/admin/countPrice}}（方法：\code{countPrice}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<Double>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/admin/countPrice} 用例验证表}\label{tab:api-106}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Double} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(107) GET \code{/api/admin/statistics}}（方法：\code{statistics}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @RequestParam(required = false) LocalDate from, @RequestParam(required = false) LocalDate to
+  \item \textbf{响应结构：} HttpResult<Map<String, Object>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/admin/statistics} 用例验证表}\label{tab:api-107}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{String, Object} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(108) GET \code{/api/admin/statistics/export / /api/admin/text/csv;charset=UTF-8}}（方法：\code{exportStatistics}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @RequestParam(required = false) LocalDate from, @RequestParam(required = false) LocalDate to
+  \item \textbf{响应结构：} ResponseEntity<String>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/admin/statistics/export / /api/admin/text/csv;charset=UTF-8} 用例验证表}\label{tab:api-108}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{String} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+\paragraph{控制器：\code{AdminAccountController.java}} 基础路径为 \code{/api/admin/users}，共包含 2 个映射端点。
+
+\noindent\textbf{(109) GET \code{/api/admin/users}}（方法：\code{list}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @RequestParam(defaultValue = "0") int status, @RequestParam(defaultValue = "") String keyword
+  \item \textbf{响应结构：} HttpResult<List<AdminUserVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/admin/users} 用例验证表}\label{tab:api-109}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AdminUserVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(110) PUT \code{/api/admin/users/{userId}/status}}（方法：\code{setActivated}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @PathVariable Long userId, @RequestParam boolean activated
+  \item \textbf{响应结构：} HttpResult<Void>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PUT /api/admin/users/\{userId\}/status} 用例验证表}\label{tab:api-110}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Void} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+\paragraph{控制器：\code{AdminReviewController.java}} 基础路径为 \code{/api/admin/reviews}，共包含 2 个映射端点。
+
+\noindent\textbf{(111) GET \code{/api/admin/reviews}}（方法：\code{list}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<List<ReviewVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/admin/reviews} 用例验证表}\label{tab:api-111}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{ReviewVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(112) PATCH \code{/api/admin/reviews/{id}/hide}}（方法：\code{hide}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @PathVariable Long id
+  \item \textbf{响应结构：} HttpResult<Void>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{PATCH /api/admin/reviews/\{id\}/hide} 用例验证表}\label{tab:api-112}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Void} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+\paragraph{控制器：\code{AdminRiderController.java}} 基础路径为 \code{/api/v1/admin}，共包含 5 个映射端点。
+
+\noindent\textbf{(113) GET \code{/api/v1/admin/rider-applications}}（方法：\code{riderApplications}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @RequestParam(required = false) Integer status
+  \item \textbf{响应结构：} HttpResult<List<RiderProfile>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/admin/rider-applications} 用例验证表}\label{tab:api-113}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{RiderProfile} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(114) POST \code{/api/v1/admin/rider-applications/{id}/audit}}（方法：\code{auditRider}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @PathVariable Long id, @Valid @RequestBody RiderAuditDTO dto；请求体 \code{RiderAuditDTO} 核心字段包括：approved(Boolean), reason(String)
+  \item \textbf{响应结构：} HttpResult<RiderProfile>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/admin/rider-applications/\{id\}/audit} 用例验证表}\label{tab:api-114}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{RiderProfile} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(115) GET \code{/api/v1/admin/delivery-exceptions}}（方法：\code{deliveryExceptions}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @RequestParam(required = false) Integer status
+  \item \textbf{响应结构：} HttpResult<List<DeliveryExceptionVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/admin/delivery-exceptions} 用例验证表}\label{tab:api-115}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryExceptionVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(116) GET \code{/api/v1/admin/delivery-tasks/summary}}（方法：\code{deliveryTaskSummary}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<Integer>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/admin/delivery-tasks/summary} 用例验证表}\label{tab:api-116}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Integer} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(117) POST \code{/api/v1/admin/delivery-exceptions/{id}/resolve}}（方法：\code{resolveException}）
+\begin{itemize}
+  \item \textbf{权限要求：} hasAuthority('ADMIN')
+  \item \textbf{请求参数：} @PathVariable Long id, @Valid @RequestBody DeliveryExceptionResolveDTO dto；请求体 \code{DeliveryExceptionResolveDTO} 核心字段包括：action(String), note(String)
+  \item \textbf{响应结构：} HttpResult<DeliveryTaskVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/admin/delivery-exceptions/\{id\}/resolve} 用例验证表}\label{tab:api-117}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DeliveryTaskVO} 数据 & 正常测试 \\
+TC02 & 未携带 Token 或使用非授权角色凭证访问 & HTTP 401/403，\code{UNAUTHORIZED}，拒绝执行并返回提示 & 权限边界 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\subsubsection{高德地图代理与地理接口}
+\paragraph{控制器：\code{MapController.java}} 基础路径为 \code{/api/maps}，共包含 6 个映射端点。
+
+\noindent\textbf{(118) GET \code{/api/maps/config}}（方法：\code{config}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} Object
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/maps/config} 用例验证表}\label{tab:api-118}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Object} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(119) GET \code{/api/maps/search}}（方法：\code{search}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam String keywords, @RequestParam(defaultValue="") String city
+  \item \textbf{响应结构：} Object
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/maps/search} 用例验证表}\label{tab:api-119}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Object} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(120) GET \code{/api/maps/reverse}}（方法：\code{reverse}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam String location
+  \item \textbf{响应结构：} Object
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/maps/reverse} 用例验证表}\label{tab:api-120}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Object} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(121) GET \code{/api/maps/convert}}（方法：\code{convert}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam String location
+  \item \textbf{响应结构：} Object
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/maps/convert} 用例验证表}\label{tab:api-121}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Object} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(122) GET \code{/api/maps/route}}（方法：\code{route}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam String origin,@RequestParam String destination
+  \item \textbf{响应结构：} Object
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/maps/route} 用例验证表}\label{tab:api-122}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Object} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(123) GET \code{/api/maps/_AMapService/**}}（方法：\code{sdk}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} HttpServletRequest request,@RequestParam Map<String,String> params
+  \item \textbf{响应结构：} ResponseEntity<String>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/maps/\_AMapService/**} 用例验证表}\label{tab:api-123}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{String} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\subsubsection{AI 智能客服与多模态点餐接口}
+\paragraph{控制器：\code{AiChatController.java}} 基础路径为 \code{/api/ai/chat}，共包含 7 个映射端点。
+
+\noindent\textbf{(124) POST \code{/api/ai/chat}}（方法：\code{chat}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestBody AiChatRequestDTO request；请求体 \code{AiChatRequestDTO} 核心字段包括：message(String), userId(Long), sessionId(String), chatType(String)
+  \item \textbf{响应结构：} HttpResult<AiChatResponseVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/ai/chat} 用例验证表}\label{tab:api-124}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AiChatResponseVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(125) GET \code{/api/ai/chat/history}}（方法：\code{getChatHistory}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Parameter(description = "用户ID，不传则使用当前登录用户") @RequestParam(required = false) Long userId, @Parameter(description = "页码，从1开始") @RequestParam(defaultValue = "1") Integer page, @Parameter(description = "每页大小，最大50") @RequestParam(defaultValue = "20") Integer size
+  \item \textbf{响应结构：} HttpResult<List<AiChatHistoryVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/ai/chat/history} 用例验证表}\label{tab:api-125}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AiChatHistoryVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(126) GET \code{/api/ai/chat/history/session/{sessionId}}}（方法：\code{getChatHistoryBySession}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Parameter(description = "会话ID") @PathVariable String sessionId
+  \item \textbf{响应结构：} HttpResult<List<AiChatHistoryVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/ai/chat/history/session/\{sessionId\}} 用例验证表}\label{tab:api-126}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AiChatHistoryVO} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(127) DELETE \code{/api/ai/chat/history/{historyId}}}（方法：\code{deleteChatHistory}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Parameter(description = "对话历史ID") @PathVariable Long historyId
+  \item \textbf{响应结构：} HttpResult<Boolean>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{DELETE /api/ai/chat/history/\{historyId\}} 用例验证表}\label{tab:api-127}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Boolean} 数据 & 正常测试 \\
+TC02 & 传入不存在的资源 ID（如 999999）或跨用户资源 ID & HTTP 403/404，返回 \code{NOT_FOUND} 或归属校验拒绝 & 异常边界 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(128) POST \code{/api/ai/chat/history/clean}}（方法：\code{cleanOldChatHistory}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Parameter(description = "保留的记录数量，默认50条") @RequestParam(defaultValue = "50") Integer keepCount
+  \item \textbf{响应结构：} HttpResult<Boolean>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/ai/chat/history/clean} 用例验证表}\label{tab:api-128}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{Boolean} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 在非法业务状态下执行操作或重复提交幂等请求 & HTTP 409/422，拒绝非法状态跃迁且不产生重复副作用 & 状态边界 \\
+\end{longtable}
+
+\noindent\textbf{(129) GET \code{/api/ai/chat/health}}（方法：\code{healthCheck}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<String>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/ai/chat/health} 用例验证表}\label{tab:api-129}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{String} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(130) GET \code{/api/ai/chat/recommendations}}（方法：\code{recommendations}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestParam(required = false, defaultValue = "") String query, @RequestParam(required = false) BigDecimal budget
+  \item \textbf{响应结构：} HttpResult<List<AiRecommendationVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/ai/chat/recommendations} 用例验证表}\label{tab:api-130}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AiRecommendationVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+\paragraph{控制器：\code{AssistantController.java}} 基础路径为 \code{/api/v1}，共包含 5 个映射端点。
+
+\noindent\textbf{(131) GET \code{/api/v1/assistant/capabilities}}（方法：\code{capabilities}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} 无显式入参（身份由服务端认证上下文注入）
+  \item \textbf{响应结构：} HttpResult<AssistantCapabilityVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{GET /api/v1/assistant/capabilities} 用例验证表}\label{tab:api-131}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AssistantCapabilityVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 查询条件为空结果集或非法分页/时间参数 & HTTP 200 返回空集合，或 HTTP 400 提示参数不匹配 & 边界测试 \\
+\end{longtable}
+
+\noindent\textbf{(132) POST \code{/api/v1/assistant/messages}}（方法：\code{message}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestBody AssistantMessageRequestDTO request；请求体 \code{AssistantMessageRequestDTO} 核心字段包括：message(String), sessionId(String), budget(BigDecimal), usePreferences(Boolean)
+  \item \textbf{响应结构：} HttpResult<AssistantMessageVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/assistant/messages} 用例验证表}\label{tab:api-132}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AssistantMessageVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(133) POST \code{/api/v1/recommendations}}（方法：\code{recommendations}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @Valid @RequestBody(required = false) RecommendationRequestDTO request；请求体 \code{RecommendationRequestDTO} 核心字段包括：query(String), budget(BigDecimal), quantity(Integer), maxDeliveryFee(BigDecimal), minRating(BigDecimal), freeDeliveryOnly(Boolean), category(String), usePreferences(Boolean)
+  \item \textbf{响应结构：} HttpResult<List<AiRecommendationVO>>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/recommendations} 用例验证表}\label{tab:api-133}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{AiRecommendationVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(134) POST \code{/api/v1/dish-recognitions}}（方法：\code{recognizeDish}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestPart("image") MultipartFile image
+  \item \textbf{响应结构：} HttpResult<DishRecognitionVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/dish-recognitions} 用例验证表}\label{tab:api-134}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{DishRecognitionVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}
+
+\noindent\textbf{(135) POST \code{/api/v1/voice-order-drafts}}（方法：\code{createVoiceOrderDraft}）
+\begin{itemize}
+  \item \textbf{权限要求：} 受 JWT 认证保护（或公开白名单放行）
+  \item \textbf{请求参数：} @RequestPart("audio") MultipartFile audio
+  \item \textbf{响应结构：} HttpResult<VoiceOrderDraftVO>
+\end{itemize}
+\begin{longtable}{C{.10\linewidth}L{.35\linewidth}L{.34\linewidth}C{.12\linewidth}}
+\caption{接口 \texttt{POST /api/v1/voice-order-drafts} 用例验证表}\label{tab:api-135}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{编号} & \textbf{输入与前置条件} & \textbf{预期响应与边界行为} & \textbf{测试类型} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+TC01 & 传入合法请求参数与有效角色凭证 & HTTP 200，\code{success=true}，返回预期 \code{VoiceOrderDraftVO} 数据 & 正常测试 \\
+TC02 & 未登录请求受保护接口或缺少必填参数 & HTTP 400/401，返回参数校验失败或认证失败响应 & 异常测试 \\
+TC03 & 请求体必填字段为空或超出校验格式/长度限制 & HTTP 400，\code{PARAM_VERIFIED_FAILED}，返回字段校验明细 & 校验测试 \\
+\end{longtable}

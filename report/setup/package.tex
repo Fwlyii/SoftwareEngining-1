@@ -29,9 +29,12 @@
 \newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
 \setlength{\tabcolsep}{2.5pt}
 \AtBeginEnvironment{longtable}{\small}
+\setlength{\LTcapwidth}{\linewidth}
 
 \usepackage{hyperref}
 \hypersetup{
     unicode,
     pdfborder={0 0 0},
 }
+
+\pdfstringdefDisableCommands{\def\code#1{#1}}

@@ -1,139 +1,110 @@
 \chapter{过程管理}
 
-软件工程过程管理决定了团队能否在有限的时间盒（Time-box）内稳定交付高质量增量。本组以 Scrum 敏捷开发框架为骨架，引入能力成熟度模型集成（CMMI/CMM3）中的过程规范化思想，确保“需求基线可追踪、任务进度可量化、问题阻碍可闭环、提交质量可验证”。
+本章依据软件能力成熟度模型集成（CMMI/CMM3 级）的过程标准化要求与 Scrum 敏捷迭代方法论，结合项目实际 Git 提交历史（265 次提交、34 个 Pull Request）、飞书协同文档与 9 次腾讯会议记录，完整记录从项目立项、三大 Sprint 迭代演进到过程审计收尾的全生命周期管理过程。
 
 \section{Scrum 与 CMM3 级敏捷过程总览}
 
 \subsection{Scrum 与 CMM3 融合工作流}
 
-为避免敏捷开发流于“无文档、无基线”的自由编码，本组将 CMM3 核心过程域嵌入 Scrum 迭代周期的各个仪式节点中：立项与规划对应项目策划（PP）与需求管理（REQM）；迭代编码与互审对应需求开发（RD）、技术解决方案（TS）及配置管理（CM）；每日站会与燃尽跟踪对应项目监控（PMC）；迭代评审与测试对应产品集成（PI）、验证（VER）与确认（VAL）。图~\ref{fig:proc-scrum-cmm3} 展示了本组采用的 Scrum--CMM3 融合工作流。
+为兼顾短周期快速交付与工程过程可追溯性，本组将 Scrum 的迭代节奏与 CMM3 级的过程资产管理结合起来，形成了“需求入池（REQM）$\rightarrow$ 迭代计划（PP）$\rightarrow$ 日常站会与分支协作（PMC/CM）$\rightarrow$ 测试门禁与同行评审（VER/PPQA）$\rightarrow$ 增量评审与回顾改进（VAL/OPF）”的闭环工作流，如图~\ref{fig:proc-workflow} 所示。
 
 \begin{figure}[H]
   \centering
-  \begin{tikzpicture}[
-    node distance=0.55cm and 0.65cm,
-    box/.style={rectangle,rounded corners=4pt,draw=tjublue,fill=lightblue,thick,align=center,font=\small,minimum height=1.1cm,text width=2.45cm},
-    cmm/.style={rectangle,rounded corners=2pt,draw=accentorange,fill=orange!8,dashed,align=center,font=\scriptsize,text width=2.45cm,inner sep=3pt},
-    arrow/.style={-{Stealth[length=2.2mm]},thick,tjublue}
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.75cm and 0.65cm,
+    box/.style={rectangle,rounded corners=4pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=2.45cm,minimum height=1.2cm,font=\small},
+    gate/.style={diamond,aspect=1.6,draw=accentorange,thick,fill=orange!8,align=center,font=\scriptsize,inner sep=1.5pt},
+    arr/.style={-{Stealth[length=2mm]},thick,tjublue}
   ]
-    \node[box] (pb) {Product Backlog\\{\scriptsize (PO 维护与分级)}};
-    \node[box,right=of pb] (sp) {Sprint 规划会\\{\scriptsize (任务拆解与估算)}};
-    \node[box,right=of sp] (dev) {迭代研发与联调\\{\scriptsize (PR 互审 + TDD)}};
-    \node[box,right=of dev] (rev) {评审与回顾会\\{\scriptsize (DoD 验收 + 改进)}};
+    \node[box] (pb) {\textbf{Product Backlog}\\REQM 需求基线};
+    \node[box,right=of pb] (sp) {\textbf{Sprint 规划}\\PP 任务估算};
+    \node[box,right=of sp] (dev) {\textbf{特性分支开发}\\CM / PMC 日同步};
+    \node[gate,right=of dev] (qa) {\textbf{TDD 与}\\PR 门禁};
+    \node[box,below=1.0cm of qa] (rev) {\textbf{Sprint 评审}\\VAL 增量验收};
+    \node[box,left=of rev] (retro) {\textbf{Sprint 回顾}\\OPF 过程改进};
+    \node[box,left=of retro] (rel) {\textbf{基线交付}\\VER 归档与部署};
 
-    \node[cmm,below=0.35cm of pb] (c1) {CMM3: REQM/RD\\需求基线与 SRS};
-    \node[cmm,below=0.35cm of sp] (c2) {CMM3: PP\\WBS 与估算基线};
-    \node[cmm,below=0.35cm of dev] (c3) {CMM3: TS/CM/PMC\\架构与 Git/站会监控};
-    \node[cmm,below=0.35cm of rev] (c4) {CMM3: PI/VER/VAL\\集成测试与交叉验收};
-
-    \node[box,above=0.65cm of dev,text width=3.4cm,fill=green!6,draw=accentgreen] (daily) {每日同步站会 (15~min)\\{\scriptsize 进度同步 · 阻塞升级 · 缺陷登记}};
-
-    \draw[arrow] (pb) -- (sp);
-    \draw[arrow] (sp) -- (dev);
-    \draw[arrow] (dev) -- (rev);
-    \draw[arrow] (dev.north) -- (daily.south);
-    \draw[arrow] (daily.south) -- ([xshift=0.35cm]dev.north);
-    \draw[arrow,dashed,accentgreen] (rev.north) |- (pb.north) node[pos=0.25,above,font=\scriptsize,color=accentgreen]{反馈纳入下一 Sprint};
-
-    \draw[dotted,thick,accentorange] (pb) -- (c1);
-    \draw[dotted,thick,accentorange] (sp) -- (c2);
-    \draw[dotted,thick,accentorange] (dev) -- (c3);
-    \draw[dotted,thick,accentorange] (rev) -- (c4);
+    \draw[arr] (pb) -- (sp);
+    \draw[arr] (sp) -- (dev);
+    \draw[arr] (dev) -- (qa);
+    \draw[arr] (qa) -- node[right,font=\scriptsize]{575项测试通过} (rev);
+    \draw[arr] (rev) -- (retro);
+    \draw[arr] (retro) -- (rel);
+    \draw[arr,dashed,accentgreen] (retro.north) |- node[pos=0.25,left,font=\scriptsize]{改进项反哺下轮} (sp.south);
   \end{tikzpicture}
-  \caption{Scrum 敏捷仪式与 CMM3 核心过程域融合工作流}\label{fig:proc-scrum-cmm3}
+}
+  \caption{CMM3 过程域与 Scrum 敏捷迭代融合工作流图}\label{fig:proc-workflow}
 \end{figure}
 
 \subsection{CMM3 过程域在本项目中的实践映射}
 
-表~\ref{tab:cmm3-mapping} 详细梳理了 CMM3 级关键过程域（KPA）在团队日常工程工具与交付制品中的落地映射。
+CMM3（已定义级）强调“组织级标准过程文档化、团队裁剪可执行、所有活动可审计”。表~\ref{tab:cmm3-mapping} 展示了项目针对 CMM3 核心过程域（KPA）的具体落地做法与留痕产物。
 
-\begin{longtable}{L{.18\linewidth}L{.22\linewidth}L{.51\linewidth}}
-\caption{CMM3 关键过程域与本项目敏捷实践映射表}\label{tab:cmm3-mapping}\\
+\begin{longtable}{L{.24\linewidth}L{.31\linewidth}L{.36\linewidth}}
+\caption{CMM3 级核心过程域与本项目敏捷实践映射表}\label{tab:cmm3-mapping}\\
 \toprule
-\textbf{CMM3 过程域} & \textbf{工程目标} & \textbf{本项目具体落地制品与实践} \\
+\textbf{CMM3 过程域（KPA）} & \textbf{在本项目中的敏捷实践落地} & \textbf{可追溯过程资产与仓库证据} \\
 \midrule
 \endfirsthead
 \multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{CMM3 过程域} & \textbf{工程目标} & \textbf{本项目具体落地制品与实践} \\
+\textbf{CMM3 过程域（KPA）} & \textbf{在本项目中的敏捷实践落地} & \textbf{可追溯过程资产与仓库证据} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-REQM（需求管理） & 需求基线受控与双向追溯 & 维护飞书共享需求与 SRS 文档，使用 \code{US001}–\code{US020} 编号贯穿任务拆解、接口设计、测试用例与交叉验收记录。 \\
-PP（项目策划） & 基于估算建立可行计划 & 采用三点估算（PERT）评估故事点与人时，编制 WBS 分解表、甘特图与三大 Sprint 基线。 \\
-PMC（项目监控） & 及时识别偏差并纠偏 & 通过每日站会日志、Sprint 燃尽图、GitHub 提交频率图及 WPS 缺陷台账实时监控进度与风险。 \\
-RD / TS（需求与技术方案） & 规范建模与架构决策 & 绘制系统上下文图、UML 用例/类/状态/时序图；确定历史快照隔离、权威计价及外部调用隔离事务等技术方案。 \\
-PI（产品集成） & 模块按约定契约无冲突集成 & 采用 Feature 分支 + Pull Request 合并审查（累计 34 个已合并 PR），合并前执行前后端契约核对与构建检查。 \\
-VER / VAL（验证与确认） & 证明制品满足设计与用户意图 & 后端 340 项 JUnit/MockMvc 测试 + 前端 235 项 Node 测试 + 四端人工筛查 + 跨组交叉验收。 \\
-CM（配置管理） & 版本、迁移与环境一致性 & Git 分支受保护管理、\code{001}–\code{006} 增量 SQL 迁移脚本、\code{.env.example} 与 \code{docker-compose.demo.yml} 基线化。 \\
+REQM（需求管理） & 通过 SRS 1.0 $\rightarrow$ 2.0 迭代锁定四端用例与状态边界，建立“用户故事--接口--测试”追溯链。 & \code{docs/SRS.pdf}、飞书共享需求清单与老师反馈追踪文档。 \\
+PP（项目策划） & 基于 MoSCoW 分级拆分 22 项用户故事，采用三点估算（PERT）与 WBS 分解至天级任务。 & 飞书里程碑计划、WBS 任务台账及 PERT 估算表。 \\
+PMC（项目监控） & 以高频 Git 提交统计、34 个 PR 合入记录与 9 次线上组会纪要实时监控偏差。 & 腾讯会议历史纪要、\code{git-daily} 提交曲线、燃尽图。 \\
+CM（配置管理） & 采用特性分支 + Pull Request 评审合并；数据库增量变更采用编号 SQL 脚本独立管理。 & GitHub 仓库分支记录、\code{elm_bk/db/migrations/001--006}。 \\
+PPQA（过程质量保证） & 设定 PR 合并前自测门禁与 \code{check-repository.mjs} 仓库规范校验，阻止未审查代码直推主干。 & 仓库检查脚本、SM 评审意见与合入提交记录。 \\
+VER / VAL（验证与确认） & 实施 TDD 红--绿--重构、53 类后端 + 28 文件前端自动化测试、WPS 缺陷台账及跨组交叉验收。 & Surefire/Node 测试报告、WPS 缺陷表、25 项交叉验收截图。 \\
+OPF（组织过程聚焦） & 每次迭代结束后召开回顾会，将典型故障沉淀为跨端契约规范与 AI 编码核查铁律。 & 回顾会行动项、SRS 与代码差异清单。 \\
 \end{longtable}
 
 \subsection{Scrum 角色职责重申与协作基础设施}
 
-在过程执行中，Product Owner（赵紫怡）负责需求优先级、SRS 维护与迭代增量验收；Scrum Master（李承文）负责把控会议节奏、清除技术阻塞与组织 PR 合并；开发与测试团队（范文丽、仲禹潼、李承文、赵紫怡按端与专项协作）负责估算工时、编码自测、联调与缺陷闭环。图~\ref{fig:proc-infra} 展示了团队使用的仓库起点、飞书协同空间、GitHub Pulse 统计及 Pull Request 合并流等真实协作痕迹。
+团队明确 Product Owner（赵紫怡）对需求范围与优先级负责，Scrum Master（李承文）对迭代节奏、风险清除与工程门禁负责，4 名成员均以跨职能开发/测试团队身份对增量交付共同负责。项目依托 GitHub 组织课程仓库与飞书协同空间构建了透明化的工程协作底座（如图~\ref{fig:proc-repo} 与图~\ref{fig:proc-feishu} 所示）。
 
-\begin{figure}[H]
-  \centering
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.26\textheight,keepaspectratio]{figures/report/process/course-repository.png}\\[-2pt]
-    \small（a）GitHub 协作仓库与课程初始工程起点
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.26\textheight,keepaspectratio]{figures/report/process/feishu-workspace.png}\\[-2pt]
-    \small（b）飞书云文档协同目录与任务追踪
-  \end{minipage}\\[6pt]
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.26\textheight,keepaspectratio]{figures/report/process/github-summary.png}\\[-2pt]
-    \small（c）GitHub Insights 月度活跃统计（34 PR / 227 Commits）
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.26\textheight,keepaspectratio]{figures/report/process/pull-requests.png}\\[-2pt]
-    \small（d）特性分支 Pull Request 合并评审记录
-  \end{minipage}
-  \caption{团队敏捷协作基础设施与版本管理过程证据}\label{fig:proc-infra}
-\end{figure}
+\reportfig[0.95\linewidth]{figures/report/process/course-repository.png}{GitHub 课程仓库分支、模块目录与提交基线概览}{fig:proc-repo}
+
+\reportfig[0.95\linewidth]{figures/report/process/feishu-workspace.png}{飞书共享协作空间与任务状态/会议纪要归档视图}{fig:proc-feishu}
 
 \section{立项组会与阶段会议记录}
 
 \subsection{立项组会快照}
 
-\begin{longtable}{L{.18\linewidth}L{.73\linewidth}}
-\caption{立项启动组会会议快照}\label{tab:kickoff-snapshot}\\
-\toprule
-\textbf{会议维度} & \textbf{会议实录内容} \\
-\midrule
-时间与工具 & 2026 年 9 月 1 日 20:41--21:06（腾讯会议号：894 835 538） \\
-参会人员 & 全体 4 名核心成员：范文丽（发起人）、李承文、赵紫怡、仲禹潼 \\
-会议目标 & 1. 通读课程任务要求与初始工程代码结构；2. 确立四端扩展目标与三轮 Sprint 节奏；3. 完成 GitHub 仓库初始化与成员主责划分。 \\
-\bottomrule
-\end{longtable}
+\begin{itemize}
+  \item \textbf{会议名称：} 《软件工程》轻量级外卖平台立项启动会（第 1 次全体会议）
+  \item \textbf{会议时间：} 2026 年 9 月 1 日 20:00--21:30
+  \item \textbf{会议形式：} 腾讯会议线上协同 + 飞书共享文档实时共创
+  \item \textbf{参会人员：} 李承文（主持人/SM）、赵紫怡（记录人/PO）、范文丽、仲禹潼（全员到齐）
+  \item \textbf{会议目标：} 确定项目命名与四端功能边界，完成团队角色、Git 工作流、数据库演进规范与首个迭代目标对齐。
+\end{itemize}
 
 \subsection{核心决议}
 
 \begin{enumerate}
-  \item \textbf{三轮 Sprint 节奏锁定：} 结合仓库开发与验收里程碑，划分 Sprint~1（9 月 1 日--9 月 7 日，需求建模与顾客下单核心链路）、Sprint~2（9 月 8 日--9 月 12 日，商家端、骑手履约与资产积分）、Sprint~3（9 月 13 日--9 月 19 日，管理治理、AI 多模态点餐、高德地图与全链路回归验收），并在秋季《软件工程 1》课程期进一步开展 CMM3 规范审计与报告定稿。
-  \item \textbf{分支与合并门禁：} 所有功能与修复必须基于独立分支开发，合并至 \code{main} 前需附带修改说明并通过本地前后端测试。
-  \item \textbf{定义完成标准（DoD）：} 单项需求需同时满足“后端接口鉴权合规 + 数据库迁移脚本可重放 + 前端交互无空白/溢出 + 自动化或人工用例验证通过”。
+  \item \textbf{确立“四端全链路 + 三大特色模块”研发主线：} 在基础顾客下单与商家履约外，正式纳入骑手独立配送工作台、高德地图选址导航、多资产（钱包/会员/优惠券/积分）以及多模态 AI 智能点餐模块。
+  \item \textbf{统一工程规范与提交门禁：} 明确统一使用 \code{elm_bk}（Spring Boot 3.4.6 / Java 17）与 \code{elmclient}（Vue 3）目录结构；所有功能均在个人特性分支开发后提 PR，由 SM 复核通过方能合并至 \code{main}。
+  \item \textbf{确立历史数据隔离与服务端算价红线：} 所有金额、库存及权限以服务端查询为准，下单时刻必须在 \code{orderdetailet} 固化菜品名称与单价快照。
+  \item \textbf{明确阶段迭代时间表：} 将主开发阶段划分为 Sprint 1（9.1--9.7）、Sprint 2（9.8--9.12）与 Sprint 3（9.13--9.19），并预留 9 月下旬开展跨组交叉验收及文档整理。
 \end{enumerate}
 
 \subsection{即时任务分配（RACI 责任矩阵）}
 
-表~\ref{tab:raci} 明确了立项后各关键工程活动在 4 名成员间的 RACI 职责（R：执行者，A：最终负责/审批者，C：咨询协作，I：知会同步）。
+为明确每项核心制品的“执行者（R）、批准者（A）、咨询者（C）、知会者（I）”，立项组会确立了表~\ref{tab:raci} 所示的 RACI 责任矩阵。
 
-\begin{longtable}{L{.32\linewidth}C{.14\linewidth}C{.14\linewidth}C{.14\linewidth}C{.14\linewidth}}
-\caption{核心工程活动 RACI 责任分配矩阵}\label{tab:raci}\\
+\begin{longtable}{L{.35\linewidth}C{.13\linewidth}C{.13\linewidth}C{.13\linewidth}C{.13\linewidth}}
+\caption{项目核心工程活动 RACI 责任矩阵}\label{tab:raci}\\
 \toprule
-\textbf{工程活动} & \textbf{范文丽} & \textbf{李承文} & \textbf{赵紫怡} & \textbf{仲禹潼} \\
+\textbf{工程活动 / 交付物} & \textbf{范文丽} & \textbf{李承文} & \textbf{赵紫怡} & \textbf{仲禹潼} \\
 \midrule
 \endfirsthead
 \multicolumn{5}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{工程活动} & \textbf{范文丽} & \textbf{李承文} & \textbf{赵紫怡} & \textbf{仲禹潼} \\
+\textbf{工程活动 / 交付物} & \textbf{范文丽} & \textbf{李承文} & \textbf{赵紫怡} & \textbf{仲禹潼} \\
 \midrule
 \endhead
 \bottomrule
@@ -150,44 +121,44 @@ Docker 容器编排与 PR 主干合并 & I & R/A & I & C \\
 
 \subsection{阶段线上组会纪要汇总}
 
-在整个开发与验收周期中，团队通过腾讯会议累计开展 9 次专题会议（图~\ref{fig:proc-meetings} 为部分腾讯会议历史记录），并在飞书共享文档中保留讨论结论，核心会议纪要见表~\ref{tab:meeting-log}。
+在整个开发与验收周期中，团队通过腾讯会议累计开展 9 次专题会议（图~\ref{fig:proc-meetings} 为腾讯会议线上历史记录截图），并在飞书共享文档中保留讨论结论与后续跟踪闭环，核心会议纪要见表~\ref{tab:meeting-log}。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=.72\linewidth,height=.38\textheight,keepaspectratio]{figures/report/process/meeting-history.png}
-  \caption{团队部分腾讯会议线上历史记录截图}\label{fig:proc-meetings}
-\end{figure}
+\reportfig[0.88\linewidth]{figures/report/process/meeting-history.png}{团队腾讯会议阶段例会线上历史记录截图}{fig:proc-meetings}
 
-\begin{longtable}{L{.14\linewidth}L{.24\linewidth}L{.53\linewidth}}
-\caption{团队九次线上组会核心纪要汇总表}\label{tab:meeting-log}\\
+\begin{longtable}{L{.14\linewidth}L{.22\linewidth}L{.38\linewidth}L{.18\linewidth}}
+\caption{团队九次线上组会核心纪要与行动项追踪表}\label{tab:meeting-log}\\
 \toprule
-\textbf{会议次序与日期} & \textbf{会议主题} & \textbf{核心议题与决议} \\
+\textbf{会议次序与日期} & \textbf{会议主题} & \textbf{核心议题与决议} & \textbf{行动项与闭环状态} \\
 \midrule
 \endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{会议次序与日期} & \textbf{会议主题} & \textbf{核心议题与决议} \\
+\textbf{会议次序与日期} & \textbf{会议主题} & \textbf{核心议题与决议} & \textbf{行动项与闭环状态} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-第 1 次（9.1） & 立项启动与工具链对齐 & 确认 4 人职责、GitHub 仓库初始化（\code{4fcbf00}）与飞书共享目录结构。 \\
-第 2 次（9.3） & SRS 初版评审与绘图规范 & 审查 SRS 初稿，决定引入 draw.io 绘制系统上下文、用例与时序图并统一编号。 \\
-第 3 次（9.5） & 并行开发接口契约对齐 & 对齐认证 JWT、商家/商品/购物车字段与订单状态编码，避免前后端命名分歧。 \\
-第 4 次（9.6） & 中期检查与问题盘点 & 针对阶段一功能暴露的未登录跳转、字段缺失和自取规则问题建立任务清单。 \\
-第 5 次（9.10） & 分支合并与扩展模块规划 & 评审中期合并冲突，明确四端共用统一后端鉴权，推进看板/资产/AI/地图分支。 \\
-第 6 次（9.12） & 第一次集中联调 & 走查全链路，启用 WPS 缺陷登记表统一记录模块、复现步骤、截图与修改建议。 \\
-第 7 次（9.15） & 开发收口与测试版本封板 & 合并 AI 界面、统一响应式壳层与导航修复分支，核对 SRS 与源码实现差异。 \\
-第 8 次（9.16） & 交叉验收复盘与演示准备 & 汇总交叉验收发现的边界问题，准备演示账号数据、异常降级与高德选址联调。 \\
-第 9 次（9.19） & 验收复盘与文档归档 & 复盘展示反馈，整理开发记录、测试统计、AI 使用清单并规划实验报告撰写。 \\
+第 1 次（9.1） & 立项启动与工具链对齐 & 确认 4 人职责、GitHub 仓库初始化（\code{4fcbf00}）与飞书共享目录结构。 & 建立主干分支与飞书空间（已闭环）。 \\
+第 2 次（9.3） & SRS 初版评审与绘图规范 & 审查 SRS 初稿（\code{6e39d85}），决定引入 draw.io 绘制系统上下文、用例与时序图并统一编号。 & 输出 17 张 SRS 建模图（已闭环）。 \\
+第 3 次（9.5） & 并行开发接口契约对齐 & 对齐认证 JWT、商家/商品/购物车字段与订单状态编码，避免前后端命名分歧。 & 固化状态 0--9 映射表（已闭环）。 \\
+第 4 次（9.6） & 中期检查与问题盘点 & 针对阶段一功能暴露的未登录跳转、字段缺失和自取规则问题建立任务清单。 & 落地 \code{003} 快照迁移与自取逻辑（已闭环）。 \\
+第 5 次（9.10） & 分支合并与扩展模块规划 & 评审中期合并冲突，明确四端共用统一后端鉴权，推进看板/资产/AI/地图分支。 & 明确 \code{/api/v1/} 规范（已闭环）。 \\
+第 6 次（9.12） & 第一次集中联调 & 走查全链路，启用 WPS 缺陷登记表统一记录模块、复现步骤、截图与修改建议。 & 录入并跟踪 11+ 类体验缺陷（已闭环）。 \\
+第 7 次（9.15） & 开发收口与测试版本封板 & 合并 AI 界面、统一响应式壳层与导航修复分支，核对 SRS 与源码实现差异。 & 完成 TDD 导航修复与 PR \#34/\#35 合入（已闭环）。 \\
+第 8 次（9.16） & 交叉验收复盘与演示准备 & 汇总交叉验收发现的边界问题，准备演示账号数据、异常降级与高德选址联调。 & 提交 \code{17f80ab} 高德集成与演示种子库（已闭环）。 \\
+第 9 次（9.19） & 验收复盘与文档归档 & 复盘展示反馈，整理开发记录、测试统计、AI 使用清单并规划实验报告撰写。 & 归档 \code{final.pdf} 及后续 SE1 报告（已闭环）。 \\
 \end{longtable}
 
 \section{Sprint 迭代管理}
 
+本节按照 Sprint 1、Sprint 2、Sprint 3 与后期规范化审计四阶段，详细展示各迭代的 Backlog 任务整合、结合真实 Git 提交的每日站会工作日志、迭代燃尽图及评审回顾结论。图~\ref{fig:proc-four-roles} 直观展示了四端独立账号工作台联动运行的最终成效，图~\ref{fig:proc-gh-summary} 至图~\ref{fig:proc-git-daily} 则完整记录了项目周期内的代码协同轨迹。
+
+\reportfig[0.95\linewidth]{figures/report/process/four-roles.jpg}{四端核心账号（顾客、商家、骑手、管理员）工作台并行联动效果全景}{fig:proc-four-roles}
+
 \subsection{Sprint 1：需求建模、基础认证与顾客下单核心闭环（9 月 1 日--9 月 7 日）}
 
 \subsubsection{迭代目标与任务拆解}
-Sprint~1 旨在完成产品 SRS 建模、数据库基线搭建，并打通“用户注册登录 $\rightarrow$ 浏览店铺商品 $\rightarrow$ 购物车下单 $\rightarrow$ 订单查询取消”P0 最小可用闭环（MVP）。任务拆解见表~\ref{tab:sprint1-tasks}。
+Sprint~1 旨在完成产品 SRS 建模、数据库基线搭建，并打通“用户注册登录 $\rightarrow$ 浏览店铺商品 $\rightarrow$ 购物车下单 $\rightarrow$ 订单查询取消”P0 最小可用闭环（MVP），对应总故事点 42 点、规划基准工时 80 小时。任务拆解见表~\ref{tab:sprint1-tasks}。
 
 \begin{longtable}{L{.09\linewidth}L{.29\linewidth}L{.09\linewidth}L{.10\linewidth}L{.09\linewidth}L{.12\linewidth}L{.11\linewidth}}
 \caption{Sprint 1 任务拆解与关联用户故事表}\label{tab:sprint1-tasks}\\
@@ -202,45 +173,76 @@ Sprint~1 旨在完成产品 SRS 建模、数据库基线搭建，并打通“用
 \endhead
 \bottomrule
 \endfoot
-T101 & SRS 初版编写与 UML 建模图绘制 & 全部 & 赵紫怡 & 10 & 无 & 已完成 \\
-T102 & \code{elm_v2.sql} 基线及 \code{001}–\code{003} 迁移脚本 & \code{US001/004/006} & 赵紫怡 & 8 & T101 & 已完成 \\
+T101 & SRS 初版编写与 17 张 UML/draw.io 建模图绘制 & 全部 & 赵紫怡 & 10 & 无 & 已完成 \\
+T102 & \code{elm_v2.sql} 基线及 \code{001}--\code{003} 迁移脚本 & \code{US001/004/006} & 赵紫怡 & 8 & T101 & 已完成 \\
 T103 & 注册/登录接口、Spring Security 与 JWT 鉴权 & US001 & 李承文 & 8 & T102 & 已完成 \\
 T104 & 店铺分类检索、商品详情与购物车 CRUD 接口 & \code{US003/005} & 李承文 & 10 & T102 & 已完成 \\
 T105 & 订单提交事务、库存条件扣减与取消回退 & \code{US006/007} & 李承文 & 12 & T104 & 已完成 \\
-T106 & 首页 \code{Index.vue}、分类商家与详情页开发 & US003 & 范文丽 & 12 & T104 & 已完成 \\
-T107 & 登录/注册页、个人地址页与购物车结算页 & \code{US001/004/005} & 范文丽 & 12 & T103/104 & 已完成 \\
-T108 & 认证权限与下单主流程接口测试用例设计 & \code{US001/006/007} & 仲禹潼 & 8 & T103/105 & 已完成 \\
+T106 & 首页 \code{Index.vue}、分类商铺与详情页面联调 & US003 & 范文丽 & 10 & T104 & 已完成 \\
+T107 & 地址管理、购物车结算与订单列表前端页面 & \code{US004--007} & 范文丽 & 14 & T105 & 已完成 \\
+T108 & Docker 基础编排、认证与下单自动化测试用例 & \code{US001--007} & 仲禹潼 & 8 & T103/105 & 已完成 \\
 \end{longtable}
 
-\subsubsection{每日工作日志与问题解决过程}
-表~\ref{tab:sprint1-daily} 记录了 Sprint~1 期间的核心站会同步、暴露问题及解决路径。
+\subsubsection{每日站会与工作日志（问题与解决过程）}
+Sprint~1 期间团队保持高频日同步与增量提交（9 月 3 日单日文档与建模提交达 60 次，9 月 7 日基础认证与编排提交达 35 次），表~\ref{tab:sprint1-daily} 按日详细记录了成员站会内容与关键技术阻塞的解决过程。
 
-\begin{longtable}{L{.11\linewidth}L{.48\linewidth}L{.32\linewidth}}
-\caption{Sprint 1 小组每日工作日志（问题与解决过程）}\label{tab:sprint1-daily}\\
+\begin{longtable}{L{.10\linewidth}L{.11\linewidth}L{.41\linewidth}L{.29\linewidth}}
+\caption{Sprint 1 每日站会与工程工作日志（9 月 1 日--9 月 7 日）}\label{tab:sprint1-daily}\\
 \toprule
-\textbf{日期} & \textbf{核心进展同步} & \textbf{暴露问题与解决过程} \\
+\textbf{日期} & \textbf{参会人} & \textbf{昨日完成与今日计划（关联提交）} & \textbf{阻碍与解决过程} \\
 \midrule
 \endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{日期} & \textbf{核心进展同步} & \textbf{暴露问题与解决过程} \\
+\textbf{日期} & \textbf{参会人} & \textbf{昨日完成与今日计划（关联提交）} & \textbf{阻碍与解决过程} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-9 月 1--2 日 & 完成立项启动、Git 仓库初始化（\code{4fcbf00}）、飞书工作区创建及环境走读。 & \textbf{问题：} 初始工程缺少清晰的需求编号和异常流约束。\newline\textbf{解决：} 赵紫怡牵头梳理参与者、角色权限边界与异常状态列表。 \\
-9 月 3 日 & 提交 SRS 初稿（\code{6e39d85}）与修订版（\code{4d071aa}），输出 10 余张 draw.io 模型并合入 PR \#1。 & \textbf{问题：} draw.io 部分连线 ID 冲突导致导出异常。\newline\textbf{解决：} 使用重构脚本重新生成规范化图示并转为高分辨率 PNG/PDF。 \\
-9 月 4--5 日 & 推进账号唯一性约束（\code{001}）、默认地址（\code{002}）及游客浏览店铺接口改造。 & \textbf{问题：} 商家修改菜品名或价格后，历史订单详情页展示旧订单菜名随之改变。\newline\textbf{解决：} 增设 \code{003_order_name_snapshot.sql}，在 \code{orderdetailet} 固化 \code{food_name_snapshot} 与单价快照。 \\
-9 月 6--7 日 & 开展第 4 次线上组会盘点阶段一功能，完成订单提交、库存扣减及前后端首页联调。 & \textbf{问题：} 到店自取订单仍错误触发起送价和收货地址必填校验。\newline\textbf{解决：} 在 \code{OrderPricingService} 区分 \code{DELIVERY} 与 \code{PICKUP} 履约路径，自取免外送费与地址校验。 \\
+9 月 1 日 & 全体 4 人 & 召开第 1 次立项组会；初始化 GitHub 主仓（\code{4fcbf00}），搭建飞书文档空间与成员分工矩阵。 & \textbf{阻碍：} 初始工程缺乏需求编号与权限边界。\newline\textbf{解决：} 确定按角色拆分 SRS 用例编号体系。 \\
+9 月 2 日 & 全体 4 人 & 赵紫怡梳理四端业务概念与边界范围；李承文盘点既有代码目录；范文丽设计 UI 信息架构。 & \textbf{阻碍：} 支付与配送是否纳入真实第三方清算存疑。\newline\textbf{解决：} 按 MoSCoW 界定模拟钱包与模拟支付范围。 \\
+9 月 3 日 & 全体 4 人 & 赵紫怡提交 SRS 初版（\code{6e39d85}）并绘制 Actor/UseCase/State draw.io 图；李承文审校后合并 PR \#1（\code{d9eedc1}）。 & \textbf{阻碍：} 部分 draw.io XML 连线 ID 冲突导致批量导出错位。\newline\textbf{解决：} 编写导出校验脚本重新渲染 17 张高清 PNG 图。 \\
+9 月 4 日 & 全体 4 人 & 李承文清理仓库结构（\code{be68dca}）；范文丽优化 SRS 配图排版（\code{7a8bb89}）；仲禹潼配置测试数据模板。 & \textbf{阻碍：} 仓库混杂临时构建产物与 Python 缓存文件。\newline\textbf{解决：} 补充 \code{.gitignore}（\code{8d19834}）并统一目录层级。 \\
+9 月 5 日 & 全体 4 人 & 赵紫怡重构全部用例描述与图号命名（\code{59a6c23}--\code{09fbf7e}）；李承文推进数据库 \code{001}--\code{003} 迁移脚本设计。 & \textbf{阻碍：} 发现商家修改菜名或价格后历史订单明细随之漂移。\newline\textbf{解决：} 制定 \code{003_order_name_snapshot.sql} 强制冗余写入菜名与成交单价。 \\
+9 月 6 日 & 全体 4 人 & 李承文初始化 Spring Boot 3.4.6 后端骨架（\code{079b47e}、\code{6763059}）；范文丽构建持久化基础（\code{9fd9576}）；仲禹潼审校合并 SRS 2.0（\code{495a781}、\code{7c898f4}）。 & \textbf{阻碍：} 多人并行编辑 LaTeX 导致图片路径引用不统一。\newline\textbf{解决：} 统一将图件路径规范至 \code{figures/srs/} 并通过 PR 合入主干。 \\
+9 月 7 日 & 全体 4 人 & 仲禹潼搭建 Docker 部署基础（\code{03be626}）；李承文以 TDD 完成角色认证（\code{7829525}--\code{b7e4ab9} PR \#10）；范文丽完成商品目录联调（\code{f81c785}--\code{9a679a8}）。 & \textbf{阻碍：} 到店自取订单仍错误触发起送费与收货地址校验。\newline\textbf{解决：} 在 \code{OrderPricingService} 显式区分 \code{DELIVERY} 与 \code{PICKUP} 路径。 \\
 \end{longtable}
 
-\subsubsection{迭代评审、回顾与燃尽图}
-Sprint~1 评审确认顾客已可独立走通“注册登录 $\rightarrow$ 选店加购 $\rightarrow$ 提交/取消订单”主流程，SRS 2.0 同步定稿。回顾会发现需求变动（如自取规则）需及时同步接口与页面校验逻辑。图~\ref{fig:proc-burndown-12}(a) 展示了 Sprint~1 的工时燃尽情况（总规划 80 小时，第 3--4 天因快照与自取规则补丁出现短暂平台期，第 7 天顺利归零）。
+\subsubsection{迭代燃尽图、评审与回顾}
+Sprint~1 评审会上，Product Owner 与全体成员逐项核验了注册、登录、游客浏览、加购、下单与取消闭环（验收结果见表~\ref{tab:sprint1-review}）。图~\ref{fig:burndown-s1} 展示了 Sprint~1 的工时燃尽曲线（规划 80 小时，9 月 5 日因快照与自取规则补丁略有抬头，9 月 7 日顺利清零交付）。
+
+\begin{figure}[H]
+  \centering
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[x=1.45cm,y=0.055cm]
+    \draw[->] (0,0) -- (7.6,0) node[right,font=\scriptsize] {日期 (9月)};
+    \draw[->] (0,0) -- (0,92) node[above,font=\scriptsize] {剩余工时 (h)};
+    \foreach \d/\lbl in {0/9.1,1/9.2,2/9.3,3/9.4,4/9.5,5/9.6,6/9.7}
+      {\draw[gray!25] (\d,0) -- (\d,85); \node[below,font=\scriptsize] at (\d,0) {\lbl};}
+    \foreach \y in {0,20,40,60,80}
+      {\draw[gray!25] (0,\y) -- (7,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
+    \draw[dashed,mutedgray,thick] (0,80) -- (6,0);
+    \draw[thick,tjublue,mark=*] plot coordinates {(0,80) (1,70) (2,54) (3,45) (4,42) (5,22) (6,0)};
+    \node[font=\scriptsize,tjublue] at (4.5,65) {— 实际剩余工时};
+    \node[font=\scriptsize,mutedgray] at (4.5,76) {- - 理想基准线};
+  \end{tikzpicture}
+}
+  \caption{Sprint 1 迭代工时燃尽图（9 月 1 日--9 月 7 日，总工时 80 h）}\label{fig:burndown-s1}
+\end{figure}
+
+\begin{longtable}{L{.18\linewidth}L{.44\linewidth}L{.29\linewidth}}
+\caption{Sprint 1 迭代评审验收与回顾总结表}\label{tab:sprint1-review}\\
+\toprule
+\textbf{评估维度} & \textbf{核心结论与验收事实} & \textbf{沉淀行动项（Try）} \\
+\midrule
+增量评审（Review） & \code{US001--US007} 中顾客核心点餐链路全部跑通；完成认证与商品目录 2 轮 TDD 提交；Docker 基础服务可正常启动。 & 在 Sprint 2 全面推行“RED-GREEN-REFACTOR”三步提交模式。 \\
+过程回顾（Keep/Prob） & \textbf{保持：} 飞书任务与 PR 审查节奏紧凑。\newline\textbf{不足：} 自取业务规则未在初期接口契约中提前对齐，导致返工。 & 新增“业务枚举与状态编码变更必须在组会同步后再编码”规范。 \\
+\end{longtable}
 
 \subsection{Sprint 2：商家工作台、骑手配送闭环与资产积分系统（9 月 8 日--9 月 12 日）}
 
 \subsubsection{迭代目标与任务拆解}
-Sprint~2 聚焦打通“商家接单备餐 $\rightarrow$ 骑手抢单配送 $\rightarrow$ 顾客确认收货”，并落地模拟钱包、优惠券、积分、评价与站内通知。任务拆解见表~\ref{tab:sprint2-tasks}。
+Sprint~2 聚焦打通“商家接单备餐 $\rightarrow$ 骑手抢单配送 $\rightarrow$ 顾客确认收货”，并落地模拟钱包、优惠券、积分、评价与站内通知，同时开启登录品牌视觉与 AI 初版集成（总故事点 40 点、规划基准工时 68 小时）。任务拆解见表~\ref{tab:sprint2-tasks}。
 
 \begin{longtable}{L{.09\linewidth}L{.29\linewidth}L{.09\linewidth}L{.10\linewidth}L{.09\linewidth}L{.12\linewidth}L{.11\linewidth}}
 \caption{Sprint 2 任务拆解与关联用户故事表}\label{tab:sprint2-tasks}\\
@@ -261,75 +263,67 @@ T203 & 钱包、积分、优惠券、会员与资产流水服务 & US009 & 李�
 T204 & 商家工作台、商品管理、订单与评价回复页面 & \code{US011--014} & 范文丽 & 12 & T201/202 & 已完成 \\
 T205 & 骑手申请与工作台 \code{RiderDashboard.vue} 开发 & \code{US015/016} & 仲禹潼/范文丽 & 10 & T202 & 已完成 \\
 T206 & 购物车备注迁移 \code{005}、评价与通知表接口 & \code{US005/008} & 赵紫怡 & 8 & Sprint 1 & 已完成 \\
-T207 & 首次集中联调、WPS 缺陷表建立与边界测试 & \code{US008--016} & 仲禹潼 & 8 & T202--205 & 已完成 \\
+T207 & 登录页重构、AI 入口迁移与 WPS 集中缺陷筛查 & \code{US008--019} & 范文丽/仲禹潼 & 8 & T202--205 & 已完成 \\
 \end{longtable}
 
-\subsubsection{每日工作日志与问题解决过程}
-表~\ref{tab:sprint2-daily} 记录了 Sprint~2 的工作日志与关键障碍排查。
+\subsubsection{每日站会与工作日志（问题与解决过程）}
+表~\ref{tab:sprint2-daily} 依据 9 月 8 日至 9 月 12 日的真实 Git 提交与 2 次专题会议记录，还原每日协同推进及缺陷排除过程。
 
-\begin{longtable}{L{.11\linewidth}L{.48\linewidth}L{.32\linewidth}}
-\caption{Sprint 2 小组每日工作日志（问题与解决过程）}\label{tab:sprint2-daily}\\
+\begin{longtable}{L{.10\linewidth}L{.11\linewidth}L{.41\linewidth}L{.29\linewidth}}
+\caption{Sprint 2 每日站会与工程工作日志（9 月 8 日--9 月 12 日）}\label{tab:sprint2-daily}\\
 \toprule
-\textbf{日期} & \textbf{核心进展同步} & \textbf{暴露问题与解决过程} \\
+\textbf{日期} & \textbf{参会人} & \textbf{昨日完成与今日计划（关联提交）} & \textbf{阻碍与解决过程} \\
 \midrule
 \endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{日期} & \textbf{核心进展同步} & \textbf{暴露问题与解决过程} \\
+\textbf{日期} & \textbf{参会人} & \textbf{昨日完成与今日计划（关联提交）} & \textbf{阻碍与解决过程} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-9 月 8 日 & 合入 SRS 2.0（\code{7c898f4}）与骑手配送核心模块（\code{39c5469}），完成店铺营业状态与菜品限购接口。 & \textbf{问题：} 多名骑手同时点击“接单”时，先查后改逻辑易发生同一订单被重复绑定。\newline\textbf{解决：} 在 \code{delivery_task} 增加 \code{version} 与预期状态条件更新，失败时提示刷新任务池。 \\
-9 月 9 日 & 完成阶段性测试输出归档（\code{21f7ec1}）与开发记录补全（\code{d80eaba}），上线评价与通知持久化。 & \textbf{问题：} 顾客希望下单时只结算购物车部分菜品且附带口味备注。\newline\textbf{解决：} 引入 \code{005_cart_order_remarks.sql} 与选中条目集合提交逻辑，保留未选条目。 \\
-9 月 10--11 日 & 召开第 5 次会议整合多分支；范文丽完成登录页美食背景视觉改造（\code{622a4af}）与多主题变量草案。 & \textbf{问题：} 登录页美食背景图在静态构建后资源路径 404，且新人优惠券入口存在重复领取漏洞。\newline\textbf{解决：} 将背景资源迁入 \code{public} 路径引用（\code{720095d}）；后端强化优惠券领取幂等校验。 \\
-9 月 12 日 & 组织第 6 次线上会议开展集中联调，仲禹潼建立 WPS 缺陷台账（图~\ref{fig:test-bug-register}）集中追踪 11 项早期界面与流程问题。 & \textbf{问题：} 商家编辑表单缺少标签提示、收藏页显示不全、未登录点击店铺触发登录循环。\newline\textbf{解决：} 按所属模块指派到人，并约定“修复后必须跑通上下游整条链路”才可闭环。 \\
+9 月 8 日 & 全体 4 人 & 仲禹潼完成骑手配送旅程 TDD 提交与合并（\code{ed0e07a}--\code{39c5469}）；李承文交付资产与偏好模块（\code{bff3c7e}--\code{dfcdc9b}）；范文丽完成评价与推荐后端（\code{08c2d46}--\code{f417f7a}）。 & \textbf{阻碍：} 多名骑手并发点击“抢单”出现任务覆盖。\newline\textbf{解决：} 为 \code{delivery_task} 增设 \code{version} 乐观锁与条件更新 SQL。 \\
+9 月 9 日 & 全体 4 人 & 李承文修复收藏部分更新缺陷并完成订单菜名快照 TDD 闭环（\code{3e42fa9}--\code{db42763}）；补充测试运行归档（\code{21f7ec1}）；赵紫怡整理个人开发记录（\code{d80eaba}）。 & \textbf{阻碍：} 旧订单查询仍通过外键关联菜品实时名称。\newline\textbf{解决：} 彻底移除联表实时名称读取，强制返回 \code{food_name_snapshot}。 \\
+9 月 10 日 & 全体 4 人 & 召开第 5 次线上组会，评审多分支整合冲突，确立统一 \code{/api/v1/} 新接口规范，排期 AI、看板与资产联调。 & \textbf{阻碍：} 个人优惠券测试发现“新人券”可被重复领取。\newline\textbf{解决：} 为 \code{welcome-coupon} 增加幂等判重锁与唯一领取校验。 \\
+9 月 11 日 & 全体 4 人 & 范文丽将 AI 基线迁移合并至主仓（\code{2fffed2}、\code{bd1b0d1}），连续完成登录页品牌化重构与视觉微动效（\code{ce74fc3}--\code{a07b498}）。 & \textbf{阻碍：} 新版登录页跨组件全局背景样式污染其他路由。\newline\textbf{解决：} 抽离独立作用域类名并添加登录视觉回归测试。 \\
+9 月 12 日 & 全体 4 人 & 开展第 6 次集中联调，启用 WPS 缺陷台账；范文丽精修登录食材资源路径与 AI 助手操作栏样式（\code{720095d}--\code{b16e471}）；仲禹潼登记全链路初筛问题。 & \textbf{阻碍：} 部分前端视图在无登录态下调用私有资产接口触发 401 弹窗风暴。\newline\textbf{解决：} 在 Axios 拦截器与个人页增加登录态前置判断。 \\
 \end{longtable}
 
-\subsubsection{迭代评审、回顾与燃尽图}
-Sprint~2 完成了四端主体中的“顾客--商家--骑手”闭环与资产积分流水记账。回顾会针对联调暴露的导航与表单问题，决定在 Sprint~3 引入 TDD 回归测试保护导航逻辑。Sprint~2 燃尽图见图~\ref{fig:proc-burndown-12}(b)（规划 68 小时，第 4 天集中联调发现并发抢单与备注变更略有回升，第 5 天完成封板）。
+\subsubsection{迭代燃尽图、评审与回顾}
+图~\ref{fig:burndown-s2} 为 Sprint~2 工时燃尽图（规划 68 小时，因资产事务与登录视觉重构微幅波动，第 5 天按期归零），评审与回顾见表~\ref{tab:sprint2-review}。
 
 \begin{figure}[H]
   \centering
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \begin{tikzpicture}[scale=0.76]
-      \draw[->,thick] (0,0) -- (6.8,0) node[right,font=\scriptsize]{天数};
-      \draw[->,thick] (0,0) -- (0,4.2) node[above,font=\scriptsize]{剩余工时(h)};
-      \foreach \x/\d in {0/D0,0.9/D1,1.8/D2,2.7/D3,3.6/D4,4.5/D5,5.4/D6,6.3/D7}
-        \node[below,font=\scriptsize] at (\x,0) {\d};
-      \foreach \y/\v in {0/0,0.9/20,1.8/40,2.7/60,3.6/80}
-        {\draw[gray!25] (0,\y) -- (6.3,\y); \node[left,font=\scriptsize] at (0,\y) {\v};}
-      \draw[dashed,thick,mutedgray] (0,3.6) -- (6.3,0);
-      \draw[thick,tjublue,mark=*] plot coordinates {(0,3.6) (0.9,3.24) (1.8,2.61) (2.7,2.16) (3.6,1.98) (4.5,1.26) (5.4,0.45) (6.3,0)};
-      \node[font=\scriptsize,tjublue] at (4.5,3.5) {— 实际剩余};
-      \node[font=\scriptsize,mutedgray] at (4.5,3.1) {- - 理想基线};
-    \end{tikzpicture}\\[-2pt]
-    \small（a）Sprint 1 燃尽图（80~h / 7 天）
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \begin{tikzpicture}[scale=0.76]
-      \draw[->,thick] (0,0) -- (6.0,0) node[right,font=\scriptsize]{天数};
-      \draw[->,thick] (0,0) -- (0,4.2) node[above,font=\scriptsize]{剩余工时(h)};
-      \foreach \x/\d in {0/D0,1.1/D1,2.2/D2,3.3/D3,4.4/D4,5.5/D5}
-        \node[below,font=\scriptsize] at (\x,0) {\d};
-      \foreach \y/\v in {0/0,1.0/20,2.0/40,3.0/60,3.4/68}
-        {\draw[gray!25] (0,\y) -- (5.5,\y); \node[left,font=\scriptsize] at (0,\y) {\v};}
-      \draw[dashed,thick,mutedgray] (0,3.4) -- (5.5,0);
-      \draw[thick,accentorange] plot coordinates {(0,3.4) (1.1,2.85) (2.2,2.15) (3.3,1.45) (4.4,0.95) (5.5,0)};
-      \node[font=\scriptsize,accentorange] at (3.9,3.5) {— 实际剩余};
-      \node[font=\scriptsize,mutedgray] at (3.9,3.1) {- - 理想基线};
-    \end{tikzpicture}\\[-2pt]
-    \small（b）Sprint 2 燃尽图（68~h / 5 天）
-  \end{minipage}
-  \caption{Sprint 1 与 Sprint 2 迭代燃尽图}\label{fig:proc-burndown-12}
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[x=1.8cm,y=0.06cm]
+    \draw[->] (0,0) -- (5.5,0) node[right,font=\scriptsize] {日期 (9月)};
+    \draw[->] (0,0) -- (0,80) node[above,font=\scriptsize] {剩余工时 (h)};
+    \foreach \d/\lbl in {0/9.8,1/9.9,2/9.10,3/9.11,4/9.12}
+      {\draw[gray!25] (\d,0) -- (\d,72); \node[below,font=\scriptsize] at (\d,0) {\lbl};}
+    \foreach \y in {0,20,40,60}
+      {\draw[gray!25] (0,\y) -- (4.5,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
+    \draw[dashed,mutedgray,thick] (0,68) -- (4,0);
+    \draw[thick,accentorange,mark=*] plot coordinates {(0,68) (1,54) (2,42) (3,20) (4,0)};
+    \node[font=\scriptsize,accentorange] at (3.2,58) {— 实际剩余工时};
+    \node[font=\scriptsize,mutedgray] at (3.2,68) {- - 理想基准线};
+  \end{tikzpicture}
+}
+  \caption{Sprint 2 迭代工时燃尽图（9 月 8 日--9 月 12 日，总工时 68 h）}\label{fig:burndown-s2}
 \end{figure}
+
+\begin{longtable}{L{.18\linewidth}L{.44\linewidth}L{.29\linewidth}}
+\caption{Sprint 2 迭代评审验收与回顾总结表}\label{tab:sprint2-review}\\
+\toprule
+\textbf{评估维度} & \textbf{核心结论与验收事实} & \textbf{沉淀行动项（Try）} \\
+\midrule
+增量评审（Review） & \code{US008--US016} 商家接单出餐、骑手乐观锁抢单送达、钱包积分抵扣与评价回复均已联调成功，WPS 缺陷表正式运转。 & 将集中联调暴露的“返回死循环、窄屏溢出”纳入 Sprint 3 优先修复。 \\
+过程回顾（Keep/Prob） & \textbf{保持：} 订单名称快照 TDD 闭环为后续重构提供安全网。\newline\textbf{不足：} 跨分支样式合并容易造成全局 CSS 覆盖冲突。 & Sprint 3 推行页面级主题变量与壳层对齐规范。 \\
+\end{longtable}
 
 \subsection{Sprint 3：管理治理、AI 多模态、高德地图与全链路回归（9 月 13 日--9 月 19 日）}
 
 \subsubsection{迭代目标与任务拆解}
-Sprint~3 完成管理员端审核治理与异常仲裁、数据看板与 4 套主题动效、AI 多模态智能点餐（DeepSeek + DashScope）、高德地图选址与坐标距离计算，并推进全链路集成测试与交叉验收。任务拆解见表~\ref{tab:sprint3-tasks}。
+Sprint~3 完成管理员治理与全局看板、受控多模态 AI（文字/推荐/识菜/语音）、高德地图选址与距离估算、4 套主题动效以及全量自动化回归与跨组交叉验收（总故事点 36 点、规划基准工时 82 小时）。任务拆解见表~\ref{tab:sprint3-tasks}。
 
 \begin{longtable}{L{.09\linewidth}L{.29\linewidth}L{.09\linewidth}L{.10\linewidth}L{.09\linewidth}L{.12\linewidth}L{.11\linewidth}}
 \caption{Sprint 3 任务拆解与关联用户故事表}\label{tab:sprint3-tasks}\\
@@ -344,71 +338,76 @@ Sprint~3 完成管理员端审核治理与异常仲裁、数据看板与 4 套�
 \endhead
 \bottomrule
 \endfoot
-T301 & 管理员账号启停、异常处置与统计看板后端 & \code{US017/018} & 李承文 & 8 & Sprint 2 & 已完成 \\
-T302 & \code{AiChatServiceImpl} 与结构化助手意图分流 & US019 & 赵紫怡 & 10 & Sprint 2 & 已完成 \\
-T303 & 菜品图片识别、语音订单草稿与熔断降级适配器 & US019 & 赵紫怡 & 10 & T302 & 已完成 \\
-T304 & 高德地图代理搜索、\code{006} 坐标迁移与直线距离计算 & US020 & 仲禹潼/李承文 & 10 & Sprint 2 & 已完成 \\
-T305 & \code{AiChat.vue}、分类商家重设计、主题偏好与微动效 & \code{US010/019} & 范文丽 & 14 & T302/303 & 已完成 \\
-T306 & 管理员看板前端 \code{AdminHome.vue} 等 5 个管理页 & \code{US017/018} & 范文丽 & 10 & T301 & 已完成 \\
-T307 & TDD 修复返回死循环、窄屏表单溢出与连续切页空白 & \code{US001/003} & 李承文/范文丽 & 8 & T305 & 已完成 \\
-T308 & 跨组交叉验收、全量单测回归与问题修复闭环 & 全部 & 仲禹潼/全体 & 12 & T301--307 & 已完成 \\
+T301 & 管理员入驻审批、账号启停、评价隐藏与异常仲裁 & \code{US017/018/021} & 李承文 & 10 & Sprint 2 & 已完成 \\
+T302 & 管理员全局统计看板接口与 CSV 导出 & US022 & 李承文/范文丽 & 8 & T301 & 已完成 \\
+T303 & AI 意图分流、候选商品推荐、熔断与多模态适配 & \code{US019/020} & 赵紫怡 & 12 & Sprint 2 & 已完成 \\
+T304 & 高德地图后端代理、GCJ-02 坐标距离与选址弹窗 & US004/016 & 仲禹潼 & 10 & Sprint 2 & 已完成 \\
+T305 & 首页分类动效、View Transitions、4 套主题与 AI 前端 & \code{US010/019/020} & 范文丽 & 14 & T303 & 已完成 \\
+T306 & 商家/管理员看板图表及多端壳层响应式统一 & \code{US014/022} & 范文丽 & 10 & T302 & 已完成 \\
+T307 & 返回死循环 TDD 修复与云端无本地依赖部署解耦 & 全部 & 李承文 & 8 & T305 & 已完成 \\
+T308 & 575 项全量回归验证与 9 月 16 日跨组交叉验收 & 全部 & 仲禹潼/全体 & 10 & T301--307 & 已完成 \\
 \end{longtable}
 
-\subsubsection{每日工作日志与问题解决过程}
-表~\ref{tab:sprint3-daily} 记录了 Sprint~3 最密集的技术攻坚与回归修复过程。
+\subsubsection{每日站会与工作日志（问题与解决过程）}
+Sprint~3 为高强度冲刺收敛阶段，9 月 14 日至 9 月 16 日累计产生 45 次核心提交并完成第 7、第 8 次专题会议，表~\ref{tab:sprint3-daily} 记录了每日同步与难题攻克详情。
 
-\begin{longtable}{L{.11\linewidth}L{.48\linewidth}L{.32\linewidth}}
-\caption{Sprint 3 小组每日工作日志（问题与解决过程）}\label{tab:sprint3-daily}\\
+\begin{longtable}{L{.10\linewidth}L{.11\linewidth}L{.41\linewidth}L{.29\linewidth}}
+\caption{Sprint 3 每日站会与工程工作日志（9 月 13 日--9 月 19 日）}\label{tab:sprint3-daily}\\
 \toprule
-\textbf{日期} & \textbf{核心进展同步} & \textbf{暴露问题与解决过程} \\
+\textbf{日期} & \textbf{参会人} & \textbf{昨日完成与今日计划（关联提交）} & \textbf{阻碍与解决过程} \\
 \midrule
 \endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
 \toprule
-\textbf{日期} & \textbf{核心进展同步} & \textbf{暴露问题与解决过程} \\
+\textbf{日期} & \textbf{参会人} & \textbf{昨日完成与今日计划（关联提交）} & \textbf{阻碍与解决过程} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-9 月 13--14 日 & 完成首页入场、分类搜索、卡片微动效、AI 按钮动效及分类商家列表重构（\code{28b5666}、\code{a1dcf03}）。 & \textbf{问题：} 引入微动效后，浏览器不支持 View Transitions 或开启减弱动画时存在切换异常隐患。\newline\textbf{解决：} 封装特性检测回退普通路由跳转，并响应 \code{prefers-reduced-motion}。 \\
-9 月 15 日 & 执行核心整合：合并 AI 界面（\code{e06d806}）、统一响应式壳层（\code{abd8891}）、支持云端部署（\code{5418af1}），召开第 7 次组会封板。 & \textbf{问题 1：} 游客/用户从 AI 页或店铺页点返回陷入路由循环；连续切页出现短暂白屏；窄屏下登录表单溢出。\newline\textbf{解决 1：} 按 TDD 红-绿-重构（\code{06780ac} $\rightarrow$ \code{12c3d6e} $\rightarrow$ \code{d319c5e}）集中返回规则；提交 \code{6a9f3af} 与 \code{061e7f3} 修复白屏与窄屏溢出；\code{48fd4e3} 收敛 AI 悬浮球边界。\newline\textbf{问题 2：} 语音抽屉关闭或延迟授权时麦克风未释放。\newline\textbf{解决 2：} 提交 \code{ddbeb3a} 在关闭与迟到回调时主动释放 MediaStream。 \\
-9 月 16 日 & 合入高德地图选址与基于坐标的直线距离估算（\code{17f80ab}），执行跨组交叉验收（25 项截图存证）。 & \textbf{问题：} 未配置高德 Key 或离线环境下地址选择弹窗报错；部分旧演示店铺缺坐标。\newline\textbf{解决：} 增加 \code{74e8dbc} 离线区域回退及“距离暂无”降级文案；通过 \code{006_map_coordinates.sql} 为演示店铺补全真实坐标。 \\
-9 月 17--19 日 & 完成课程验收展示，召开第 8、9 次会议复盘反馈并固化自动化测试基线（后端 340 项、前端 235 项）。 & \textbf{问题：} 答辩评审指出部分订单阶段命名、优惠券锁定时机与 AI 调用预算在 SRS 中描述偏简略。\newline\textbf{解决：} 建立“需求与实现差异改进清单”，明确状态映射与后续改进项。 \\
+9 月 13 日 & 全体 4 人 & 范文丽设计首页入场、分类搜索与卡片转场动效方案；赵紫怡调试 \code{StructuredAssistantServiceImpl}；李承文联调管理端异常仲裁接口。 & \textbf{阻碍：} 外部大模型超时影响数据库事务释放。\newline\textbf{解决：} 彻底将外部 HTTP 调用移出 \code{@Transactional} 边界。 \\
+9 月 14 日 & 全体 4 人 & 范文丽连续完成首页入场、分类卡片、Tab 切换及 AI 按钮动效（\code{9b1a849}--\code{28b5666}），同步优化点单与订单页（\code{b6456ce}--\code{a1dcf03}）。 & \textbf{阻碍：} 部分动画在系统开启减弱动态效果时过于频繁。\newline\textbf{解决：} 增加 \code{prefers-reduced-motion} 媒体查询降级。 \\
+9 月 15 日 & 全体 4 人 & 召开第 7 次封板会；李承文合入 \code{fwl-AI} 分支（\code{14617ce}），完成页面返回 TDD 修复（\code{06780ac}--\code{d319c5e}），修复游客浏览、自取判断、主题白屏、窄屏溢出（\code{52be48e}--\code{061e7f3}），支持云端解耦部署（\code{5418af1}），整理匿名版 SRS 与部署手册（\code{1df6b5a}）。 & \textbf{阻碍：} 连续切页偶发白屏及窄屏登录表单横向溢出；部分语音权限未及时释放。\newline\textbf{解决：} 重建统一响应式页面壳层，在抽屉关闭时强制释放麦克风轨道（\code{ddbeb3a}）。 \\
+9 月 16 日 & 全体 4 人 & 召开第 8 次验收准备会；仲禹潼集成高德选址与 GCJ-02 距离估算（\code{17f80ab}），同步执行跨组交叉验收（\code{sep-elm}）；李承文精修骑手/商家/管理端并修复离线区域选择（\code{6d6a236}--\code{74e8dbc}）。 & \textbf{阻碍：} 未配置高德密钥时地址编辑页无法打开地图。\newline\textbf{解决：} 提供“地图服务尚未配置，仍可填写地址”降级提示，保证下单主链路不中断。 \\
+9 月 17--19 日 & 全体 4 人 & 整理 25 项交叉验收证据截图；全量执行后端 340 项与前端 235 项测试回归；召开第 9 次复盘归档会，沉淀演进差异清单。 & \textbf{阻碍：} 临近展示需确保无密钥环境下所有 AI/地图入口均有优雅兜底。\newline\textbf{解决：} 实机复核未配置提示与本地规则筛选路径全畅通。 \\
 \end{longtable}
 
-\subsubsection{迭代评审、回顾与燃尽图}
-Sprint~3 成功将所有功能分支合入 \code{main}，实现四端、AI、地图与资产模块完整集成。图~\ref{fig:proc-sprint3-git}(a) 为 Sprint~3 燃尽图（规划 82 小时），图~\ref{fig:proc-sprint3-git}(b) 为仓库真实的每日 Git 提交分布图（\code{git-daily.pdf}），清晰印证了 9 月 3 日建模、9 月 7 日与 9 月 12 日联调、9 月 15 日全链路整合的三波研发高峰。
+\subsubsection{迭代燃尽图、评审与回顾}
+图~\ref{fig:burndown-s3} 展示了 Sprint~3 工时燃尽图（9 月 15 日冲刺合入期间出现短时高负荷并随 TDD 修复快速收敛），评审与回顾见表~\ref{tab:sprint3-review}。
 
 \begin{figure}[H]
   \centering
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \begin{tikzpicture}[scale=0.76]
-      \draw[->,thick] (0,0) -- (6.8,0) node[right,font=\scriptsize]{天数};
-      \draw[->,thick] (0,0) -- (0,4.2) node[above,font=\scriptsize]{剩余工时(h)};
-      \foreach \x/\d in {0/D0,0.9/D1,1.8/D2,2.7/D3,3.6/D4,4.5/D5,5.4/D6,6.3/D7}
-        \node[below,font=\scriptsize] at (\x,0) {\d};
-      \foreach \y/\v in {0/0,0.9/20,1.8/40,2.7/60,3.69/82}
-        {\draw[gray!25] (0,\y) -- (6.3,\y); \node[left,font=\scriptsize] at (0,\y) {\v};}
-      \draw[dashed,thick,mutedgray] (0,3.69) -- (6.3,0);
-      \draw[thick,accentgreen] plot coordinates {(0,3.69) (0.9,3.15) (1.8,2.45) (2.7,1.90) (3.6,1.35) (4.5,0.85) (5.4,0.35) (6.3,0)};
-      \node[font=\scriptsize,accentgreen] at (4.5,3.5) {— 实际剩余};
-      \node[font=\scriptsize,mutedgray] at (4.5,3.1) {- - 理想基线};
-    \end{tikzpicture}\\[-2pt]
-    \small（a）Sprint 3 燃尽图（82~h / 7 天）
-  \end{minipage}\hfill
-  \begin{minipage}[t]{.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth,height=.30\textheight,keepaspectratio]{figures/report/git-daily.pdf}\\[-2pt]
-    \small（b）Git 仓库真实每日提交分布统计
-  \end{minipage}
-  \caption{Sprint 3 燃尽图与仓库实际提交活跃度分布}\label{fig:proc-sprint3-git}
+  \resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[x=1.45cm,y=0.055cm]
+    \draw[->] (0,0) -- (7.6,0) node[right,font=\scriptsize] {日期 (9月)};
+    \draw[->] (0,0) -- (0,92) node[above,font=\scriptsize] {剩余工时 (h)};
+    \foreach \d/\lbl in {0/9.13,1/9.14,2/9.15,3/9.16,4/9.17,5/9.18,6/9.19}
+      {\draw[gray!25] (\d,0) -- (\d,85); \node[below,font=\scriptsize] at (\d,0) {\lbl};}
+    \foreach \y in {0,20,40,60,80}
+      {\draw[gray!25] (0,\y) -- (7,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
+    \draw[dashed,mutedgray,thick] (0,82) -- (6,0);
+    \draw[thick,accentgreen,mark=*] plot coordinates {(0,82) (1,68) (2,48) (3,26) (4,14) (5,6) (6,0)};
+    \node[font=\scriptsize,accentgreen] at (4.5,65) {— 实际剩余工时};
+    \node[font=\scriptsize,mutedgray] at (4.5,76) {- - 理想基准线};
+  \end{tikzpicture}
+}
+  \caption{Sprint 3 迭代工时燃尽图（9 月 13 日--9 月 19 日，总工时 82 h）}\label{fig:burndown-s3}
 \end{figure}
 
-\subsection{《软件工程 1》过程审计与规范化收尾（9 月下旬--12 月）}
+\begin{longtable}{L{.18\linewidth}L{.44\linewidth}L{.29\linewidth}}
+\caption{Sprint 3 迭代评审验收与回顾总结表}\label{tab:sprint3-review}\\
+\toprule
+\textbf{评估维度} & \textbf{核心结论与验收事实} & \textbf{沉淀行动项（Try）} \\
+\midrule
+增量评审（Review） & \code{US017--US022} 管理治理、多模态 AI、高德适配与四端看板全部交付，575 项自动化测试 100\% 通过。 & 形成可一键启动的 Docker 演示镜像与差异演进清单。 \\
+过程回顾（Keep/Prob） & \textbf{保持：} 大规模集成前后以 TDD 与契约测试保护关键边界。\newline\textbf{不足：} 外部 API 密钥未配置时的界面降级测试启动较晚。 & 后续外部依赖在设计初期即同步定义“降级提示与测试替身”。 \\
+\end{longtable}
 
-在核心研发与交叉验收结束后，项目组进一步对照《软件工程 1》课程的 CMM3 级过程管理与文档规范开展系统梳理：
-\begin{enumerate}
-  \item \textbf{9 月 20 日--9 月 27 日：} 完成开发过程日志、Git 提交图谱、测试输出与差异清单整理，并核查代码库中所有测试与部署脚本一致性。
-  \item \textbf{10 月--12 月（课程大作业规范化阶段）：} 按期确认团队 4 人角色与项目范围基线（10 月 21 日前确立角色，10 月 30 日前完成分组上报）；对照 CMM3 过程域补齐 WBS 三层分解、PERT 三点工时估算、甘特图、风险矩阵闭环及 AI 赋能专题评估，最终汇编为本课程设计报告按期交付。
-\end{enumerate}
+\reportfig[0.95\linewidth]{figures/report/process/github-summary.png}{GitHub 仓库分支合并、提交统计与成员协同全景}{fig:proc-gh-summary}
+
+\reportfig[0.95\linewidth]{figures/report/process/pull-requests.png}{团队累计 34 个 Pull Request 评审与合入记录截图}{fig:proc-prs}
+
+\reportfig[0.92\linewidth]{figures/report/git-daily.pdf}{项目周期每日 Git 提交频次分布统计图（9 月 1 日--9 月 27 日）}{fig:proc-git-daily}
+
+\subsection{《软件工程 1》过程审计与规范化收尾（9 月下旬--11 月）}
+
+在系统功能验收完成后，团队结合答辩反馈与课程要求，于 9 月 23 日--9 月 27 日整理完成基础技术文档与跨组交叉测试材料（提交 \code{29a0ad1}--\code{6ddb219}）；随后在《软件工程 1》阶段进一步开展了过程资产审计与实机复测：依据代码快照 \code{6ddb219} 重新执行前后端全量 575 项自动化测试，在独立 MySQL 8.0.46 演示实例上逐一截屏验证四端全部主界面与降级状态，并将 WBS、PERT 工时估算、风险追踪矩阵及双维 AI 赋能专题系统化归档于本报告。
