@@ -1,28 +1,31 @@
 \chapter{定义项目}
 
-本章围绕“轻量级外卖服务平台”开展项目范围定义与软件系统设计，覆盖产品愿景与敏捷规划、MoSCoW 优先级与 Product Backlog、技术架构、MySQL 8 数据库模型（全量 23 张数据表）、四端及特色功能详细设计、RESTful 接口契约（全量 24 个控制器 135 个端点）与用户界面（UI）设计。
+\newcommand{\chapterfigureprose}[1]{%
+  \begin{minipage}{\linewidth}
+    \setlength{\parindent}{2em}
+    \indent #1\par
+  \end{minipage}\par\medskip
+}
+
+我们从一笔校园外卖订单开始讨论。顾客要知道钱算得对不对、餐送到了哪儿。商家要知道什么时候该备餐，骑手要知道哪一单已经可以取。如果送不下去，还得有人处理。我们先把这些问题写进用例，再沿订单拆页面、接口和数据。最后的数据库包含 23 张业务表，接口清单覆盖 24 个控制器的 135 个映射。
 
 \section{产品愿景与敏捷规划}
 
 \subsection{背景与目的}
 
 \subsubsection{项目背景}
-在高校校园及周边生活场景中，师生点餐需求高频且集中，但传统校园订餐方式仍存在流程割裂、履约不透明及扩展能力有限等痛点：
-\begin{enumerate}
-  \item \textbf{订单与履约流转非标准化：} 人工记录、微信接龙或电话沟通容易出现地址漏填、菜品规格误记、起送门槛判断错误及到店自取与外送混淆等问题，缺乏可追踪的状态机约束。
-  \item \textbf{多方角色权责边界不清：} 商家缺少对商品上下架、库存、满减活动及营业状态的自主管控；骑手缺乏统一的抢单、到店、取餐与异常上报工作台；管理员缺少准入审核与平台级治理视图。
-  \item \textbf{消费决策与交互体验割裂：} 顾客缺少基于个人口味忌口的智能推荐入口，难以在下单前透明核对“满减、会员折扣、优惠券、积分抵扣”的真实计算顺序，历史订单也常因商家改价或下架商品而发生信息漂移。
-  \item \textbf{并发安全与系统可靠性不足：} 高峰期多用户抢购有限库存、重复点击支付以及多名骑手同时抢同一配送任务时，若缺少条件更新、幂等键与事务保护，极易引发超卖、重复扣款或任务归属冲突。
-\end{enumerate}
+学校和周边店铺的午餐订单通常集中在一段时间里。人工记录、微信接龙和电话都能接单，忙起来却容易漏掉收货地址、菜品规格或起送金额。顾客改成到店自取时，商家仍需备餐，骑手就不用接手了。我们用订单状态记录谁完成了哪一步，从订单明细可以回查处理结果。
+
+梳理干系人时，各端要解决的问题逐渐清楚。商家需要自己调整营业状态、库存和满减。骑手在工作台抢单、确认到店和取餐，也能报异常。商家和骑手的准入由管理员审核，送不下去的单也交到管理员端处理。
+
+顾客先按口味和忌口挑菜，再看满减、会员折扣、优惠券和积分到底怎么扣。店铺以后改价、改名或下架，原来的账单仍要说得清。同时买最后一份菜、同时抢一单、弱网下重复提交或支付，都是需要明确结果的情况。我们把库存、任务归属和资金分别放进相应的事务边界，并将这些情况列入联调和回归。
 
 \subsubsection{项目核心目标（与 TQCS 对齐）}
-围绕软件工程时间（Time）、质量（Quality）、成本（Cost）与范围（Scope）控制目标，本项目在课程初始工程基础上完成架构重构与全链路增强（详见表~\ref{tab:tqcs-goals}）：
-\begin{enumerate}
-  \item \textbf{构建四端闭环（Scope \& Quality）：} 打通顾客、商家、骑手、管理员四端核心流程，支持外送与到店自取双模式，实现订单状态与配送任务的严格联动。
-  \item \textbf{强化数据与资金准确性（Reliability）：} 采用服务端权威计价、下单商品/地址快照隔离、条件更新防超卖及幂等支付机制，保障交易记录与资产流水准确可追溯。
-  \item \textbf{融入 AI 与地图差异化能力（Innovation）：} 提供文字对话、智能推荐、图片识菜、语音草稿四类受控 AI 点餐入口，结合高德地图实现精准选址、直线距离与送达时长估算。
-  \item \textbf{按敏捷迭代按期交付（Time \& Cost）：} 遵循 Scrum + CMM3 过程规范，通过三大短周期迭代及持续自动化测试保护，在有限周期内高质量完成交付与验收。
-\end{enumerate}
+课程给了我们初始工程，能够安排的人和时间有限。我们先商定这一次要交付哪些功能，再定进度和验收条件。时间（Time）、质量（Quality）、成本（Cost）和范围（Scope）的约定汇总在表~\ref{tab:tqcs-goals}。
+
+范围和质量都落在一笔订单上。外送要经过顾客、商家和骑手，遇到异常还能交给管理员，自取则由顾客直接取餐。服务端定价，建单时保存商品和地址快照，用条件更新扣库存。检查幂等键和当前状态后才继续建单或付款。取消订单后，仍可以按原订单号找到资金和积分的变动。
+
+文字问答、智能推荐、图片识菜、语音点餐草稿和高德选址是后续增量。地图还用于估算直线距离及送达时间。我们按 Scrum 把功能分到三轮，借鉴 CMM 已定义级的做法记录需求、计划和验证结果。每轮都回归已经能走通的订单，给最后的集成和验收留出时间。
 
 \begin{longtable}{L{.14\linewidth}L{.26\linewidth}L{.51\linewidth}}
 \caption{项目 TQCS 工程目标与量化验收基准表}\label{tab:tqcs-goals}\\
@@ -46,49 +49,29 @@ Scope（范围） & 聚焦四端闭环与特色增值能力 & 严格执行 MoSCo
 \subsection{项目定义}
 
 \subsubsection{项目名称}
-轻量级外卖服务平台（课程演进代号：饿了吧校园外卖平台）。
+\textbf{轻量级外卖服务平台}（课程演进代号为“饿了吧校园外卖平台”）。
 
 \subsubsection{核心功能定位与目标用户}
-\begin{enumerate}
-  \item \textbf{顾客端（校园及周边消费者）：} 支持游客与登录态浏览、分类搜索、口味偏好与主题切换、高德地图选址与收货地址管理、购物车跨店隔离与部分勾选提交、外送/自取切换、服务端算价与模拟钱包/积分/优惠券支付、订单全流程跟踪与取消、评价发布、收藏点赞及 AI 辅助点餐。
-  \item \textbf{商家端（校内食堂档口及周边餐饮商户）：} 支持入驻申请与审核状态查看、店铺资料与满减/营业状态配置、菜品分类/价格/库存/限购与上下架管理、订单接单/拒单/出餐流转、顾客评价查看与回复，以及经营数据看板与报表导出。
-  \item \textbf{骑手端（校园兼职或专职配送员）：} 支持实名与车辆类型入驻申请、在线/离线状态切换、可接配送任务抢单、到店确认、取餐配送、确认送达、异常情况上报，以及高德外部导航联动与收益里程统计。
-  \item \textbf{管理员端（平台运营与治理人员）：} 支持商家/开店/骑手准入审核、用户与商家账号治理（启用/停用/角色分配）、配送异常人工处置（恢复/改派/终止）、评价隐藏治理以及平台级交易趋势看板。
-\end{enumerate}
+
+顾客主要是校园及周边消费者。游客可先浏览店铺和菜单，登录后再管理偏好、地址和购物车。下单支持部分勾选、外送或自取和多种优惠，订单结束后还可以评价、点赞或收藏。AI 入口为选菜提供帮助。
+
+商家主要是校内食堂档口及周边餐饮商户。开店后可以维护菜品分类、价格、库存、限购、上架状态和店铺满减。接单、拒单和出餐在同一工作台完成，评价回复、经营看板和报表导出用于日常经营。
+
+骑手实名申请入驻，按配送工具登记资料。获批后可上线抢单，在途中确认到店、取餐和送达，必要时上报异常。工作台同时提供高德外部导航、里程统计和预计收益。管理员则负责商家、店铺及骑手准入，处理账号启停和角色分配，治理违规评价，并通过看板跟踪平台交易。
 
 \subsection{迭代周期与 Scrum 机制}
 
-团队采用增量式 Scrum 敏捷开发框架，并结合 CMM3 级过程域实施标准化管理：
-\begin{itemize}
-  \item \textbf{迭代周期划分：} 核心研发工作划分为 3 个紧凑迭代周期（Sprint 1：需求建模与用户下单核心闭环；Sprint 2：商家履约、骑手配送与资产体系；Sprint 3：管理治理、AI 多模态、高德地图与全链路回归），随后开展跨组交叉验收与《软件工程 1》规范化文档归档。
-  \item \textbf{敏捷例会制度：} 每个迭代起点召开规划会拆解 Sprint Backlog；开发期间通过飞书文档与线上短会同步每日进展与阻塞；迭代末期开展演示评审与问题回顾，并依据 TDD 红--绿--重构与自动化测试门禁合并 PR。
-  \item \textbf{就绪与完成定义（DoR / DoD）：} 团队明确规定只有具备明确角色故事、接口字段与异常边界的用户故事才允许进入 Sprint（DoR）；只有完成编码实现、通过前后端自动化测试、经过 SM 代码审查合并且飞书状态更新的任务才标记为完成（DoD），具体准则见表~\ref{tab:dor-dod}。
-\end{itemize}
+Sprint 1 先画需求模型，把顾客下单做出来。Sprint 2 再接商家履约、骑手配送和资产，顾客下的单可以接着往下走。Sprint 3 加上治理、AI 和高德地图，再集中回归、跨组验收并归档文档。每轮有一个可试用的增量，上一轮留下的问题也可以带回下一次规划。
 
-\begin{longtable}{L{.18\linewidth}L{.35\linewidth}L{.38\linewidth}}
-\caption{团队敏捷就绪定义（DoR）与完成定义（DoD）检查标准}\label{tab:dor-dod}\\
-\toprule
-\textbf{质量门禁阶段} & \textbf{核心准入/验收条目} & \textbf{工程验证载体} \\
-\midrule
-\endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{质量门禁阶段} & \textbf{核心准入/验收条目} & \textbf{工程验证载体} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-DoR（迭代就绪） & 1. 故事具备明确的角色、目标、商业价值及 MoSCoW 优先级；\newline 2. 涉及表结构变更已明确迁移 SQL 策略；\newline 3. 前后端已对齐请求路径、DTO 字段与状态码。 & 飞书 Product Backlog、SRS 用例章节与 \code{elm_v2.sql} 评审记录 \\
-\midrule
-DoD（任务完成） & 1. 核心逻辑与分支边界通过 \code{./mvnw test} 与 \code{npm test}；\newline 2. 安全边界（JWT 上下文提取、权限注解）经人工复核；\newline 3. PR 合并至 \code{main} 且未破坏容器一键启动脚本；\newline 4. 关联缺陷已在 WPS 台账复测关闭。 & GitHub PR 合并记录、Surefire/Node 测试日志、WPS 闭环台账 \\
-\end{longtable}
+每轮开始，我们在规划会上拆 Sprint Backlog，先说清哪个角色用、调用哪些字段、遇到异常怎么办。开发中在飞书和短会上同步，收尾时把功能演示出来，再谈哪些做法需要调整。采用 TDD 的任务按红--绿--重构推进，自动化测试通过并经 SM 审查合并后更新飞书。就绪和完成的条件见表~\ref{tab:dor-dod}。
 
 \section{项目范围与 Product Backlog}
 
 \subsection{项目范围界定}
 
-图~\ref{fig:def-context} 与图~\ref{fig:def-actors} 分别展示了系统的上下文外部依赖边界与四类参与者职责。平台内部由前端 SPA、Spring Boot 业务服务与 MySQL 8 持久化层构成；外部依赖包括 DeepSeek 大模型、DashScope 视觉与语音识别、高德地图服务及对象存储。本期明确将范围边界固化在表~\ref{tab:scope-boundary} 中，避免需求蔓延挤压测试回归窗口。
+定范围时，我们先问系统从谁手里接收信息、做完后把结果交给谁。图~\ref{fig:def-context} 画平台与外部服务的交界，图~\ref{fig:def-actors} 再画各个角色能发起的动作。前端 SPA、Spring Boot 业务服务和 MySQL 8 归平台维护。DeepSeek、DashScope 的视觉和语音识别、高德地图与对象存储由外部服务提供。表~\ref{tab:scope-boundary} 写清这些环境条件、要处理的数据和本期能交付的功能。钱包充值和结算先模拟，真实清算和实时轨迹另留给后续，给四端履约的联调和回归留足时间。
 
+\Needspace{.34\textheight}
 \begin{longtable}{L{.16\linewidth}L{.38\linewidth}L{.37\linewidth}}
 \caption{系统建设范围（In-Scope）与显式排除项（Out-of-Scope）清单}\label{tab:scope-boundary}\\
 \toprule
@@ -109,14 +92,23 @@ DoD（任务完成） & 1. 核心逻辑与分支边界通过 \code{./mvnw test} 
 智能与管理域 & 结构化菜单筛选、DeepSeek 问答、DashScope 识菜与语音草稿（含未配置降级）、四端看板与导出 & 大规模向量知识库 RAG 集群、单用户精细化商业计费配额系统 \\
 \end{longtable}
 
-\srsfig[0.95\linewidth]{figures/srs/01-system-context.png}{系统上下文边界与外部依赖集成视图}{fig:def-context}
-
-\srsfig[0.92\linewidth]{figures/srs/09-actor-analysis.png}{系统四端参与者职责与交互边界分析模型}{fig:def-actors}
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{图~\ref{fig:def-context} 从系统边界出发，可沿外部连线查到地图、语音和图像等功能所依赖的服务。图~\ref{fig:def-actors} 从登录后的使用者出发，四种角色各自办理业务，共用认证流程。以外送为例，顾客提交地址，商家处理订单，骑手执行配送，管理员处理异常。订单记录把这些分散在不同页面的动作串到一起。}
+  \includegraphics[width=.80\linewidth,height=.36\textheight,keepaspectratio]{figures/srs/01-system-context.png}
+  \caption{系统上下文边界与外部依赖集成视图}\label{fig:def-context}
+  \medskip
+  \includegraphics[width=.82\linewidth,height=.22\textheight,keepaspectratio]{figures/srs/09-actor-analysis.png}
+  \caption{系统四端参与者职责与交互边界分析模型}\label{fig:def-actors}
+  \par\smallskip
+  \chapterfigureprose{以地图为例，外部服务提供位置检索和坐标，顾客确认后由平台保存地址。配送任务读取订单上的地址记录。即使演示环境只填写文字地址，顾客提交、商家出餐和骑手接单仍分别由平台处理，可以用同一个订单号在三端核对。}
+\end{figure}
 
 \subsection{Product Backlog}
 
-本组结合 MoSCoW 优先级法则（P0：必须实现的核心基线；P1：应当实现的完整增强；P2：条件允许时纳入的可选增强），并对照《软件需求规格说明书》（SRS）中的标准用例编号（\code{UC-COM/CUS/MER/RID/ADM/AI/MKT/PER}），将全部需求拆解为 22 项标准用户故事（\code{US001}--\code{US022}，总故事点 118 点），构成项目的 Product Backlog。表~\ref{tab:backlog-summary} 汇总了优先级分布，表~\ref{tab:product-backlog} 给出了完整的用户故事卡片与验收标准。
+我们把《软件需求规格说明书》（SRS）里的用例分成 22 项用户故事（\code{US001}--\code{US022}，共 118 点），逐项保留 \code{UC-COM/CUS/MER/RID/ADM/AI/MKT/PER} 中的来源编号。MoSCoW 分级给这些故事排了次序。P0 是必须完成的交易和履约，P1 加入资产、评价等增强，P2 则在条件允许时加入识菜、语音草稿等功能。这些故事合在一起就是 Product Backlog。优先级和故事点见表~\ref{tab:backlog-summary}，每个故事怎么验收可以到附录~\ref{app:project} 的表~\ref{tab:product-backlog} 查。
 
+\Needspace{.21\textheight}
 \begin{longtable}{C{.14\linewidth}L{.28\linewidth}C{.16\linewidth}C{.16\linewidth}L{.18\linewidth}}
 \caption{Product Backlog 优先级与故事点统计表}\label{tab:backlog-summary}\\
 \toprule
@@ -130,281 +122,286 @@ P2（Could） & 多模态识菜/语音草稿、高德定位与视觉动效增强
 \bottomrule
 \end{longtable}
 
-\begin{longtable}{L{.08\linewidth}L{.10\linewidth}L{.11\linewidth}L{.34\linewidth}C{.06\linewidth}C{.06\linewidth}L{.17\linewidth}}
-\caption{Product Backlog 详细用户故事与验收标准清单（US001--US022）}\label{tab:product-backlog}\\
-\toprule
-\textbf{编号} & \textbf{SRS 映射} & \textbf{角色} & \textbf{用户故事描述（As a / I want / So that）} & \textbf{优先} & \textbf{点数} & \textbf{核心验收标准（DoD）} \\
-\midrule
-\endfirsthead
-\multicolumn{7}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{编号} & \textbf{SRS 映射} & \textbf{角色} & \textbf{用户故事描述（As a / I want / So that）} & \textbf{优先} & \textbf{点数} & \textbf{核心验收标准（DoD）} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-US001 & UC-COM-01 & 通用用户 & 作为平台用户，我希望能通过账号密码注册、登录、修改个人资料/头像并安全退出，以便使用受保护功能。 & P0 & 5 & 用户名/手机号全局唯一；错误密码与停用账号拒绝登录；JWT 无状态鉴权且密码密文不回传。 \\
-US002 & UC-COM-02/03 & 通用用户 & 作为已登录用户，我希望能申请成为商家或骑手并查看站内审核通知，以便合法切换对应工作端。 & P0 & 5 & 角色切换严格由服务端权威权限决定；入驻审核结果实时写入站内通知并支持标为已读。 \\
-US003 & UC-CUS-01 & 游客/顾客 & 作为游客或顾客，我希望能按分类、关键字、销量或起送价浏览店铺及菜品详情，以便快速决策选餐。 & P0 & 5 & 未登录可公开浏览店铺，休息中店铺明确标示并拦截加购；售罄/下架菜品不可下单。 \\
-US004 & UC-COM-02 & 顾客 & 作为顾客，我希望能增删改查收货地址并设置默认地址，以便下单结算时自动填充联系信息。 & P0 & 3 & 仅本人可读写本人地址；支持 11 位有效手机号正则校验与默认地址唯一切换。 \\
-US005 & UC-CUS-02 & 顾客 & 作为顾客，我希望能分店管理购物车、填写口味备注并支持部分勾选商品结算，以便灵活安排多人点餐。 & P0 & 8 & 同商品自动合并数量；超限购/超库存拦截；未勾选商品提交后仍保留在购物车中。 \\
-US006 & UC-CUS-03/04 & 顾客 & 作为顾客，我希望能选择外送或到店自取模式进行试算并幂等提交订单，以便准确完成下单支付。 & P0 & 8 & 自取免外送费、起送价及收货地址；按 \code{idempotencyKey} 防重复建单；高并发防超卖。 \\
-US007 & UC-CUS-04/05 & 顾客 & 作为顾客，我希望能查看本人订单状态时间线、取消未接单订单并确认收货，以便掌控交易闭环。 & P0 & 5 & 跨用户订单严格隔离（403）；取消订单事务内恢复库存与退还资产；确认收货发放积分。 \\
-US008 & UC-CUS-06 & 顾客 & 作为顾客，我希望能对已完成订单进行 1--5 星评价（支持传图）、查看商家回复以及点赞收藏店铺。 & P1 & 5 & 坚持“一单一评”原则；支持上传最多 3 张评价图片；收藏列表支持增删查看。 \\
-US009 & UC-MKT-01 & 顾客 & 作为顾客，我希望能使用模拟钱包充值、领取新人券、开通 30 天体验会员及用积分抵扣订单金额。 & P1 & 8 & 所有金额严格采用 \code{BigDecimal} 精确运算；钱包扣款、退款与积分变更均记入流水账本。 \\
-US010 & UC-PER-01 & 顾客 & 作为顾客，我希望能切换 4 套视觉主题并保存辣度、口味偏好与忌口标签，以便获得个性化界面与推荐。 & P1 & 3 & 主题切换即时应用 CSS 变量并同步后端；支持一键恢复默认设置且屏蔽过敏忌口提示。 \\
-US011 & UC-MER-01 & 商家 & 作为商家，我希望能提交开店申请并维护店名、地址、起送费、配送费、满减规则及营业/休息状态。 & P0 & 5 & 仅审核通过的本人店铺可维护营业配置；切换“休息中”后顾客端同步禁止新下单。 \\
-US012 & UC-MER-02 & 商家 & 作为商家，我希望能新增/编辑菜品、自定义菜品分类、调整库存与单笔限购并控制上下架状态。 & P0 & 5 & 修改商品名或价格不影响历史订单明细快照（\code{food_name_snapshot}）；库存支持原子条件扣减。 \\
-US013 & UC-MER-03 & 商家 & 作为商家，我希望能查看本店待处理与进行中订单明细，并执行接单、拒单退款或确认出餐操作。 & P0 & 5 & 拒单自动退还顾客资产与恢复库存；出餐后外送订单自动生成待抢配送任务，自取转为待取餐。 \\
-US014 & UC-MER-04 & 商家 & 作为商家，我希望能查看顾客评价并发布回复，并在经营看板按日期范围查看营收与热销趋势、导出报表。 & P1 & 5 & 仅本店所属订单评价可回复；经营看板支持 CSV/Excel 导出且数据与真实已完成订单一致。 \\
-US015 & UC-RID-01/02 & 骑手 & 作为骑手，我希望能提交实名与车辆类型入驻申请，审核通过后切换在线接单并在任务池抢单。 & P0 & 5 & 采用乐观锁（\code{version}）条件更新实现并发抢单互斥，后发起请求明确返回“任务已被领取”。 \\
-US016 & UC-RID-03/04 & 骑手 & 作为骑手，我希望能按“到店 $\rightarrow$ 取餐 $\rightarrow$ 送达”节点推进配送，并使用高德地图外部导航。 & P0 & 5 & 节点推进同步主订单状态并记录时间戳；缺坐标时自动降级为文本地址提示而不阻断履约。 \\
-US017 & UC-ADM-01 & 管理员 & 作为管理员，我希望能集中审核商家入驻、新店铺开店及骑手资格申请，控制平台准入质量。 & P0 & 5 & 审核通过或拒绝必须记录审批意见并自动触发站内通知；未授权账号访问返回 403。 \\
-US018 & UC-ADM-02 & 管理员 & 作为管理员，我希望能启停违规用户账号、隐藏恶意评价并查看平台汇总订单，维护社区生态。 & P0 & 5 & 停用账号立即拦截登录与接口调用；隐藏评价在公开店铺页不可见但保留后台审计记录。 \\
-US019 & UC-AI-01 & 顾客 & 作为顾客，我希望能通过 AI 客服咨询平台规则与个人订单状态，并通过条件推荐获得真实菜品候选卡片。 & P1 & 5 & AI 不得直接代下单；候选菜品必须来自在售库存表且支持一键加购；订单查询严格隔离本人数据。 \\
-US020 & UC-AI-02 & 顾客 & 作为顾客，我希望能上传菜品图片识菜或通过语音生成点餐草稿，并在未配置模型时获得清晰提示。 & P2 & 5 & 外部网络调用置于数据库事务外；超时熔断后平滑降级至本地筛选规则，绝不阻断普通点餐。 \\
-US021 & UC-RID-04 / ADM-02 & 骑手/管理员 & 作为骑手我希望能上报配送异常，作为管理员我希望能对异常任务执行恢复、改派或终止仲裁。 & P0 & 4 & 异常上报同步挂起主订单（状态 9）；管理员仲裁恢复原态、换绑骑手或取消订单并回退资产。 \\
-US022 & UC-ADM-03 / CUS-06 & 管理员/顾客 & 作为管理员我希望能查看平台级多维趋势看板与导出数据，作为顾客我希望能按月/年查看个人消费统计。 & P1 & 4 & 平台看板支持按时间粒度统计成交额、活跃店铺与订单分布；消费统计支持按月/年维度聚合展示。 \\
-\end{longtable}
+\subsection{从用户故事到验收场景}
+
+同一个功能在不同端的说法不完全相同。顾客看到的是“餐品已备好”或“等待骑手接单”，商家执行的是确认出餐，骑手看到的是接单大厅的新任务。整理 Backlog 时，我们先用顾客能完成的动作描述故事，再按状态把商家与骑手的后续操作接上。这样拆分以后，随便打开某个端只能看到流程的一段，评审时则可以顺着同一订单核对前后是否连得起来。
+
+以表~\ref{tab:product-backlog} 中的双模式结算为例，外送时需要检查起送金额和收货地址，商家出餐后才能生成待接配送任务。到店自取按同样的购物车和计价规则提交，外送费为零，出餐后由顾客取餐。两个分支都需要记录订单明细和付款状态。选择哪种履约方式属于顾客的输入，之后每一端能够执行的动作则由当前状态给出。
+
+这也是课上讲的先理解问题、再设计、实施和检查。用例先写顾客要怎样取到餐，设计时再把它拆到结算页、订单服务和落库。做完后重新按顾客的操作走，页面要显示配送方式和应付金额，接口要拒绝不合条件的提交，数据库要存下最终选择和快照。各项测试分别查实现，迭代演示再沿同一单确认前后能接上。图~\ref{fig:def-actors} 和图~\ref{fig:def-activity} 可以查到由哪个角色动手，以及到了哪里该交给下一端。
+
+类似的划分也用于智能推荐和地图选址。推荐带来候选菜单，选中后仍回到购物车结算。地图用于辅助填写地址和展示距离，地址归属与外送条件由订单服务检查。将扩展能力接在核心流程旁边，优先级可以分开安排，验收时却能清楚看到它们怎样进入同一条主线。
 
 \section{技术架构与风险应对}
 
 \subsection{技术栈选型}
 
-平台采用前后端完全分离的现代 Web 架构，总体技术架构见图~\ref{fig:def-arch}。为保证大型单页应用的加载效率，前端仅首页保留首屏同步打包，商家端、骑手端、管理员端及 AI 点餐页均采用路由懒加载；后端采用经典的 \textbf{Controller $\rightarrow$ Service $\rightarrow$ Mapper（MyBatis）$\rightarrow$ MySQL 8} 分层架构，并将第三方外部依赖（DeepSeek、DashScope、高德地图）封装为独立客户端与适配器层，严禁与数据库事务耦合。系统各层技术选型及工程用途见表~\ref{tab:tech-stack}。
+平台分开部署前端与后端。打开首页时只加载首页所需的代码，进入商家、骑手、管理员或 AI 点餐页时再按路由加载。后端的请求依次经过 Controller、Service 和 MyBatis Mapper，最后到 MySQL 8。Controller 接页面请求，Service 管交易规则，Mapper 负责查写记录。这样顾客页面换了布局，订单的计价和库存规则仍在同一个地方。DeepSeek、DashScope 和高德地图各有独立客户端或适配器，调用放在数据库事务外。分层关系见图~\ref{fig:def-arch}，用到的技术见附录~\ref{app:project} 的表~\ref{tab:tech-stack}。
 
 \srsfig[0.95\linewidth]{figures/report/process/architecture.png}{轻量级外卖服务平台五层技术架构与外部服务解耦视图}{fig:def-arch}
 
-在代码组织层面，系统严格划分以下五层职责边界：
-\begin{enumerate}
-  \item \textbf{表现与交互层（\code{elmclient/src/views/} 与 \code{components/}）：} 基于 Vue 3 Composition API 与全局 CSS 变量主题引擎构建 33 个页面视图，配合 \code{authGuard.js} 实施四端角色路由隔离。
-  \item \textbf{前端通信与状态契约层（\code{elmclient/src/services/} 与 \code{utils/}）：} 通过 Axios 拦截器统一注入 Bearer JWT 并拦截跨站泄露；封装 \code{checkout.js}、\code{amap.js}、\code{theme.js} 等纯函数工具以支持 Node 无浏览器单元测试。
-  \item \textbf{安全网关与接口控制器层（\code{elm_bk/config/} 与 \code{controller/}）：} Spring Security 过滤器链解析并校验 JWT，配合 \code{@PreAuthorize} 注解与 \code{CurrentUserService} 从认证上下文提取真实用户身份；\code{GlobalExceptionHandler} 将业务异常映射为标准 HTTP 401/403/404/409/422/503 状态码。
-  \item \textbf{核心业务与事务服务层（\code{elm_bk/service/impl/}）：} 承载订单权威计价（\code{OrderPricingService}）、混合资产结算（\code{OrderSettlementService}）、订单状态机及骑手乐观锁抢单等核心逻辑，确保资金与库存操作处于 ACID 事务边界内。
-  \item \textbf{持久层与外部隔离适配层（\code{mapper/} 与 \code{client/}）：} MyBatis 显式 XML/注解 SQL 控制复杂条件更新与历史快照写入；DeepSeek、DashScope 与高德 REST 客户端均配置独立超时控制与 \code{AiCircuitBreaker} 熔断器，故障时自动回退本地规则。
-\end{enumerate}
+前端有 33 个页面视图。我们在 \code{elmclient/src/views/} 和 \code{components/} 用 Vue Composition API 管交互，用 CSS 变量统一主题。\code{authGuard.js} 判断当前身份能打开哪些页面。请求和页面状态交给 \code{services/} 和 \code{utils/}，Axios 拦截器统一给站内接口带上 Bearer JWT。\code{checkout.js}、\code{amap.js} 和 \code{theme.js} 里的纯函数抽出来后，可以直接用 Node 写测试。
 
-\begin{longtable}{L{.18\linewidth}L{.28\linewidth}L{.45\linewidth}}
-\caption{系统技术栈选型与工程用途}\label{tab:tech-stack}\\
-\toprule
-\textbf{架构层级} & \textbf{核心技术与版本} & \textbf{选型依据与工程用途} \\
-\midrule
-\endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{架构层级} & \textbf{核心技术与版本} & \textbf{选型依据与工程用途} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-前端工程 & Vue 3 + Vue Router 4 + Axios + CSS Variables & 组合式 API 便于拆分业务逻辑；路由元信息实现四端权限守卫；CSS 变量实现 4 套主题即时切换。 \\
-前端质量与构建 & Vue CLI + Node.js Test Runner (\code{node --test}) & 零额外重型框架即可执行 28 个测试文件（235 项断言），保障算价、导航与契约回归。 \\
-后端应用框架 & Java 17 + Spring Boot 3.4.6 + Spring Security & 提供稳健的 REST 接口、方法级权限控制（\code{@PreAuthorize}）、参数校验与全局异常处理。 \\
-认证与实时推送 & JJWT (HMAC-SHA512) + WebSocket & 无状态令牌鉴权（含记住我时长区分）与订单状态实时推送通道。 \\
-数据持久化 & MySQL 8.0 + MyBatis + HikariCP + 迁移脚本 & MyBatis 便于精准编写条件更新 SQL 与历史快照写入；版本号递增脚本保障可复现演进。 \\
-外部服务适配 & DeepSeek API + DashScope + 高德 Web/JS API & 接入大模型对话、多模态识菜/语音识别与地理编码；内置超时限制、熔断器与降级路径。 \\
-后端测试与容器 & JUnit 5 + Mockito + MockMvc + H2 + Docker Compose & H2 内存库支撑 53 个测试类（340 项）秒级隔离执行；Docker Compose + Nginx 一键编排交付。 \\
-\end{longtable}
+请求到达服务端后，Spring Security 校验 JWT，控制器根据注解判断调用角色，业务代码借助 \code{CurrentUserService} 取得认证用户。计价、资产结算、订单状态和骑手抢单放在服务层，同一次业务操作中的资金和库存更新由事务保护。MyBatis 的 XML 与注解 SQL 负责带条件的写入和快照落库。\code{GlobalExceptionHandler} 再将认证、权限、状态冲突和服务不可用等异常转换为 HTTP 响应。
+
+外部服务由独立客户端调用。DeepSeek 与 DashScope 的能力按超时与熔断规则处理，高德服务也有自己的超时配置。推荐或地图调用不可用时，页面仍能保留菜单选餐或手工地址录入。把这些调用放在交易事务之外，可以避免上游请求迟迟未结束时占住订单和库存操作。
 
 \subsection{初期架构风险与敏捷应对}
 
-在架构设计初期，团队重点识别了多端共用后端、资金并发一致性及外部依赖稳定性三类高风险架构决策点，并制定了敏捷演进对策（见表~\ref{tab:init-risk}）。
+最初画架构时，我们先看哪些问题会牵连整笔订单。四端共用后端，如果对状态的叫法和可执行动作理解不同，接单就会断在中间。付款、退款和重复提交碰在一起，余额与流水要对得上。地图或模型出问题，也要让人继续点餐。我们分别用状态约定、事务和可降级的外部接口处理这些风险，详细记录见附录~\ref{app:project} 的表~\ref{tab:init-risk}。
 
-\begin{longtable}{L{.22\linewidth}L{.33\linewidth}L{.36\linewidth}}
-\caption{项目定义阶段核心技术风险与敏捷应对}\label{tab:init-risk}\\
-\toprule
-\textbf{初期架构风险点} & \textbf{潜在系统故障后果} & \textbf{架构层敏捷应对策略} \\
-\midrule
-\endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{初期架构风险点} & \textbf{潜在系统故障后果} & \textbf{架构层敏捷应对策略} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-信任客户端价格与身份参数 & 恶意篡改下单金额或伪造 \code{userId}/\code{riderId} 越权读写他人订单 & 彻底废弃客户端金额直传；后端从 JWT 上下文提取身份并重新查库计算全部价格。 \\
-外部 AI 调用嵌入数据库事务 & 大模型慢响应（3--10 秒）长期占用数据库连接池导致系统雪崩 & 在 \code{AiChatServiceImpl} 与 \code{StructuredAssistantServiceImpl} 中先完成外部调用，再开启短事务落库。 \\
-高并发库存扣减与骑手抢单冲突 & 热门商品超卖为负库存、多个骑手同时抢单造成任务归属错乱 & 采用 \code{stock >= qty} 条件更新扣库存，为 \code{delivery_task} 引入 \code{version} 乐观锁校验。 \\
-多端演进导致旧前端接口失配 & 保留的课程初始接口与新增 v1 业务接口返回数据结构不一致 & 在旧 Controller 内保留兼容路径并统一委托至同一 Service，同时编写接口契约清理测试守护。 \\
-第三方地图或密钥未配置阻断演示 & 课程部署环境缺少高德或 DashScope 密钥时，选址或点餐页面卡死报错 & 地图选址增加离线地址回退与“距离暂无”提示；AI 服务不可用时自动切换本地筛选帮助。 \\
-\end{longtable}
+\subsection{订单提交的分层协作}
+
+沿图~\ref{fig:def-arch} 看一次下单就能看清这些层怎么配合。顾客在结算页选店铺、商品、地址和履约方式，也能看到折扣明细。页面把各项选择和相关编号交给请求层，并附上这次提交的幂等键。接口先由认证凭证确认是谁下单，再把参数交给订单服务。
+
+订单模块在代码中的分工见图~\ref{fig:def-order-service-uml}。控制器依赖 \code{OrderService} 接口，建单和状态变更由 \code{OrderServiceImpl} 转交给相应的服务。比如改自取价格时，可以沿建单服务找到 \code{OrderPricingService.quote}，而支付和取消的资产处理集中在 \code{OrderSettlementService}。
+
+\begin{figure}[!htbp]
+  \centering
+  \input{figures/uml/order-service-classes}
+  \caption{订单服务的实现类与依赖关系（UML 类图）}\label{fig:def-order-service-uml}
+\end{figure}
+
+订单服务按身份、店铺和勾选范围读取购物车，并重新检查商品价格、上架状态、库存和限购。若选择外送，还要核对收货地址的归属和起送门槛。校验通过后，服务预占库存、保存订单与明细、记录初始状态，并从购物车移除已提交的内容。商家改价后，历史账单仍保留建单时的信息。
+
+前端拿到订单号后进入支付步骤。订单提交与支付拆开，顾客能在确认折扣和付款方式后再付款，商家只会接到达到待接单状态的订单。后来若执行拒单或退款，结果通过相同订单号追溯到库存、优惠券和资产流水。订单状态由服务层推进，各端工作台读取该状态显示可用操作。
+
+\begin{table}[!htbp]
+  \centering
+  \caption{选餐、下单与支付的数据交接}\label{tab:def-order-layer-handoff}
+  \reporttablesize
+  \begin{tabularx}{\linewidth}{@{}L{.19\linewidth}YY@{}}
+  \toprule
+  环节 & 交给下一层的信息 & 可核对的结果 \\
+  \midrule
+  页面与请求层 & 店铺、勾选商品、履约方式、地址及幂等键 & 页面保留当前选项，并用返回结果更新订单入口 \\
+  订单接口与服务 & 经认证的顾客身份及已解析的请求参数 & 商品、地址和订单分别按归属校验 \\
+  建单事务 & 库存预占、订单、明细与初始状态 & 返回唯一订单号，明细保留成交名称与单价 \\
+  支付事务 & 订单号、支付方式、优惠券和请求使用的积分 & 相应资产扣减、流水与待商家接单状态一起提交 \\
+  \bottomrule
+  \end{tabularx}
+\end{table}
 
 \section{数据库设计}
 
 \subsection{数据库概述}
 
-系统数据库基于 MySQL 8.0（字符集统一为 \code{utf8mb4}、排序规则 \code{utf8mb4_0900_ai_ci}、存储引擎 InnoDB）构建，整体设计严格遵循第三范式（3NF）以消除基础实体冗余；同时针对外卖交易场景特有的“历史不可变性”需求，在订单明细与收货地址中引入受控的反范式快照字段（\code{food_name_snapshot}、\code{food_price} 与 \code{address_snapshot}），确保商家后续改价、改名或下架商品不会污染既有历史账单。
+业务表使用 MySQL 8.0、\code{utf8mb4} 和 InnoDB。用户、店铺和菜品等基础实体按第三范式组织。拆表时还要考虑一项资料改了以后，过去的记录该怎么读。我们在订单明细和主表保留成交时的菜名、单价和收货地址（\code{food_name_snapshot}、\code{food_price} 与 \code{address_snapshot}）。商家能继续改菜单，顾客也能更换地址，查原有账单时就读订单里存下的那一份。
 
 \subsection{领域模型与数据表设计}
 
-图~\ref{fig:def-domain-core} 与图~\ref{fig:def-domain-assets} 分别展示了系统核心交易领域（用户、店铺、商品、购物车、订单、配送）与扩展增值领域（资产流水、优惠券、偏好、AI 会话）的 UML 类图模型。全库共包含 23 张数据表，按五大业务域汇总于表~\ref{tab:db-overview}。
+画 UML 类图时，我们先列出一笔交易从哪里来、会留下哪些记录。用户、店铺、商品、购物车、订单与配送任务构成图~\ref{fig:def-domain-core}。资产流水、优惠券、偏好和 AI 会话另外画在图~\ref{fig:def-domain-assets}，便于查清哪些记录随交易更新、哪些按用户独立保存。两张设计图用到的 23 张数据表按五个业务域列在附录~\ref{app:db} 的表~\ref{tab:db-overview}。
 
-\srsfig[0.96\linewidth]{figures/srs/02-core-domain-class.png}{系统核心交易与多端履约领域模型类图}{fig:def-domain-core}
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{图~\ref{fig:def-domain-core} 的主线从用户延伸到商家资料、店铺和商品。商家先在工作台选择店铺，再打开该店的菜单。保存菜品变更时，服务端同时根据当前账号、店铺和菜品判断能否写入。这样，同一套页面可供经营多家店的商家使用，价格和库存的修改仍对应到具体店铺。}
+  \includegraphics[width=.96\linewidth,height=.60\textheight,keepaspectratio]{figures/srs/02-core-domain-class.png}
+  \caption{系统核心交易与多端履约领域模型类图}\label{fig:def-domain-core}
+  \par\smallskip
+  \chapterfigureprose{核对成交记录时，从订单主表按编号找到商家、顾客和履约方式，再用同一编号查询菜品明细。外送单还可以查配送任务，沿任务归属定位接受订单的骑手。这样查得的店铺与顾客分别支撑商家工作台和顾客订单页的查询范围。}
+\end{figure}
 
-\srsfig[0.94\linewidth]{figures/srs/03-assets-preference-class.png}{用户资产、优惠券、偏好与 AI 会话领域模型类图}{fig:def-domain-assets}
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{图~\ref{fig:def-domain-assets} 把当前余额与每笔流水画成相连的对象。付款时可从账户查到扣款所用余额，核对历史记录时则看对应的扣款和后续退款条目。优惠券也有面向用户的持有记录，用来判断这一张是否已核销。偏好设置独立保存，用户换主题时无需改动任何一笔订单。}
+  \includegraphics[width=.94\linewidth,height=.60\textheight,keepaspectratio]{figures/srs/03-assets-preference-class.png}
+  \caption{用户资产、优惠券、偏好与 AI 会话领域模型类图}\label{fig:def-domain-assets}
+  \par\smallskip
+  \chapterfigureprose{设计上，账户页用用户编号读余额和积分，流水则按每次资产变化追加记录。若需要复核一笔订单，先找到付款对应的流水，再核对券是否使用以及取消后是否退回。这样可以把账户当前数额与单笔交易留存的变化分开查阅。}
+\end{figure}
 
-\begin{longtable}{L{.18\linewidth}L{.31\linewidth}L{.42\linewidth}}
-\caption{系统 23 张数据库表全景清单}\label{tab:db-overview}\\
-\toprule
-\textbf{业务域} & \textbf{数据表名} & \textbf{核心业务职责} \\
-\midrule
-\endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{业务域} & \textbf{数据表名} & \textbf{核心业务职责} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-认证与用户域 & \code{users}、\code{person}、\code{authority}、\code{user_authority}、\code{permission_application} & 账号密码、个人基础资料（手机号唯一）、角色字典、多角色授权关联与商家入驻申请审核。 \\
-店铺与商品域 & \code{business}、\code{food}、\code{merchant_interaction} & 店铺基本信息、满减门槛、营业/审核状态、坐标字段；菜品价格/库存/限购/分类；用户点赞与收藏记录。 \\
-下单与交易域 & \code{delivery_address}、\code{cart}、\code{orders}、\code{orderdetailet}、\code{order_status_history} & 收货地址与默认/坐标信息；购物车与备注；订单主记录（含幂等键与快照）；订单明细快照；状态变更审计日志。 \\
-配送与骑手域 & \code{rider_profile}、\code{delivery_task}、\code{delivery_exception} & 骑手实名审核与在线/里程/收益统计；配送任务状态、乐观锁 \code{version} 与各节点时间戳；异常上报与处理。 \\
-资产、互动与智能域 & \code{user_asset}、\code{user_coupon}、\code{user_asset_ledger}、\code{review}、\code{notification}、\code{user_preference}、\code{ai_chat_history} & 钱包余额/积分/会员到期时间；优惠券持有与核销；资产变更流水；评价与商家回复；站内通知；主题与口味偏好；AI 会话记录。 \\
-\end{longtable}
-
-\input{body/ch2_db_specs}
+附录~\ref{app:db} 按业务域列出 23 张表及其关键字段，完整定义见初始化和迁移脚本。
 
 \subsubsection{数据库版本化增量迁移演进}
-除基线初始化脚本 \code{elm_v2.sql} 外，团队针对开发演进过程中发现的唯一性漏洞、历史数据漂移及新特性扩展，编写了 6 个可审计的幂等增量迁移脚本（存放于 \code{elm_bk/db/migrations/}），具体演进记录见表~\ref{tab:db-migrations}。
+新库从 \code{elm_v2.sql} 开始，已有库里还存着账号、地址和订单。给旧数据加账号唯一性约束、默认地址、菜名快照、备注或地图坐标时，我们把改动拆进 6 个迁移脚本，放在 \code{elm_bk/db/migrations/}。以后接手的人能按表~\ref{tab:db-migrations} 核对每次改了哪里、影响哪些记录。
 
-\begin{longtable}{L{.26\linewidth}L{.22\linewidth}L{.43\linewidth}}
-\caption{数据库版本化增量迁移脚本（001--006）演进清单}\label{tab:db-migrations}\\
-\toprule
-\textbf{迁移脚本文件名} & \textbf{涉及核心表} & \textbf{演进动因与安全保护策略} \\
-\midrule
-\endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{迁移脚本文件名} & \textbf{涉及核心表} & \textbf{演进动因与安全保护策略} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-\code{001_account_uniqueness.sql} & \code{users}, \code{person} & 为用户名与手机号增设唯一约束，先检测重复记录而不自动删改历史账号；逻辑删除后保留唯一占位防冒充。 \\
-\code{002_default_address.sql} & \code{delivery_address} & 新增 \code{is_default} 标识列，自动为已有地址的老账号将最早有效地址设为默认。 \\
-\code{003_order_name_snapshot.sql} & \code{orderdetailet} & 新增 \code{food_name_snapshot} 列固化下单商品名称；幂等检查列存在性且不回填历史空值。 \\
-\code{004_demo_business_categories.sql} & \code{business} & 事务化修正演示店铺分类编码，严格限定按 ID 与店名条件更新，避免覆盖线上真实店铺。 \\
-\code{005_cart_order_remarks.sql} & \code{cart}, \code{orders} & 幂等增加口味备注列（\code{remarks VARCHAR(255)}），支持下单时备注由购物车自动透传至订单。 \\
-\code{006_map_coordinates.sql} & \code{business}, \code{delivery_address} & 为商铺与收货地址增设高德经纬度（\code{DECIMAL(10,6)}）与 \code{poi_id}/\code{adcode}，不猜测既有历史坐标。 \\
-\end{longtable}
+新建数据库直接初始化基线表结构，已有数据库则按现有列和索引选择适用的迁移。账号唯一性改造先分组检查重名账号与重复手机号，再添加唯一约束。出现历史重复时，由维护人员先核对原记录，脚本保留基于软删除的历史关联。上线前可以对照账号条数与索引定义，确认约束到位且原有记录仍在。
+
+为已有账号增加默认地址时，脚本从各顾客仍在用的地址中选择主键最小的一条，保留所有地址及其归属。上线后由地址管理功能继续维护默认项，用户可以改选或删除地址。没有历史地址的账号保持原状，录入首条地址时设为默认。
+
+有些历史资料原本就没留下来。订单明细新增菜名快照后，旧订单仍留空，详情页显示“名称未留存”。地图坐标、兴趣点编号和格式化地址也允许为空。原有地址可以照常用文字显示，顾客重新选址后才写入坐标。这样加了新功能，由旧数据打开的订单和地址也还能用。
 
 \subsection{数据库访问与并发事务接口}
 
-\begin{enumerate}
-  \item \textbf{条件更新防超卖：} 扣减商品库存执行 \texttt{\small UPDATE food SET stock = stock - \#\{qty\} WHERE id = \#\{foodId\} AND stock >= \#\{qty\} AND shelve\_status = 1}，通过数据库行锁与受影响行数判断确保并发零超卖。
-  \item \textbf{乐观锁防撞单：} 骑手抢单执行 \texttt{\small UPDATE delivery\_task SET rider\_id = \#\{riderId\}, task\_status = 1, version = version + 1 WHERE id = \#\{taskId\} AND task\_status = 0 AND version = \#\{expectedVersion\}}，杜绝多人并发点击导致同一订单被多名骑手领取。
-  \item \textbf{订单幂等与只增账本：} \code{orders} 表通过联合唯一索引 \code{uk_orders_customer_idempotency} 阻止超时重试引起的重复建单；\code{user_asset_ledger} 采用纯追加（Append-Only）模式记录每笔余额、积分变动，取消退款或商家拒单均以反向冲正流水体现，绝不直接覆写历史账目。
-\end{enumerate}
+扣减库存时，\code{FoodMapper.decrementStock} 在同一条更新语句里检查商品仍上架、未删除且库存足够。服务用受影响行数判断是否预占成功。两笔订单请求同一菜品时，数据库会串行处理该库存行。先扣减的请求令剩余库存发生变化，后来的请求按新库存判断。若多件商品中有一件预占失败，事务回滚已做的库存扣减。
+
+抢单使用相似的条件更新。\code{DeliveryTaskMapper.acceptTask} 只更新仍待接、尚未绑定骑手的任务行，成功后同时记录骑手、接单时间，并递增 \code{version}。两个骑手可以同时在列表中看到待抢任务，先完成更新的请求取得归属。此后的到店、取餐和送达继续检查执行骑手及上一步状态，拒绝针对旧状态的操作。
+
+\code{orders} 表通过顾客与幂等键的联合唯一索引 \code{uk_orders_customer_idempotency} 约束重复建单，正常重试可通过查找原单返回已有订单号。退款沿用支付阶段记录的金额和积分。余额和积分的变化逐笔追加到 \code{user_asset_ledger}，取消、拒单和退款写入相应冲正流水，原交易记录仍可按订单号查到。
+
+\subsection{订单快照与可变资料}
+
+为顾客保存一份能复查的历史订单，首先需要区分哪些字段代表当时的交易，哪些字段来自现在的菜单。菜品表包含当前名称、单价和上架状态，每次打开菜单都应读取最新配置。下单时，订单明细同时保存菜品编号、名称快照、成交单价与数量。之后查历史订单时，可以用编号找到相应商品，但展示原账单应读取订单明细上的快照。
+
+地址也遵循这一规则。顾客在个人中心修改联系电话、重命名地址或删除旧记录，都会影响今后的下单选项。已经生成的订单应保留提交时的配送地址、联系人与联系电话。外送任务和售后问题往往发生在下单之后，若详情页把修改后的地址显示为原地址，顾客、商家和骑手就无法以同一份记录核对事实。
+
+历史详情通过订单号关联原明细，可以与资产流水核对。本期新增的快照字段保存建单时的值。菜品改名或下架后，仍可查到当时的名称、单价和数量。缺少快照的旧记录显示历史名称未留存。回归时先创建订单，再修改菜品名称并重新查询，核对选餐页和订单页是否分别读取最新菜单和原有明细。
+
+\begin{table}[!htbp]
+  \centering
+  \caption{订单查询涉及的数据来源}\label{tab:def-order-data-origin}
+  \reporttablesize
+  \begin{tabularx}{\linewidth}{@{}L{.21\linewidth}YY@{}}
+  \toprule
+  场景 & 读取位置 & 关键字段与用途 \\
+  \midrule
+  浏览当前菜单 & \code{food} & 名称、价格、库存及上架状态，用于当次选菜 \\
+  查看历史菜品 & \code{orderdetailet} & 菜名快照、成交单价与数量，用于原单明细 \\
+  核对外送信息 & \code{orders} & 地址与联系人快照，用于本次履约 \\
+  查询资金变动 & \code{user_asset_ledger} & 订单关联编号以及余额、积分变化，用于核对扣款和冲正 \\
+  \bottomrule
+  \end{tabularx}
+\end{table}
 
 \section{详细功能设计}
 
-为全面支撑四端协同业务闭环，本节从系统全局用例出发，逐端阐述顾客、商家、骑手、管理员及 AI 智能体的详细功能逻辑，并给出全链路活动图、状态机与核心时序交互模型。图~\ref{fig:def-usecase-all} 呈现了平台顶层系统总用例边界。
+总用例图先把顾客、商家、骑手、管理员和智能助手涉及的动作摆在一起（图~\ref{fig:def-usecase-all}）。单看一个端，只能知道这个角色要办什么。遇到出餐后谁接手、取消后怎么退款之类的问题，还得把用例放回一笔订单，核对活动图里的交接、状态转换和时序。
 
-\srsfig[0.95\linewidth]{figures/srs/10-system-use-case.png}{系统顶层总用例图（四端角色与核心业务域边界）}{fig:def-usecase-all}
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{画完总用例，组员可以从同一个地方出发验收。“配送任务管理”从商家出餐开始，先看任务有没有出现，再从骑手、商家和顾客三端查看同一笔订单。看“平台审核”时，则从申请人提交资料开始，接着看管理员怎么处理，最后回到申请入口检查资格是否更新。}
+  \includegraphics[width=.82\linewidth,height=.43\textheight,keepaspectratio]{figures/srs/10-system-use-case.png}
+  \caption{系统顶层总用例图（四端角色与核心业务域边界）}\label{fig:def-usecase-all}
+\end{figure}
 
 \subsection{顾客端功能模块}
 
-顾客端覆盖从游客发现店铺到售后评价、资产管理与智能点餐的完整消费旅程（详细用例模型见图~\ref{fig:def-uc-customer}）：
-\begin{enumerate}
-  \item \textbf{公开浏览与多维检索（UC-CUS-01）：} 支持游客与已登录顾客按 10 类美食分类筛选、关键字模糊匹配店铺及菜品名称、按销量/评分/起送费排序，并在配置坐标后展示商铺与当前收货地址间的直线距离与预估送达时长。店铺处于“休息中”（\code{operating_status = 0}）时，列表与详情页均以明确徽标提示并禁用结算加购按钮。
-  \item \textbf{购物车跨店隔离与备注管理（UC-CUS-02）：} 购物车按店铺分块展示，支持同商品数量合并、部分勾选待结算商品、单品删除、按店清空及整单口味/餐具备注编辑（\code{remarks}）。加入或修改数量时服务端实时校验商品上架状态、当前可用库存与单笔限购上限（\code{purchase_limit}）。
-  \item \textbf{双模履约结算与权威试算（UC-CUS-03/04）：} 支持“外送（DELIVERY）”与“到店自取（PICKUP）”切换。选择自取时自动豁免外送费、起送门槛及收货地址校验。结算页通过试算接口实时返回原价小计、商家满减、会员 95 折、优惠券面额及积分抵扣（100 积分抵 1 元，上限不超过券后金额 20\%），支持以钱包余额或模拟支付完成付款，并携带前端生成的 \code{idempotencyKey} 防止弱网连点重复下单。
-  \item \textbf{订单跟踪、取消与确认收货（UC-CUS-05）：} 订单列表按状态分组展示；详情页展示下单商品快照（名称、单价、数量）、配送任务进度及状态变更历史时间线。在商家接单前允许顾客自助取消并全额退还已核销资产；货物送达后支持确认收货并自动累计消费积分与触发评价入口。
-  \item \textbf{个人资产、消费统计与主题偏好（UC-CUS-06 / MKT-01 / PER-01）：} 提供钱包余额查询、模拟充值、新人券领取、30 天体验会员开通与资产明细流水；提供按月度/年度聚合的个人消费金额与常去店铺分析；支持 4 套视觉主题切换与辣度/口味/忌口标签持久化。
-\end{enumerate}
+顾客打开平台，往往先想找一家当下能点的店。游客和登录顾客都能浏览 10 类美食，从关键字找到店铺或菜品，再按销量、评分或起送价排序（UC-CUS-01）。有收货坐标时，列表显示直线距离和预计送达时长。店铺休息时，列表和详情页都给出提示，加购和结算暂时关闭。从进店到最后的评价，涉及的用例见图~\ref{fig:def-uc-customer}。
 
-\srsfig[0.95\linewidth]{figures/srs/11-customer-use-case.png}{顾客端详细用例图（浏览检索、购物车结算、订单资产与评价）}{fig:def-uc-customer}
+购物车按店铺分块。同一菜品的数量合并，可单独删除商品、按店清空或只勾选一部分结算（UC-CUS-02）。用户填写的口味和餐具备注随订单保存。变更数量时，服务端还会检查上架、库存和单笔限购条件。
+
+外送和到店自取可以在结算时切换（UC-CUS-03/04）。自取不收外送费，也不受起送门槛限制。页面展示原价、满减、会员 95 折、优惠券和积分抵扣，100 积分抵 1 元，抵扣金额最高为券后金额的 20\%。用户可用钱包余额或模拟支付付款。提交时由请求携带幂等键，避免网络重试产生多笔订单。
+
+订单列表按状态展示，详情中可以对照当时的菜品名称、单价、数量和配送时间线（UC-CUS-05）。商家接单前，顾客可以取消并退回已核销资产。送达后确认收货，系统累计消费积分并开放评价入口。个人中心还有钱包、模拟充值、新人券、30 天体验会员和明细流水，以及按月度、年度聚合的消费金额与常去店铺数据（UC-CUS-06 / MKT-01 / PER-01）。顾客可以在四套主题中切换，口味、忌口和辣度标签随偏好保存。
+
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{图里写清了什么时候能操作。有可售菜品才能加购，本人的订单才能查看，顾客确认收货后才开放评价。从订单列表或支付结果进入详情，看到的订单信息和下一步操作应当相同。}
+  \includegraphics[width=.80\linewidth,height=.43\textheight,keepaspectratio]{figures/srs/11-customer-use-case.png}
+  \caption{顾客端详细用例图（浏览检索、购物车结算、订单资产与评价）}\label{fig:def-uc-customer}
+\end{figure}
 
 \subsection{商家端功能模块}
 
-商家端赋能入驻商户自主完成店铺配置、供给维护、高效接单出餐与经营复盘（详细用例模型见图~\ref{fig:def-uc-merchant}）：
-\begin{enumerate}
-  \item \textbf{入驻申请与资质状态流转（UC-MER-01）：} 普通用户可通过 \code{/merchant/apply} 提交入驻申请，待管理员审核通过并授予 \code{BUSINESS} 权限后即可进入商家工作台；工作台支持多店铺管理、新开店铺申请、店名/地址/起送费/配送费/满减活动修改，以及一键切换“营业中/休息中”。
-  \item \textbf{商品分类、库存与限购控制（UC-MER-02）：} 支持自定义店铺内部菜品分类、上传菜品图片、调整价格与可售库存、设置单笔限购数量（\code{purchaseLimit}）及即时上下架操作；任何菜品名称或价格更新均不影响已生成历史订单的明细快照。
-  \item \textbf{订单履约流转（UC-MER-03）：} 实时接收 WebSocket 与列表推送的新支付订单，支持“接单制作（1 $\rightarrow$ 2）”“拒单取消并自动退还顾客资产（1 $\rightarrow$ 8）”及“确认出餐（2 $\rightarrow$ 3/4）”。外送订单出餐后自动在 \code{delivery_task} 生成抢单任务；到店自取订单则直接进入待顾客取餐状态。
-  \item \textbf{评价回复与经营看板（UC-MER-04）：} 支持按店铺查看全部顾客评分评价与晒图并发布官方回复；经营看板按日期区间统计订单量、营业额、热销菜品排行及顾客复购表现，并支持导出对账报表。
-\end{enumerate}
+商家先从 \code{/merchant/apply} 提交入驻申请，拿到 \code{BUSINESS} 权限后才能进工作台（UC-MER-01）。一个商家可以经营不止一家店。新店要先申请开店，已有店铺可在工作台选中后修改店名、地址、起送费、配送费和满减，也能随时切换营业状态。设置店铺、维护菜品、接单和经营查询所用的入口见图~\ref{fig:def-uc-merchant}。
 
-\srsfig[0.95\linewidth]{figures/srs/12-merchant-use-case.png}{商家端详细用例图（店铺经营、商品库存、接单出餐与评价看板）}{fig:def-uc-merchant}
+店铺内部可自定义菜品分类、上传图片，并维护单价、库存、单笔限购和上下架状态（UC-MER-02）。顾客下一次查看菜单时能看到新配置，已成交的订单继续读取当时的名称和价格。
+
+支付后的订单通过 WebSocket 通知和订单列表送到商家工作台（UC-MER-03）。商家可接单制作（状态 1 到 2），也可拒单并自动退回已支付资产（状态 1 到 8）。出餐时，外送单转入待骑手接单（状态 2 到 3），自取单转入待取餐（状态 2 到 4）。两种订单共用工作台，确认出餐后由服务端分流。
+
+商家还可以按店查看顾客的评分、评价与晒图，选择发布官方回复。经营看板按日期区间汇总订单量、营业额和热销菜品，提供复购统计及对账报表导出（UC-MER-04）。
+
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{以改价为例，商家先在图~\ref{fig:def-uc-merchant} 的菜品维护入口选店，然后修改本店菜单。再从订单入口查一笔已经卖出的餐，页面仍按原单明细展示当时的名字和价格。两个入口都只处理本店数据，顾客结算前后读到的记录则各有来源。}
+  \includegraphics[width=.76\linewidth,height=.41\textheight,keepaspectratio]{figures/srs/12-merchant-use-case.png}
+  \caption{商家端详细用例图（店铺经营、商品库存、接单出餐与评价看板）}\label{fig:def-uc-merchant}
+\end{figure}
 
 \subsection{骑手端功能模块}
 
-骑手端围绕校园配送员“安全抢单—高效导航—透明异常处理”的实操场景设计（详细用例模型见图~\ref{fig:def-uc-rider}）：
-\begin{enumerate}
-  \item \textbf{实名入驻与在线上下线控制（UC-RID-01）：} 支持用户填写实名、手机号及配送工具（电动车/自行车/步行）提交入驻申请；审核通过后骑手可自主切换“上线接单/休息离线”状态，并实时查看个人累计完成单数、配送里程与预估收益。
-  \item \textbf{并发抢单池与任务防撞（UC-RID-02）：} 在线骑手可浏览所有待抢配送任务（展示店铺名、取餐地址、送达地址与配送费），点击抢单后后端利用状态校验与乐观锁 \code{version} 原子锁定归属权。
-  \item \textbf{分阶段履约与高德外部导航（UC-RID-03/04）：} 骑手按“确认到店 $\rightarrow$ 确认取餐 $\rightarrow$ 确认送达”三步推进状态并记录时间戳；界面提供一键跳转高德地图导航入口，并在缺少坐标时平滑保留纯文本地址与楼栋号展示。
-  \item \textbf{配送异常上报：} 遇到顾客失联、地址错误或天气/交通受阻时，骑手可在工作台选择异常类型并填写说明，即时挂起任务并推送给平台管理员仲裁处置。
-\end{enumerate}
+骑手入驻时提交实名、手机号和配送工具，可选电动车、自行车和步行（UC-RID-01）。审核通过后，骑手可自行上下线并查看个人完成单数、里程和预估收益。图~\ref{fig:def-uc-rider} 给出了从入驻到履约的详细用例。获批且在线的骑手可以进入接单大厅，查看待抢任务的店铺、取餐地址、送达地址和配送费（UC-RID-02）。抢单由后端以任务状态与归属为条件原子更新。
 
-\srsfig[0.95\linewidth]{figures/srs/13-rider-use-case.png}{骑手端详细用例图（入驻、在线抢单、履约节点与异常上报）}{fig:def-uc-rider}
+接单后，骑手依次确认到店、取餐和送达，系统记录每一步的时间（UC-RID-03/04）。界面可跳转高德地图。缺少坐标时，保留纯文本地址和楼栋号供骑手查看。顾客失联、地址错误或天气与交通受阻时，骑手可以选择异常类型并说明情况，任务挂起以后进入管理员的待处理列表。
+
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{骑手在任务大厅先看从哪儿取、送到哪儿，领到后再进自己的配送任务（图~\ref{fig:def-uc-rider}）。打开导航只是去找位置，到没到店、取没取到餐，还是由骑手回工作台确认。如果途中无法继续，就在这笔任务的详情里上报异常。}
+  \includegraphics[width=.74\linewidth,height=.38\textheight,keepaspectratio]{figures/srs/13-rider-use-case.png}
+  \caption{骑手端详细用例图（入驻、在线抢单、履约节点与异常上报）}\label{fig:def-uc-rider}
+\end{figure}
 
 \subsection{管理员端功能模块}
 
-管理员端承担平台准入把关、违规治理与全局数据监控职责（详细用例模型见图~\ref{fig:def-uc-admin}）：
-\begin{enumerate}
-  \item \textbf{三级准入审批（UC-ADM-01）：} 集中处理“用户申请成为商家”“商家申请新开店铺”“用户申请成为骑手”三类审批流；通过或驳回时强制关联状态流转并自动向申请人发送站内通知。
-  \item \textbf{账号、评价与配送异常治理（UC-ADM-02）：} 支持按状态检索用户账号并执行启用/停用治理（停用后立即阻断认证与访问）；支持查看全平台评价并对恶意或违规评价执行“隐藏”操作；针对骑手上报的异常配送任务，执行“恢复配送”“改派其他在线骑手”或“终止订单并全额退款”三类仲裁操作。
-  \item \textbf{平台全局数据看板与导出（UC-ADM-03）：} 聚合展示平台注册用户数、在营店铺数、累计成交总额（GMV）、日/周订单趋势折线图与商家营收排行，支持按起止日期过滤及一键导出 CSV 统计表。
-\end{enumerate}
+管理员集中处理成为商家、商家开店和骑手入驻三类申请（UC-ADM-01），通过或驳回以后记录状态，并向申请人发送站内通知。日常治理包括按状态检索、启用或停用账号，停用账号会被后端阻断访问。管理员还可隐藏违规评价，并从待处理列表进入异常配送任务（UC-ADM-02），按情况恢复配送、放回接单大厅重新派送，或终止订单并退款。
 
-\srsfig[0.95\linewidth]{figures/srs/14-admin-use-case.png}{管理员端详细用例图（准入审核、账号/评价/异常治理与全局看板）}{fig:def-uc-admin}
+平台看板汇集用户数、在营店铺数、累计成交总额和商家营收排行，可按日或周查看订单趋势，并按起止日期导出 CSV（UC-ADM-03）。图~\ref{fig:def-uc-admin} 展示了治理操作和统计查询对应的用例。直接改变订单和账号结果的动作与看板查询分开，查阅数据时无需进入审核页面。
+
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{通过审核才会开放相应工作台或上线接单入口，因此先按申请类别核对申请人、店铺和当前审核状态。配送仲裁从现有订单出发。骑手上报后，管理员可查到任务及异常前的阶段，再决定能否沿原流程继续，或请其他骑手接手。两类操作分别改变准入资格和履约进度。}
+  \includegraphics[width=.77\linewidth,height=.41\textheight,keepaspectratio]{figures/srs/14-admin-use-case.png}
+  \caption{管理员端详细用例图（准入审核、账号/评价/异常治理与全局看板）}\label{fig:def-uc-admin}
+\end{figure}
 
 \subsection{核心业务活动图、状态机与时序图}
 
-为保证多端状态协同严谨无歧义，项目组绘制了完整履约活动图（图~\ref{fig:def-activity}）、下单结算时序图（图~\ref{fig:def-settlement-seq}）、订单主状态机图（图~\ref{fig:def-order-state}）、骑手配送状态机图（图~\ref{fig:def-delivery-state}）及 AI 智能助手交互时序图（图~\ref{fig:def-ai-seq}）。表~\ref{tab:state-mapping} 明确了源码枚举中 0--9 订单状态编码与业务含义的统一口径。
+拆到每一端后，我们再把一笔订单合起来看。履约活动图（图~\ref{fig:def-activity}）说明哪一步该由谁接手，下单结算时序图（图~\ref{fig:def-settlement-seq}）把算价、建单和付款放在不同请求里。订单和配送任务的状态机（图~\ref{fig:def-order-state}、图~\ref{fig:def-delivery-state}）用来核对操作的前置条件。引入智能助手后，也按同样的办法画出交互时序（图~\ref{fig:def-ai-seq}），查清推荐从哪里来，选中以后如何进购物车。
 
-\srsfig[0.96\linewidth]{figures/srs/04-fulfillment-activity.png}{跨角色多端订单创建、履约与结算全流程泳道活动图}{fig:def-activity}
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{顾客付款后，商家看到待接单订单。等商家确认出餐，骑手才在接单大厅看到任务。我们把这两个交接画在图里，联调时用同一订单号找对应记录。如果商家点了出餐、骑手端却没出现任务，就可以先查这次状态变化和任务生成。}
+  \includegraphics[width=.88\linewidth,height=.565\textheight,keepaspectratio]{figures/srs/04-fulfillment-activity.png}
+  \caption{跨角色多端订单创建、履约与结算全流程泳道活动图}\label{fig:def-activity}
+  \par\smallskip
+  \chapterfigureprose{外送和自取在出餐处才交给不同的人。复核时各准备一笔，商家都按确认出餐。外送单进入待骑手接单，任务在大厅出现。自取单进入待取餐，顾客到店拿到餐后，从订单列表确认完成。对照主订单和接单大厅的编号，可以看出在哪里分流。}
+\end{figure}
 
-\srsfig[0.96\linewidth]{figures/srs/07-settlement-sequence.png}{下单试算、防重幂等提交与混合资产结算核心时序图}{fig:def-settlement-seq}
-
-\srsfig[0.94\linewidth]{figures/srs/05-order-state.png}{平台订单主状态机（0--9 状态编码与合法跃迁条件）}{fig:def-order-state}
-
-\srsfig[0.94\linewidth]{figures/srs/06-delivery-state.png}{骑手配送任务状态机与异常挂起仲裁状态流转图}{fig:def-delivery-state}
-
-\begin{longtable}{C{.10\linewidth}L{.20\linewidth}L{.20\linewidth}L{.41\linewidth}}
-\caption{源码订单状态编码（0--9）与跨端业务口径映射表}\label{tab:state-mapping}\\
-\toprule
-\textbf{编码} & \textbf{当前实现名称} & \textbf{对应履约阶段} & \textbf{流转触发条件与业务规则} \\
-\midrule
-\endfirsthead
-\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{编码} & \textbf{当前实现名称} & \textbf{对应履约阶段} & \textbf{流转触发条件与业务规则} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-0 & 待支付 & 订单建立 & 提交订单成功后生成；支持顾客支付或取消；超时 15 分钟自动取消并恢复库存。 \\
-1 & 待商家接单 & 支付完成 & 支付成功触发；商家可执行接单或拒单，顾客在接单前可取消并全额退还资产。 \\
-2 & 待派单（制作中） & 商家备餐 & 商家接单后进入；备餐完成后外送推入骑手池（3），自取进入待取餐（4）。 \\
-3 & 待骑手接单 & 骑手抢单池 & 外送出餐后对在线骑手可见，仅首个通过条件更新的骑手可绑定成功。 \\
-4 & 待取餐 & 到店交接/自取待取 & 骑手接单/到店，或自取订单出餐完成后进入；自取由顾客直接核销取餐。 \\
-5 & 配送中 & 外送在途 & 骑手确认取餐后进入，同步记录 \code{pickup_time}。 \\
-6 & 已送达 & 待确认收货 & 骑手确认送达后进入；支持顾客手动确认，或送达超 24 小时定时任务自动完成。 \\
-7 & 已完成 & 交易终态 & 确认收货后进入；触发发放本次实付整数额对应积分，并开放订单评价。 \\
-8 & 已取消 & 终止闭环 & 取消或拒单触发；恢复库存并在 \code{user_asset_ledger} 写入反向资产/优惠券流水。 \\
-9 & 配送异常 & 挂起仲裁 & 骑手上报异常触发；等待管理员决定恢复原状态、改派骑手或终止取消。 \\
-\end{longtable}
-
-\srsfig[0.94\linewidth]{figures/srs/08-ai-assistant-sequence.png}{AI 智能客服与多模态点餐（问答/识菜/语音/推荐）交互时序图}{fig:def-ai-seq}
-
-以顾客下单结算为例，\code{OrderPricingService} 与 \code{OrderSettlementService} 严格按以下顺序执行算价（所有金额均使用 \code{BigDecimal} 精确运算，舍入模式为 \code{HALF_UP} 保留两位小数）：
+下单时，\code{OrderPricingService} 先按商品小计校验起送金额，再依次计算满减、会员折扣和外送费。付款时，\code{OrderSettlementService} 以订单上已保存的金额为基础校验优惠券和积分。金额由 \code{BigDecimal} 计算，以 \code{HALF_UP} 保留两位小数。\(\mathit{p}\) 为顾客选择使用的积分，须为 100 的整数倍，且不得超过可用积分或券后金额所允许的上限。
 \begin{align}
   \text{提交金额} &= (\text{商品小计} - \text{商家满减}) \times \text{会员折扣} + \text{外送费（自取为 0）} \\
-  \text{券后金额} &= \max(0,\; \text{提交金额} - \text{单张可用优惠券面额}) \\
-  \text{实际应付} &= \text{券后金额} - \min\left(\left\lfloor\frac{\text{可用积分}}{100}\right\rfloor,\; \text{券后金额} \times 20\%\right)
+  \text{商品可抵金额} &= \max(0,\; \text{提交金额} - \text{外送费}) \\
+  \text{券后金额} &= \text{提交金额} - \min(\text{商品可抵金额},\; \text{可用优惠券面额}) \\
+  \text{实际应付} &= \text{券后金额} - \mathit{p}/100,\quad \mathit{p}/100 \leq \text{券后金额}\times 20\%
 \end{align}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=.80\linewidth,height=.45\textheight,keepaspectratio]{figures/srs/07-settlement-sequence.png}
+  \caption{下单试算、防重幂等提交与混合资产结算核心时序图}\label{fig:def-settlement-seq}
+\end{figure}
+
+\subsubsection{一笔订单怎样算到实付金额}
+
+用一组示例金额走一遍图~\ref{fig:def-settlement-seq} 的流程。假设商品小计 60 元，店铺满 50 元减 8 元，顾客有会员、5 元可用优惠券和至少 900 积分，当前选择外送，外送费为 3 元。下单时先扣满减，再乘会员折扣，商品部分为 \(52\times 0.95=49.40\) 元。加上外送费，订单记录的提交金额为 52.40 元。
+
+支付时按 49.40 元的商品金额判断优惠券门槛，以 5 元面额计算券后金额 47.40 元。积分抵扣的金额上限是 \(47.40\times 20\%=9.48\) 元，结合 100 积分一档，当前订单最多可申请用 900 积分。若顾客选择 800 积分，实际支付 39.40 元。这样在检查页面试算时，商品优惠、外送费和积分有各自的数据来源，每一步都可以单独核对。
+
+若改成自取，提交金额从相同的商品部分 49.40 元开始，不加外送费，优惠券门槛仍按商品金额判断。若顾客下单后改用另一张券，付款请求应按新选择校验券的归属、状态、有效期和门槛。选择钱包方式时，付款服务同时检查余额，确保订单推进到待接单状态时，扣款和相应资产记录一起保存。
+
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{读图~\ref{fig:def-order-state} 时，先按交易阶段找订单的位置，再到图~\ref{fig:def-delivery-state} 查看外送任务目前由谁处理。以“已送达”为例，骑手完成了送达操作，顾客还可在订单详情确认收货。前端用这两个阶段分别决定骑手和顾客下一步看到的按钮。}
+  \begin{minipage}[t]{.32\linewidth}
+    \vspace{0pt}
+    \centering
+    \includegraphics[width=\linewidth,height=.49\textheight,keepaspectratio]{figures/srs/05-order-state.png}
+    \caption{平台订单主状态机（0--9 状态编码与合法跃迁条件）}\label{fig:def-order-state}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.64\linewidth}
+    \vspace{0pt}
+    \centering
+    \includegraphics[width=\linewidth]{figures/srs/06-delivery-state.png}
+    \caption{骑手配送任务状态机与异常挂起仲裁状态流转图}\label{fig:def-delivery-state}
+    \par\medskip
+    \raggedright
+    附录~\ref{app:project} 的表~\ref{tab:state-mapping} 给出源码枚举中 0--9 订单状态编码与业务含义的统一口径。
+  \end{minipage}
+\end{figure}
+
+\subsubsection{两种履约方式的交接}
+
+商家接单后，外送和自取都先进入制作阶段，直到商家确认出餐才分开。图~\ref{fig:def-order-state} 给出了订单在每个阶段的可达状态，图~\ref{fig:def-delivery-state} 记录了外送任务的具体节点。外送单创建待抢配送任务，骑手接单后由任务记录追踪到店、取餐和送达。自取单在出餐后进入待取餐，由顾客确认完成。
+
+外送过程存在两份相关记录。订单控制顾客和商家看到的交易阶段，配送任务保存骑手的归属、时间及现场处理状态。接单、取餐、送达等动作在服务端检查订单和配送任务，形成前后对应的状态。顾客可以在同一个详情页查到当前进度和历史时间线，商家也能据此判断餐品已交给谁。
+
+骑手上报异常时，系统保存异常前的任务状态，管理员才能决定怎样继续。恢复时回到原有节点。改派时清除原归属，任务重新进入接单大厅。取消时关闭配送与订单，再按原订单办理库存、优惠券、积分和余额处理。图~\ref{fig:def-delivery-state} 用单独分支展示这些动作，所以在联调中可以分别查看任务状态、订单状态与异常处理记录。
+
+\begin{figure}[!htbp]
+  \centering
+  \chapterfigureprose{图~\ref{fig:def-ai-seq} 中，语音和图片先经各自的识别路径转成文字或候选，文本输入则直接进入意图解析。这些信息用于查询平台菜单，返回给顾客的卡片包含可选择的菜品。顾客点选加购以后，购物车再用菜品编号处理数量和库存，完成从推荐结果到业务操作的交接。}
+  \includegraphics[width=.81\linewidth,height=.43\textheight,keepaspectratio]{figures/srs/08-ai-assistant-sequence.png}
+  \caption{AI 智能客服与多模态点餐（问答/识菜/语音/推荐）交互时序图}\label{fig:def-ai-seq}
+\end{figure}
 
 \section{接口设计}
 
 \subsection{接口统一规范}
 
-\begin{enumerate}
-  \item \textbf{RESTful 路径与版本规范：} 新增演进模块（资产、偏好、骑手、配送、评价、结构化 AI 助手）统一采用 \code{/api/v1/...} 前缀；同时在 \code{OrderController}、\code{CartController}、\code{BusinessController} 等模块保留兼容入口 \code{/api/...}，内部均委托至统一 Service，避免业务逻辑分叉。
-  \item \textbf{统一响应封装（\code{HttpResult<T>}）：} 绝大多数接口返回标准化 JSON 包络体，结构如下：
+我们在既有系统上接新功能时，原来已经能点餐的页面也要继续工作。资产、偏好、骑手、配送、评价和结构化 AI 助手的接口大多放到 \code{/api/v1/...}，订单、购物车和店铺保留既有的 \code{/api/...} 路径，由同一处服务处理。这样，旧入口查到的订单可直接用原编号办理新增的履约动作。前端也不需要为同一笔交易分别记录几个编号。
+
+前后端约定用 \code{HttpResult<T>} 来传回常规业务结果。页面先看 HTTP 状态，成功就读 \code{data}，失败则按 \code{code} 和 \code{message} 处理。
+\Needspace{9\baselineskip}
 \begin{lstlisting}[language=Java,caption={后端统一响应包装结构 HttpResult<T> 示例}]
 {
   "success": true,          // 请求业务是否成功（true / false）
@@ -413,120 +410,308 @@ US022 & UC-ADM-03 / CUS-06 & 管理员/顾客 & 作为管理员我希望能查�
   "message": null           // 失败时的可读错误提示信息
 }
 \end{lstlisting}
-  \item \textbf{认证与身份边界：} 受保护接口通过 HTTP Header \code{Authorization: Bearer <JWT>} 校验；后端严格从 Spring Security 认证上下文解析当前 \code{userId} 与角色，禁止信任前端传入的 \code{customerId} 或 \code{riderId} 进行越权操作。
-  \item \textbf{HTTP 状态码与业务错误映射：} \code{GlobalExceptionHandler} 杜绝将异常吞没为 HTTP 200，而是依据 \code{ResultCodeEnum} 返回标准 RESTful 状态码，详细映射见表~\ref{tab:http-error-map}。
-  \item \textbf{幂等防重约束：} 订单提交接口支持请求参数或头部携带 \code{idempotencyKey}，在同一用户范围内通过数据库唯一索引与事务去重，弱网重试不会生成重复订单。
-\end{enumerate}
 
-\begin{longtable}{C{.14\linewidth}L{.34\linewidth}L{.43\linewidth}}
-\caption{GlobalExceptionHandler HTTP 状态码与业务错误码映射规范表}\label{tab:http-error-map}\\
-\toprule
-\textbf{HTTP 状态码} & \textbf{对应业务错误码（code）} & \textbf{触发场景与客户端处理建议} \\
-\midrule
-\endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{HTTP 状态码} & \textbf{对应业务错误码（code）} & \textbf{触发场景与客户端处理建议} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-200 OK & \code{OK} & 业务执行成功，读取 \code{data} 渲染视图。 \\
-400 Bad Request & \code{PARAM_VERIFIED_FAILED}、\code{PARAM_NOT_MATCHED} & 请求体 Bean Validation 校验失败或缺少必填参数，前端逐字段展示提示。 \\
-401 Unauthorized & \code{AUTHENTICATION_FAILED} & 用户名密码错误、账号未激活或 JWT 过期失效，前端清理会话并跳转登录页。 \\
-403 Forbidden & \code{UNAUTHORIZED}、\code{NOT_ENOUGH_PERMISSION}、\code{USER_DENIED} & 角色权限不足或企图越权访问他人地址/订单/店铺资源。 \\
-404 Not Found & \code{NOT_FOUND}、\code{BUSINESS_MISSED}、\code{ORDER_MISSED}、\code{FOOD_MISSED} & 目标店铺、菜品、地址或订单 ID 不存在或已被逻辑删除。 \\
-409 Conflict & \code{WITHOUT_ERROR_CODE}（订单/任务状态冲突） & 并发抢单已被他人抢走、重复支付或订单处于不可取消阶段。 \\
-422 Unprocessable & \code{QUANTITY_ILLEGAL}、\code{CART_EMPTY}、\code{ORDER_SUBMIT_FAILED} & 店铺休息、超限购、库存不足、优惠券不可用等业务规则拦截。 \\
-503 Unavailable & \code{FEATURE_UNAVAILABLE} & 未配置外部高德地图或 DashScope 多模态密钥，前端进入降级模式。 \\
-\end{longtable}
+受保护接口从 \code{Authorization} 请求头读取 Bearer JWT，后端以 Spring Security 认证上下文中的用户与角色检查店铺、订单、配送资源的归属。\code{GlobalExceptionHandler} 根据业务错误码返回 HTTP 状态，客户端用这些状态区分需要重新登录、需要更正输入和需要刷新状态的情况，映射见表~\ref{tab:http-error-map}。
 
-\input{body/ch2_api_specs}
+登录、下单和履约最容易连着几个入口一起出问题。我们沿这三段说明页面之间怎样传数据，收到什么结果才算走到了下一步。单个接口的访问条件、主要入参和响应类型，可以到附录~\ref{app:api} 查 24 个控制器的 135 个映射。
+
+\subsection{登录、角色与资源归属}\label{sec:def-api-auth}
+
+统一登录把用户名、密码、选定的角色和是否记住会话传入 \code{POST /api/auth}。\code{AuthenticationRestController} 先认证账号，再请 \code{LoginRolePolicy} 判断能否进入所选入口。响应包含 \code{id_token}、实际进入的角色，以及是否处于申请阶段的标记 \code{application_only}，同时把 Bearer 凭证写到响应头。页面据此跳转顾客、商家、骑手或管理员入口，入驻尚未完成的用户留在相应申请流程。
+
+同一账号可能有多个业务身份，当前会话只携带选中入口的权限。顾客已经登录时，可以浏览个人订单和地址。进入商家工作台需使用具备商家权限的会话。前端守卫用来给出正确入口和界面状态，服务端则会在每次请求时检查凭证和动作权限，这样即使从历史链接进入页面，服务端也能按当前会话处理请求。
+
+两位顾客都有查看详情的入口，订单还得各归各的账号。商家接单、拒单和出餐前，要检查订单是否属于本店。骑手确认到店、取餐和送达时，要检查这笔任务现在绑的是哪位骑手。联调时，我们把未登录、角色选错和同角色查别人数据分开检查。典型情形见表~\ref{tab:def-api-access}。
+
+\begin{table}[!htbp]
+  \centering
+  \caption{认证和资源归属联调检查}\label{tab:def-api-access}
+  \reporttablesize
+  \begin{tabularx}{\linewidth}{@{}L{.20\linewidth}YY@{}}
+  \toprule
+  检查层次 & 示例 & 可观察结果 \\
+  \midrule
+  认证凭证 & 未带有效凭证直接进入受保护接口 & 返回 401，页面引导重新登录 \\
+  角色授权 & 顾客会话请求管理员审核接口 & 返回 403，申请记录不变 \\
+  资源归属 & 使用本人的顾客会话请求另一顾客的订单 & 拒绝访问，响应不返回该订单详情 \\
+  当前状态 & 已登录且身份正确，但配送任务已被领取 & 状态冲突提示，页面重新获取任务列表 \\
+  \bottomrule
+  \end{tabularx}
+\end{table}
+
+这些检查对应不同的测试层次。\code{SecurityHardeningTest} 检查管理员接口和各角色入口的授权声明，还构造角色绑定凭证，确认解析出来的权限只对应所选入口。订单归属则依赖真实数据。订单快照测试准备两位顾客和两位商家，在调用订单查询时分别使用这些身份核对返回情况。凭证有效只能说明请求者是谁，资源记录才决定他能看到什么。
+
+\subsection{从加购到付款的接口组合}\label{sec:def-api-order}
+
+购物车是可修改的选择，订单是需要保存的交易记录。前端先将商品加入 \code{POST /api/carts/items}，再通过按店铺查询查看商品、数量与备注。结算页从勾选项生成 \code{foodIds}，以 \code{businessId} 确认店铺，选择外送时同时提交 \code{addressId}。履约方式通过 \code{serviceMode} 传入。若商品已从购物车删除，提交时会读取到最新选择，前端需要让顾客返回购物车核对。
+
+真正建单的请求为 \code{POST /api/orders/submit}，幂等键通过 \code{Idempotency-Key} 请求头发送，兼容客户端也可使用 \code{requestId} 查询参数。第一次提交成功后返回订单号，页面用这个编号进入待支付详情。网络抖动导致客户端未收到响应时，同一次提交应继续沿用原键。若用户改了商品、地址或履约方式，应按新提交处理，以免把更改后的选择与原订单混在一起。
+
+顾客确认付款后，请求 \code{PUT /api/orders/status}，传入订单号及目标状态 1。支付方式、优惠券和积分随同请求提交。订单仍须是待支付状态，资金处理和状态更新在同一事务完成。顾客提前取消时，调用同一入口并传入目标状态 8，由当前状态决定是否允许取消。商家后续的接单和出餐走独立接口，按角色及合法前置状态推进。
+
+\begin{table}[!htbp]
+  \centering
+  \caption{购物车与订单联调的主要请求}\label{tab:def-api-submit}
+  \reporttablesize
+  \begin{tabularx}{\linewidth}{@{}L{.18\linewidth}L{.38\linewidth}Y@{}}
+  \toprule
+  页面动作 & 请求 & 核对内容 \\
+  \midrule
+  修改选餐 & \code{POST /api/carts/items}，\code{GET /api/carts/list} & 商品、数量及店铺分组 \\
+  建立订单 & \code{POST /api/orders/submit} & 订单号、库存、菜品与地址快照 \\
+  付款或取消 & \code{PUT /api/orders/status} & 订单状态、优惠券及余额和积分流水 \\
+  回看订单 & \code{GET /api/orders/detail}，\code{GET /api/v1/orders/{id}/status-history} & 订单快照与状态变化时间线 \\
+  \bottomrule
+  \end{tabularx}
+\end{table}
+
+联调时可以先以自取方式建立一单，再在保持商品和数量相同的条件下走外送，核对是否写入地址和外送费。随后用同一幂等键提交两次，确认只对应一个订单编号和一次库存预占。付款阶段应再观察扣款记录和状态历史，特别是余额不足、券不可用和已经付款三种情形。只检查页面提示容易忽略部分写入，核对主表和流水可以看出上一次失败处理是否留下了副作用。
+
+现有订单回归中的 \code{OrderNameSnapshotJourneyTest} 对外送、自取和历史订单分别准备数据，用真实接口完成加购、建单，再读取详情并查询数据库。测试检查同一商品在自取与外送时的金额差异，也验证了已有订单与新订单可以同时显示各自的成交名称。计价信任边界测试则从另一个角度检查兼容入口，确认旧格式请求中的报价无法覆盖数据库的商品价和配送费。
+
+\subsubsection{顾客取消订单后的库存与资产处理}
+
+顾客在待支付或待商家接单时可以取消。图~\ref{fig:def-cancel-sequence-uml} 从订单状态接口往下画。服务检查订单与店铺，再核对当前账号及订单状态。状态更新带上原状态作为条件，更新成功后才写状态历史并进入结算服务。这样，两端同时改一笔订单时，晚到的操作可以在回退库存与资产之前停下来。
+
+\begin{figure}[!htbp]
+  \centering
+  \input{figures/uml/customer-cancel-sequence}
+  \caption{顾客取消订单与事务回退（UML 时序图）}\label{fig:def-cancel-sequence-uml}
+\end{figure}
+
+结算服务恢复库存、释放该订单关联的券，再按原状态标记支付结果。用过钱包或积分的订单还会进入资产冲正。\code{OrderSettlementServiceTest} 分别检查付款后和付款前取消，断言覆盖库存恢复、券释放、支付状态和资产服务调用。复测时可以用订单号对照原状态、订单历史及退款流水。
+
+\subsubsection{如何检查下单失败和网络重试}
+
+回归从顾客会遇到的情况开始。购物车里还有两种商品，商家已经把第二种的库存改为零，这时提交自取单会怎样？\code{OrderNameSnapshotJourneyTest} 用 MockMvc 调真实接口，检查是否返回 HTTP 409，再查库确认第一种商品扣掉的库存已撤销，两项购物车内容都还在。把失败时应当留下的数据写成断言，以后改建单逻辑还能用同一例检查。
+
+重试场景从一次成功提交开始。顾客先得到订单号，商家随后修改商品名称与价格，顾客再用同一个幂等键提交。测试以返回的订单号和表内记录核对结果，并读取旧订单明细的名称和单价。这样能同时验证两件事，重复请求沿用原单，以及晚到的重试仍以原单成交信息为准。
+
+\begin{table}[!htbp]
+  \centering
+  \begin{minipage}[t]{.48\linewidth}
+    \vspace{0pt}
+    \caption{库存不足时的回滚检查}\label{tab:def-check-rollback}
+    \reporttablesize
+    \begin{tabularx}{\linewidth}{@{}L{.35\linewidth}Y@{}}
+    \toprule
+    观察项 & 应有结果 \\
+    \midrule
+    提交响应 & HTTP 409 \\
+    首件库存 & 保持提交前数量 \\
+    购物车 & 原两项均保留 \\
+    订单与明细 & 未生成新记录 \\
+    状态历史 & 未写入建单记录 \\
+    \bottomrule
+    \end{tabularx}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.48\linewidth}
+    \vspace{0pt}
+    \caption{同键重试时的订单检查}\label{tab:def-check-retry}
+    \reporttablesize
+    \begin{tabularx}{\linewidth}{@{}L{.35\linewidth}Y@{}}
+    \toprule
+    观察项 & 应有结果 \\
+    \midrule
+    提交响应 & 返回第一次的订单号 \\
+    订单主表 & 仍为一条订单记录 \\
+    订单明细 & 本例仍为一条明细 \\
+    菜品名称 & 保留改名前的名称 \\
+    菜品单价 & 保留建单时的价格 \\
+    \bottomrule
+    \end{tabularx}
+  \end{minipage}
+\end{table}
+
+表~\ref{tab:def-check-rollback} 和表~\ref{tab:def-check-retry} 对照了数据库中应检查的记录。失败场景确认多步操作能一起撤销，重试场景确认已有记录能被原样读取。两组用例都需要查看订单表之外的数据，其中库存反映资源有没有被误扣，状态历史和快照则反映交易有没有被误写。
+
+\subsection{配送进度与异常处理联调}\label{sec:def-api-delivery}
+
+表~\ref{tab:api-index-5} 和表~\ref{tab:api-index-6} 分列订单履约与配送任务接口。商家确认出餐时使用订单编号，骑手领取任务后使用任务编号。顾客进入订单详情时仍使用订单编号，经配送查询接口找到对应的任务。对于自取单，页面按订单状态显示待取餐。由页面携带适当编号，各端才能对照图~\ref{fig:def-order-state} 和图~\ref{fig:def-delivery-state} 查看同一条履约记录。
+
+配送联调可以依次在商家端、骑手端和顾客端查看同一订单。商家接单后，顾客看到制作进度，骑手端还没有该任务。商家确认出餐后，任务进入待接列表。领取后，任务从大厅移到当前骑手工作台，顾客才看到骑手已接单。随后测试到店、取餐和送达，各动作都应在任务详情中写下相应时间。顾客最终确认收货，订单进入完成，评价入口和资产结算随状态更新。
+
+并发场景中，两位在线骑手可能同时看到同一任务。接口以受影响行数判断结果，一位得到任务，另一位取得冲突提示。接到提示的页面应刷新列表，移除已被领取的任务。若已经领取的骑手遇到配送异常，管理员可从异常记录查看上一状态及任务归属，并选择恢复、重新派送或取消。联调不能只看异常记录是否消失，还须确认订单和任务落入对应状态，取消后再核对原订单的冲正流水。
+
+地图导航是配送任务的辅助入口。联调先核对本次返回的是取餐还是送达信息，再看坐标、地址文字和跳转链接。缺少坐标或地图配置时，配送页面仍可展示地址文本，骑手确认到店、取餐和送达时仍调用原来的任务接口。这样的安排让地址服务故障停留在导航环节，订单和任务状态仍由各自接口处理。
+
+\subsubsection{订单时间线与消息提醒}
+
+状态发生变化后，顾客通常先留意通知，再打开订单详情确认。服务端为两种查看行为保存了不同记录。订单历史由 \code{OrderStateTransitionService} 写入，记录订单编号、前后状态、操作者和变更原因。状态更新时带当前状态作为条件，只有更新成功才会插入历史记录。例如两次点击出餐，后一次若读到状态已经变化，代码就会请求刷新，时间线也只保留一次出餐。
+
+配送通知由 \code{DeliveryNotificationService} 根据业务动作选定接收者。给某个顾客、商家或骑手的通知保存为站内消息，同时经 WebSocket 推送一条带订单编号的更新。商家出餐时，还会向骑手角色广播有待接任务。广播用来提示查看接单大厅，任务详情仍从任务接口获取。个人订单明细则通过订单与身份的归属校验读取。
+
+两套记录在联调时要回到同一个订单编号。在线时可检查消息出现后页面能否查看到新状态，退出页面后重新打开，则通过订单查询及持久化通知核对历史。对骑手端，收到任务更新后还要刷新当前列表。对顾客端，点击消息能回到原订单，时间线上的出餐、接单、送达应按实际动作依次出现。
 
 \section{用户界面 (UI) 设计}
 
 \subsection{用户角色与界面映射}
 
-前端共包含 33 个页面视图组件，并通过 \code{elmclient/src/router/index.js} 的路由元信息 \code{meta.role} 与 \code{meta.public} 实现四端访问隔离。除首页、分类列表、店铺详情、搜索与登录注册页允许游客访问外，其余页面均受路由守卫保护并在切换身份时清理上一角色的私有状态。图~\ref{fig:def-page-ia} 为四端页面信息架构图，表~\ref{tab:ui-mapping} 列出角色与全量页面路由映射。
-
-\srsfig[0.96\linewidth]{figures/srs/15-page-information-architecture.png}{四端页面信息架构与核心导航路径图}{fig:def-page-ia}
-
-\begin{longtable}{L{.15\linewidth}L{.38\linewidth}L{.38\linewidth}}
-\caption{四端角色页面视图与路由映射表}\label{tab:ui-mapping}\\
-\toprule
-\textbf{角色/端} & \textbf{核心路由与页面组件} & \textbf{主要交互职责} \\
-\midrule
-\endfirsthead
-\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{角色/端} & \textbf{核心路由与页面组件} & \textbf{主要交互职责} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-公共与认证 & \code{/login} (\code{Login.vue})、\code{/register} (\code{Register.vue})、\code{/notifications} (\code{Notifications.vue}) & 四角色登录切换、头像与密码强校验注册、全端共享站内审核与业务通知。 \\
-顾客端 & \code{/index}、\code{/businessList}、\code{/businessInfo}、\code{/search}、\code{/cart}、\code{/payment}、\code{/successfulPayment}、\code{/orderList}、\code{/listDetail}、\code{/userAddress}、\code{/addUserAddress}、\code{/editUserAddress}、\code{/myInformation}、\code{/favorites}、\code{/assets}、\code{/preferences} & 店铺浏览、搜索、加购备注、外送/自取结算、订单跟踪与评价、地址选址、钱包积分、个人偏好主题、AI 入口悬浮球跳转。 \\
-AI 智能点餐 & \code{/ai-chat}、\code{/ai-chat/recommend}、\code{/ai-chat/voice}、\code{/ai-chat/image} (\code{AiChat.vue}) & 智能客服问答、条件推荐候选卡片一键加购、语音识别草稿与图片识菜入口。 \\
-商家端 & \code{/merchant/apply}、\code{/merchant/profile}、\code{/merchant/business}、\code{/merchant/businessInfo}、\code{/merchant/orders}、\code{/merchant/reviews} & 商家入驻、店铺资料/营业配置、菜品分类库存管理、订单接单出餐、评价回复与经营看板。 \\
-骑手端 & \code{/rider/apply}、\code{/rider/dashboard} & 骑手入驻申请、在线切换、可接任务抢单、到店/取餐/送达操作、高德外部导航及异常上报。 \\
-管理员端 & \code{/admin/home}、\code{/admin/user}、\code{/admin/business}、\code{/admin/shop}、\code{/admin/riders} & 平台运营统计看板、用户账号启停治理、商家与店铺审核、骑手入驻审核及配送异常仲裁。 \\
-\end{longtable}
+前端共包含 33 个页面视图组件，并通过 \code{elmclient/src/router/index.js} 的路由元信息 \code{meta.role} 与 \code{meta.public} 实现四端访问隔离。除首页、分类列表、店铺详情、搜索与登录注册页允许游客访问外，其余页面均受路由守卫保护并在切换身份时清理上一角色的私有状态。图~\ref{fig:def-page-ia} 为四端页面信息架构图，附录~\ref{app:ui} 的表~\ref{tab:ui-mapping} 列出角色与全量页面路由映射。
 
 \subsection{页面风格与布局}
 
-\begin{enumerate}
-  \item \textbf{CSS 变量多主题体系：} 系统内置“清爽蓝白”“深海夜色”“薄荷青”和“暖阳橙”4 套主题，通过全局 CSS 自定义属性统一管理主色调、卡片背景、边框与文字对比度（详见表~\ref{tab:theme-tokens}），切换后即时生效并持久化至用户偏好接口。
-  \item \textbf{响应式双端壳层与统一反馈：} 统一页面壳层同时适配桌面端宽屏与 375~px 移动端窄屏，防止登录表单或底部导航溢出；加载态、空状态、提交禁用态及字段级报错反馈均遵循统一视觉规范。
-  \item \textbf{分层动效与无障碍适配：} 店铺进入详情采用浏览器 View Transitions 共享元素转场，AI 浮窗与看板数字采用轻量微动效，同时针对系统 \code{prefers-reduced-motion} 设置自动收敛动效，图标按钮与地图弹窗支持完整键盘聚焦与文字标签。
-\end{enumerate}
+平台内置清爽蓝白、深海夜色、薄荷青和暖阳橙四套主题，通过 CSS 变量统一主色、背景、边框和文字对比度。切换立即生效，登录用户的选择随偏好保存。附录表~\ref{tab:theme-tokens} 给出了各套配色对应的场景和视觉要素。
 
-\begin{longtable}{L{.18\linewidth}L{.22\linewidth}L{.22\linewidth}L{.29\linewidth}}
-\caption{系统内置四套视觉主题配色与适用场景规范表}\label{tab:theme-tokens}\\
-\toprule
-\textbf{主题标识} & \textbf{显示名称} & \textbf{主色调特征} & \textbf{适用场景与无障碍对比度保障} \\
-\midrule
-\code{default} & 清爽蓝白 & 天青蓝（\code{\#0097FF}）配纯白卡片 & 默认校园外卖风格，信息层级分明，适合日间高频点餐。 \\
-\code{dark} & 深海夜色 & 深石板蓝底配高对比浅字 & 夜间低光环境护眼阅读，保证卡片边框与关键操作按钮对比度达标。 \\
-\code{mint} & 薄荷青 & 清新低饱和翠绿色调 & 轻食/饮品浏览氛围，已在实际浏览器环境中完成状态持久化验证。 \\
-\code{warm} & 暖阳橙 & 温暖明亮琥珀橙色调 & 增强餐饮食欲感，配合高辨识度价格标签与行动号召按钮。 \\
-\end{longtable}
-
-\subsection{UI 设计原型与运行界面展示}
-
-图~\ref{fig:def-wireframe} 展示了需求阶段绘制的核心页面线框原型。为直观呈现项目最终的四端交付成色，以下图~\ref{fig:def-ui-auth} 至图~\ref{fig:def-ui-amap} 展示了在独立 MySQL 8.0.46 演示库环境下通过 Chrome 浏览器实际运行并截取的全平台高清界面（涵盖认证注册、顾客全链路、商家端、骑手端、管理员桌面看板以及地图选址降级提示）。
-
-\srsfig[0.95\linewidth]{figures/srs/16-key-page-wireframes.png}{需求设计阶段核心业务页面线框原型图}{fig:def-wireframe}
-
-\uitwofig{figures/screenshots/ui-login.png}{（a）四端角色统一登录页（\code{/login}）}{figures/screenshots/ui-register.png}{（b）支持头像与强密码校验的注册页（\code{/register}）}{平台公共认证与注册运行界面实景截图}{fig:def-ui-auth}
-
-\uitwofig{figures/screenshots/ui-customer-home.png}{（a）顾客端首页：分类、推荐与 AI 悬浮入口（\code{/index}）}{figures/screenshots/ui-customer-shop.png}{（b）店铺详情与实时库存菜单页（\code{/businessInfo}）}{顾客端首页发现与店铺选餐界面实景截图}{fig:def-ui-cust-browse}
-
-\uitwofig{figures/screenshots/ui-customer-cart.png}{（a）购物车跨店管理与去结算视图（\code{/cart}）}{figures/screenshots/ui-customer-orders.png}{（b）顾客历史与进行中订单列表（\code{/orderList}）}{顾客端购物车与订单列表界面实景截图}{fig:def-ui-cust-cart-orders}
-
-\uitwofig{figures/screenshots/ui-customer-order-detail.png}{（a）订单明细快照与状态流转时间线（\code{/listDetail}）}{figures/report/customer.png}{（b）顾客个人中心与功能导航入口（\code{/myInformation}）}{顾客端订单详情与个人中心界面实景截图}{fig:def-ui-cust-detail-profile}
-
-\uitwofig{figures/screenshots/ui-customer-wallet.png}{（a）钱包余额、积分、红包与消费流水（\code{/assets}）}{figures/screenshots/ui-customer-preferences.png}{（b）薄荷青主题与点餐口味忌口偏好（\code{/preferences}）}{顾客端钱包资产中心与多主题偏好界面实景截图（\code{demo\_user} 演示数据）}{fig:def-ui-placeholders}
-
-\uitwofig{figures/screenshots/ui-merchant-workbench.png}{（a）商家经营工作台与店铺状态开关（\code{/merchant/business}）}{figures/screenshots/ui-merchant-foods.png}{（b）店铺菜品分类、库存与上下架管理（\code{/merchant/businessInfo}）}{商家端工作台与商品库存管理界面实景截图（\code{demo\_merchant} 演示数据）}{fig:def-ui-merchant-biz}
-
-\uitwofig{figures/screenshots/ui-merchant-orders.png}{（a）商家实时接单、拒单与出餐面板（\code{/merchant/orders}）}{figures/screenshots/ui-merchant-reviews.png}{（b）商家查看顾客评价与官方回复面板（\code{/merchant/reviews}）}{商家端订单履约与评价回复界面实景截图}{fig:def-ui-merchant-orders}
-
-\uifig[0.52\linewidth]{figures/screenshots/ui-rider-dashboard.png}{骑手端配送工作台：在线开关、待抢任务池与收益里程统计（\code{/rider/dashboard}）}{fig:def-ui-rider}
+页面适配桌面宽屏与 375~px 移动窄屏，登录表单、底部导航和交互控件使用一致的布局规则。对于加载、无数据、提交和校验失败，页面通过文字、图标与按钮状态给出反馈。进入店铺详情时可用 View Transitions 做共享元素过渡，AI 浮窗与看板数字保留轻量动效。系统偏好 \code{prefers-reduced-motion} 时减少动效，图标按钮和地图弹窗有键盘焦点及文字标签。
 
 \begin{figure}[H]
   \centering
+  \chapterfigureprose{四端导航以各自最常用的对象安排入口。顾客从店铺或商品进入购物车与订单。商家先选店，再处理菜单和订单。骑手从可接任务切到当前与历史配送，管理员从平台概览转入对应审核页面。用户回到本端主导航后，仍能找到这些入口。店铺、订单或任务的详情页则保留对应的编号，便于刷新后继续查看同一条记录。}
+  \includegraphics[width=.96\linewidth,height=.60\textheight,keepaspectratio]{figures/srs/15-page-information-architecture.png}
+  \caption{四端页面信息架构与核心导航路径图}\label{fig:def-page-ia}
+\end{figure}
+
+\subsection{页面间保留结算选择}
+
+顺着图~\ref{fig:def-page-ia} 从顾客首页走到结算，有一步很容易漏掉。选择外送却没有收货地址时，顾客得中途去新增地址，保存后还应该回到刚选好的店铺和商品。我们把这两份信息分开处理。前端记住本次结算的选择，地址服务保存收货地址和默认项。
+
+\code{checkoutContext} 从路由参数取出店铺、履约方式和勾选商品，检查编号格式并去重。路由打开地址编辑页时只带这几项信息，保存回来后再向购物车读取当前数据。若商品已被移除，页面说明具体情况并引导重新选择。返回时检查的是原来选中的商品，所以其他店铺的商品或未勾选商品可以原样留在购物车里。
+
+页面提交时会把请求和幂等键一起记下来。连续点确认，就复用正在发送的请求。拿到订单号后，再用已经返回的结果。这样前端少发重复请求，后端也能用幂等键认出原单，避免第二次扣库存。\code{checkout.test.mjs} 专门核对地址新增或编辑后的返回参数，以及网络失败后重试是否沿用原键。演示则从图~\ref{fig:def-ui-cust-cart-orders} 的购物车一路走到地址编辑、结算和订单详情，看选中的店铺、商品和数量能否一路对应。
+
+\FloatBarrier
+\subsection{UI 设计原型与运行界面展示}
+
+\newcommand{\chaptertwouipanel}[7][.455\textheight]{%
+  \begin{minipage}[t]{.48\linewidth}
+    \centering
+    \vspace{0pt}
+    \includegraphics[width=\linewidth,height=#1,keepaspectratio]{#2}\par
+    {\small #3\par}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.48\linewidth}
+    \centering
+    \vspace{0pt}
+    \includegraphics[width=\linewidth,height=#1,keepaspectratio]{#4}\par
+    {\small #5\par}
+  \end{minipage}
+  \caption{#6}\label{#7}%
+}
+
+需求阶段先画线框（图~\ref{fig:def-wireframe}），把每个角色从哪里进入、下一步要做什么画出来。交付时，我们用独立的 MySQL 8.0.46 演示库启动平台，在 Chrome 里查看实际界面。图~\ref{fig:def-ui-auth} 至图~\ref{fig:def-ui-admin-users-riders} 留下了认证注册、顾客点餐、商家接单、骑手配送、管理员桌面看板和地图服务缺少配置时的页面。
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{画线框时，我们先排能看到的信息，再排能做的动作。顾客刚打开详情，先看到餐送到了哪一步，接下来才看联系信息和可用按钮。骑手围绕手头任务看取送地址，商家围绕自己选的店找订单。先把这几个动作画出来，再看页面上哪些信息得随订单变化。}
+  \includegraphics[width=.95\linewidth,height=.35\textheight,keepaspectratio]{figures/srs/16-key-page-wireframes.png}
+  \caption{需求设计阶段核心业务页面线框原型图}\label{fig:def-wireframe}
+\end{figure}
+
+图里顶部的订单号和任务号，也成了排查时各自用的编号。顾客从历史订单查收货信息和送达进度。骑手打开进行中的任务，核对取送地址，再报告配送节点。等骑手送达，顾客页面才开放确认收货。重新从列表打开同一单，状态、按钮和时间线也应该对应得上。
+
+后面的实景可以逐项回看这份原型。点餐页分开显示需求输入、菜单候选和加购结果，推荐菜仍要能在店里买到。接单和出餐放在商家工作台不同阶段的订单卡上，商家资格与开店申请也各有一张审批列表。界面的入口位置有调整，每个角色办事时要看的订单、任务和申请信息都保留下来了。
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{统一登录页把顾客、商家、骑手和管理员的入口放在同一排。用户选定角色后，页面会提示目标工作台，并在成功认证后按服务端返回的会话信息跳转。暂时只具备申请资格的用户可先进入相应的入驻页。注册页将账号、手机号、密码确认和可选头像放在一个表单中，填写完即可按相同方式回到登录入口。}
+  \chaptertwouipanel[.50\textheight]{figures/screenshots/ui-login.png}{（a）四端角色统一登录页（\code{/login}）}{figures/screenshots/ui-register.png}{（b）支持头像与强密码校验的注册页（\code{/register}）}{平台公共认证与注册运行界面实景截图}{fig:def-ui-auth}
+\end{figure}
+
+\paragraph{发现、下单与个人资产}
+顾客从分类或推荐进入店铺，选餐后在购物车勾选订单商品。订单列表和详情用于跟踪配送，个人中心汇集资产及偏好入口，见图~\ref{fig:def-ui-cust-browse} 至图~\ref{fig:def-ui-placeholders}。
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{从首页选餐有两条常用路径。有目标时可搜索店铺或菜名，尚未决定时可先按分类与推荐浏览。进入店铺以后，配送和自取切换留在顶部，菜单按店内分类展开。底部区域显示已选金额和当前结算条件，用户往下翻菜单时仍能看到本次选择有没有满足要求。}
+  \chaptertwouipanel{figures/screenshots/ui-customer-home.png}{（a）顾客端首页分类、推荐与 AI 悬浮入口（\code{/index}）}{figures/screenshots/ui-customer-shop.png}{（b）店铺详情与实时库存菜单页（\code{/businessInfo}）}{顾客端首页发现与店铺选餐界面实景截图}{fig:def-ui-cust-browse}
+  \par\medskip
+  \chapterfigureprose{同样的一份菜，切成自取以后，页面底部的配送费和起送提示也得跟着变。顾客沿自取进结算时，仍然买的是刚才选的那份菜。店铺也可以从首页推荐和搜索结果进入，两个入口都要显示同一份店名、菜单和停售信息。}
+  \chapterfigureprose{菜单还要在加购前就告诉顾客哪些菜卖完了。把一道菜的库存调到零，再打开菜单，就能看售罄提示和按钮有没有相应变化。接着点一道还卖的菜，底部的数量随这次加购更新。}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{购物车为空时，页面保留返回商家的入口，顾客可以继续选餐。有多家店的商品时，则按店管理、勾选本次购买的商品并进入结算。订单列表按状态提供筛选，同一张卡片保留店铺、金额和当前阶段。进行中的订单便于跟踪配送，已完成的订单可查看详情、再次购买或评价。}
+  \chaptertwouipanel{figures/screenshots/ui-customer-cart.png}{（a）购物车为空时的返回入口（\code{/cart}）}{figures/screenshots/ui-customer-orders.png}{（b）顾客历史与进行中订单列表（\code{/orderList}）}{顾客端购物车与订单列表界面实景截图}{fig:def-ui-cust-cart-orders}
+  \par\medskip
+  \chapterfigureprose{顾客有时只想先买购物车里的一道菜。在同一家店加两种菜，只勾选一道，生成的订单就应当只有它。回到购物车，另一道还留在原店分组。只有把这一组也清空，才会回到左图所示的空车。测试时同时看列表中的新订单号、店名、数量和留在购物车里的内容。}
+  \chapterfigureprose{如果顾客只是把两道菜都取消勾选，购物车里其实还有商品，只是这次选购变成了零，去下单的按钮随之禁用。重新选中，底栏再次显示合计。进入结算后，仍应是刚勾选的菜和数量。}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{列表提供的是每笔交易的概况，核对一单则进入详情。页面分区展示状态、收货信息、商家和商品价格，已完成订单另有评价表单。截图中的历史明细显示“名称未留存”，对应旧订单缺少菜品名快照的情况。个人中心可以查看订单以外的长期信息，例如地址、钱包及偏好。}
+  \chaptertwouipanel{figures/screenshots/ui-customer-order-detail.png}{（a）订单明细快照与状态流转时间线（\code{/listDetail}）}{figures/report/customer.png}{（b）顾客个人中心与功能导航入口（\code{/myInformation}）}{顾客端订单详情与个人中心界面实景截图}{fig:def-ui-cust-detail-profile}
+  \par\medskip
+  \chapterfigureprose{顾客改地址后，再看旧订单还能不能知道餐送到了哪里？从左侧详情记下当时的地址和单价，再去个人中心编辑常用地址。下一单可以用新地址，打开刚才的订单，仍应看到当时那一份收货记录。这份记录跟着原单保留。}
+  \chapterfigureprose{订单进度则应该随配送变化。骑手送达后，详情多出对应节点，列表上也可以确认收货。顾客确认以后，那一单才归到已完成。}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{钱包页把余额、积分、优惠券和会员状态分开陈列。查看券时还可以核对面额和可用门槛，付款后再到资产流水查看变化。偏好页把主题与点餐偏好放在同一个入口。选中主题时可立即预览颜色，辣度、口味、忌口和品类等设置一起保存，之后进入推荐场景时可以继续使用。}
+  \chaptertwouipanel{figures/screenshots/ui-customer-wallet.png}{（a）钱包余额、积分、红包与消费流水（\code{/assets}）}{figures/screenshots/ui-customer-preferences.png}{（b）薄荷青主题与点餐口味忌口偏好（\code{/preferences}）}{顾客端钱包资产中心与多主题偏好界面实景截图（\code{demo\_user} 演示数据）}{fig:def-ui-placeholders}
+  \par\medskip
+  \chapterfigureprose{选中薄荷青时，按钮和表单会一起变色。保存后离开页面再进来，还要看到之前选的主题和口味。此时切回钱包，对照这一次改主题前后同一账号的余额、积分和券面额，可以看出外观和资产各管各的。}
+  \chapterfigureprose{真正改变余额的是充值等资产操作。演示充值前记下原余额，操作完成后重新进入资产中心，对照余额的增量和最新一笔流水，核对是不是刚才那笔入账。}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{工作台先按审核状态归类店铺，商家从列表选定店铺后再编辑菜单和营业设置。店铺获准上线后也可以暂停营业，顾客仍能看到店铺信息，页面会提示暂不可下单。单道菜品另有自己的库存和上架状态。在维护时应分清是调整某一种菜的可售量，还是暂停整家店的新订单。}
+  \chaptertwouipanel{figures/screenshots/ui-merchant-workbench.png}{（a）商家经营工作台与店铺状态开关（\code{/merchant/business}）}{figures/screenshots/ui-merchant-foods.png}{（b）店铺菜品分类、库存与上下架管理（\code{/merchant/businessInfo}）}{商家端工作台与商品库存管理界面实景截图（\code{demo\_merchant} 演示数据）}{fig:def-ui-merchant-biz}
+  \par\medskip
+  \chapterfigureprose{商家有多家店时，在一家下架一道菜，另一家的分类和库存也要照常显示。切到顾客端看调整过的店，看那道菜现在是否还能选，检查后再恢复原设置。}
+  \chapterfigureprose{店内菜品和整店营业状态放在两个入口。下架一道菜，同店其他菜仍能点。暂停整家店，顾客看到的是店铺休息。联调时从商家工作台切换一次，再用顾客店铺页看反馈，两种操作影响到的范围就清楚了。}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{订单页先按店铺缩小范围，再按待接单、待骑手、配送中等阶段继续筛选。截图中的已完成订单主要供商家查阅明细和总额，接单和出餐入口随订单阶段提供。切换到顾客评价后，列表可以看到评分、评价内容和已经发布的商家回复，尚未回复的记录留有输入框。}
+  \chaptertwouipanel{figures/screenshots/ui-merchant-orders.png}{（a）商家实时接单、拒单与出餐面板（\code{/merchant/orders}）}{figures/screenshots/ui-merchant-reviews.png}{（b）商家查看顾客评价与官方回复面板（\code{/merchant/reviews}）}{商家端订单履约与评价回复界面实景截图}{fig:def-ui-merchant-orders}
+  \par\medskip
+  \chapterfigureprose{一笔刚付款的订单先出现在待接单。商家按订单号接单，顾客再打开同一单，应当看到制作中。等订单走完，才轮到顾客评价，商家也才能在这家店的评价页看到并回复。两个入口办的事不同，联调都沿原单和店铺查。}
+  \chapterfigureprose{页面上也能看出状态前后的区别。待接单时有接单和拒单，接单后才出现确认出餐。操作后切到另一家店，再回原店查看，可以核对刚才的状态有没有存下来。}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{商家工作台呈现店铺状态、菜品库存、订单处理和评价回复。骑手在配送工作台上线、查看待抢任务、里程和收益。对应界面见图~\ref{fig:def-ui-merchant-biz} 至图~\ref{fig:def-ui-amap}。接单前的任务卡片提供取送地点和预估收入，联系人字段留到领取后显示。地址一侧保留地点文字，因此在地图选址服务暂不可用时，顾客仍能填写楼栋及具体门牌，配送时也有可查阅的地址。}
+  \begin{minipage}[t]{.46\linewidth}
+    \vspace{0pt}
+    \centering
+    \includegraphics[width=\linewidth,height=.425\textheight,keepaspectratio]{figures/screenshots/ui-rider-dashboard.png}
+    \caption{骑手端配送工作台的在线开关、待抢任务池与收益里程统计\mbox{（\code{/rider/dashboard}）}}\label{fig:def-ui-rider}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.49\linewidth}
+    \vspace{0pt}
+    \centering
+    \includegraphics[width=\linewidth,height=.425\textheight,keepaspectratio]{figures/screenshots/ui-amap-picker.png}
+    \caption{高德地图选址入口与服务未配置时的实际降级提示界面（\code{/addUserAddress}）}\label{fig:def-ui-amap}
+    \par\smallskip
+    \small\raggedright
+    本次部署环境未配置 \code{AMAP_WEB_KEY}、\code{AMAP_JS_KEY} 与 \code{AMAP_SECURITY_CODE}。打开选址弹窗后，页面提示“地图服务尚未配置，仍可填写地址”，顾客可继续手工录入。
+  \end{minipage}
+  \par\smallskip
+  \chapterfigureprose{若要复查降级路径，可先以文字录入收货地址，再用该地址提交一笔外送订单。商家出餐后切到骑手端，核对任务仍能查到取餐地点和文字送达地址。确认取餐与送达依次在任务页完成，顾客端可以按订单号查进度。}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \chapterfigureprose{管理员在首页查看交易概览，再从页面导航进入用户、商铺或骑手治理。商家资格与开店申请在首页也有各自的待处理区，管理员可以直接打开记录。}
   \fbox{\includegraphics[width=0.96\linewidth,height=0.58\textheight,keepaspectratio]{figures/screenshots/ui-admin-home.png}}
-  \caption{管理员端平台全局统计看板桌面运行界面（\code{/admin/home}，支持时间区间检索与 CSV 导出）}\label{fig:def-ui-admin-home}
+  \caption{管理员端平台全局统计看板桌面运行界面（\code{/admin/home}，\mbox{支持时间区间检索与 CSV 导出）}}\label{fig:def-ui-admin-home}
+  \par\medskip
+  \chapterfigureprose{管理员通过统计看板按时间区间检索并导出数据，再根据任务进入用户、商铺和骑手治理页面，见图~\ref{fig:def-ui-admin-home} 至图~\ref{fig:def-ui-admin-users-riders}。看板同时显示平台总量和日期范围内的统计。核对区间营业额时，可以记录查询的起止日期，再用同一日期导出的 CSV 对照有效营业额与已完成订单数。开始日期晚于结束日期时，页面会提示调整。改成有效区间后，可以继续查询和导出。}
+  \chapterfigureprose{看板顶部的用户总数、店铺总数和累计营业额来自三个汇总接口。趋势图和区间明细则使用同一组起止日期查询。界面提供快捷时间范围，选定后会更新查询表单，再刷新详细统计。复核导出时，可检查文件名中的日期是否与当前范围一致，然后查对应的订单数和金额。}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \fbox{\includegraphics[width=0.96\linewidth,height=0.58\textheight,keepaspectratio]{figures/screenshots/ui-admin-businesses.png}}
   \caption{管理员端商铺入驻审批与营业状态治理界面（\code{/admin/business}）}\label{fig:def-ui-admin-biz}
+  \par\medskip
+  \chapterfigureprose{治理页按照后台操作对象划分。店铺列表可以按营业、待审核或停业状态筛选，再打开店铺确认资料。用户页在检索到具体账号后提供启停入口。骑手页把资格申请和配送异常分别放到各自的列表。审核通过后，骑手才有资格上线接单。已有任务遇到异常时，管理员另在异常列表选择恢复、改派或取消。}
+  \begin{minipage}[t]{.48\linewidth}
+    \centering\vspace{0pt}
+    \includegraphics[width=\linewidth,height=.25\textheight,keepaspectratio]{figures/screenshots/ui-admin-users.png}\par
+    {\small （a）平台用户账号启停与角色治理（\code{/admin/user}）\par}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.48\linewidth}
+    \centering\vspace{0pt}
+    \includegraphics[width=\linewidth,height=.25\textheight,keepaspectratio]{figures/screenshots/ui-admin-riders.png}\par
+    {\small （b）骑手入驻审核与配送异常仲裁（\code{/admin/riders}）\par}
+  \end{minipage}
+  \caption{管理员端账号治理与骑手/异常审核界面实景截图}\label{fig:def-ui-admin-users-riders}
 \end{figure}
-
-\uitwofig{figures/screenshots/ui-admin-users.png}{（a）平台用户账号启停与角色治理（\code{/admin/user}）}{figures/screenshots/ui-admin-riders.png}{（b）骑手入驻审核与配送异常仲裁（\code{/admin/riders}）}{管理员端账号治理与骑手/异常审核界面实景截图}{fig:def-ui-admin-users-riders}
-
-\note{本次服务器未配置高德地图所需的 \code{AMAP_WEB_KEY}、\code{AMAP_JS_KEY} 与 \code{AMAP_SECURITY_CODE}。图~\ref{fig:def-ui-amap} 记录实际打开选址弹窗后出现的“地图服务尚未配置，仍可填写地址”提示，用于展示未配置时的降级状态；该图不作为地图瓦片、POI 搜索或真实定位成功的验证证据。}
-
-\uifig[0.52\linewidth]{figures/screenshots/ui-amap-picker.png}{高德地图选址入口与服务未配置时的实际降级提示界面（\code{/addUserAddress}）}{fig:def-ui-amap}

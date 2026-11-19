@@ -11,13 +11,17 @@ report/
   evidence/                   # 测试日志、运行信息与截图来源记录
   setup/                      # 封面、页眉页脚、宏包与自定义命令配置
   body/
-    ch1_team.tex              # 第1章 团队建立（角色、任务分配、培训大纲）
-    ch2_definition.tex        # 第2章 定义项目（愿景、Backlog、架构、22张表、接口、UI）
-    ch3_process.tex           # 第3章 过程管理（CMM3+Scrum、立项组会、三大Sprint日志与燃尽图）
-    ch4_management.tex        # 第4章 项目管理（WBS、PERT工时估算、甘特图、整体燃尽图、风险闭环）
-    ch5_delivery.tex          # 第5章 项目交付（测试文档与575项单测统计、Docker与本地部署）
-    ch6_ai_empowerment.tex    # 第6章 AI赋能专题（研发全流程AI赋能 + 运行时多模态AI边界治理）
-    ch7_retrospective.tex     # 第7章 总结回顾（项目组总结 + 4位成员各自贡献与体会）
+    ch1_team.tex              # 团队建立与培训
+    ch2_definition.tex        # 项目范围、架构与功能设计
+    ch3_process.tex           # 过程管理与三轮 Sprint
+    ch4_management.tex        # 计划、工时、进度与风险
+    ch5_delivery.tex          # 测试、交叉验收与部署
+    ch6_ai_empowerment.tex    # 研发协作与运行时 AI
+    ch7_retrospective.tex     # 交付回顾与成员体会
+    appendix_*.tex            # 附录分组及各章移入的查阅材料
+    ch2_db_specs.tex          # 附录 B 的 23 张数据库表和关键字段索引
+    ch2_api_specs.tex         # 附录 C 的 135 个接口索引
+    ch5_test_tables.tex       # 附录 D 的自动化用例索引，完整输出见 evidence/
   figures/
     Tjulogo.png               # 封面校徽
     srs/                      # 复用的SRS系统建模图（上下文、用例、类图、状态机、时序图、部署图）
@@ -26,28 +30,30 @@ report/
     screenshots/              # 本服务器实际运行项目后的浏览器截图
 ```
 
-## 本地编译方式
+## 本地编译
 
-无需 Docker 或管理员权限，也可以把 Tectonic 独立编译器下载到用户目录或项目外的工具目录，再使用其完整路径执行编译。编译器首次运行会联网下载所需宏包与 Fandol 中文字体，并自动重复编译以更新目录和交叉引用：
-
-```bash
-cd report
-/path/to/tectonic --keep-logs tjumain.tex
-```
-
-在本服务器上，编译器放置于 `/home/wenli/.local/share/course-report-tools/tectonic/tectonic`。工具链与下载缓存不提交到仓库，生成的 `tjumain.pdf` 提交到本目录；中间文件由 `.gitignore` 排除。
-
-如果已有完整的 XeLaTeX 工具链，也可以使用以下方式：
-
-请在安装了 TeX Live / MacTeX / MiKTeX（含 XeLaTeX 与中文支持包）的环境中，将工作目录切换到 `report/` 后执行两遍编译以生成目录与交叉引用：
+在仓库根目录执行以下命令。XeLaTeX 工具链需包含 ctex、Fandol 字体和常用宏包。目录、长表列宽和交叉引用稳定前需要重复编译。
 
 ```bash
 cd report
-xelatex tjumain.tex
-xelatex tjumain.tex
+xelatex -interaction=nonstopmode -halt-on-error tjumain.tex
+xelatex -interaction=nonstopmode -halt-on-error tjumain.tex
+xelatex -interaction=nonstopmode -halt-on-error tjumain.tex
 ```
 
-> 说明：报告正文中的 `setup/commands.tex` 为本地待补截图命令 `\placeholderfig` 内置了 `\IfFileExists` 判断。即使暂未放入补充截图，文档亦可直接通过编译，并在对应位置显示带操作指引的蓝色占位框；放入对应图片后重新执行 `xelatex` 即可自动嵌入实景图。
+正文采用 Fandol 宋体，宋体加粗强度与数模参考稿一致。西文优先使用 Times New Roman，缺少该字体时使用 TeX Gyre Termes。构建结果为 `tjumain.pdf`。
+
+## 附录导航
+
+| 附录 | 查阅内容 |
+| --- | --- |
+| A | 工程基线、用户故事及状态映射 |
+| B | 数据库表、关键字段与增量迁移 |
+| C | 响应规范与接口索引 |
+| D | 自动化测试索引、交叉验收、缺陷记录与部署配置 |
+| E | 四端页面路由与主题规范 |
+| F | 团队协作、Sprint 记录、工作分解与风险台账 |
+| G | AI 研发复核、运行配置与后续演进 |
 
 ## 已补充截图与验证范围
 

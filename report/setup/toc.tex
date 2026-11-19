@@ -1,14 +1,23 @@
-% !Mode:: "TeX:UTF-8"
-
-% 目录
-\defaultfont
-\clearpage{
-    \pagestyle{empty}
-    \cleardoublepage
-    \setcounter{page}{1}                                 % 单独从 1 开始编页码
-    \pagenumbering{Roman}
-    \titleformat{\chapter}{\centering\sanhao\hei}{\chaptername}{2em}{} % 设置目录两字的格式
-    \pdfbookmark[0]{目~~录}{mulu}
-    \tableofcontents                                     % 中文目录
-    \thispagestyle{plain}
-}
+% 目录展开到小节，正文与附录使用相同的目录层级。
+\clearpage
+\begingroup
+  \pagestyle{plain}
+  \pagenumbering{Roman}
+  \linespread{1}\fontsize{11bp}{15.7bp}\selectfont
+  \titleformat{\chapter}{\centering\hei\bfseries\fontsize{18bp}{21.6bp}\selectfont}{}{0pt}{}
+  \titlespacing{\chapter}{0pt}{0pt}{14pt}
+  \makeatletter
+  \renewcommand*{\@dotsep}{10000} % 页码继续右对齐，不排点线。
+  \renewcommand*{\l@chapter}[2]{%
+    \addpenalty\@secpenalty
+    \addvspace{3pt}%
+    \@dottedtocline{0}{0pt}{4.4em}{\bfseries #1}{\bfseries #2}%
+  }
+  \renewcommand*{\l@section}{\@dottedtocline{1}{1.35em}{2.15em}}
+  \renewcommand*{\l@subsection}{\@dottedtocline{2}{3.5em}{3.1em}}
+  \makeatother
+  \pdfbookmark[0]{目录}{mulu}
+  \tableofcontents
+  \thispagestyle{plain}
+  \clearpage
+\endgroup

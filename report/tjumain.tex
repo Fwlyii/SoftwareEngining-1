@@ -1,23 +1,33 @@
 \def\usewhat{xelatex}
+\PassOptionsToPackage{no-math}{fontspec}
 \documentclass[12pt,openany,oneside,fontset=none]{ctexbook}
-\IfFontExistsTF{STHeiti}{
-  \setCJKmainfont[BoldFont=STHeiti]{STSong}
-  \setCJKsansfont[AutoFakeBold=2.5]{STHeiti}
-  \setCJKmonofont{STFangsong}
-  \setCJKfamilyfont{zhsong}[BoldFont=STHeiti]{STSong}
-  \setCJKfamilyfont{zhhei}[AutoFakeBold=2.5]{STHeiti}
-  \setCJKfamilyfont{zhkai}{STKaiti}
-  \setCJKfamilyfont{zhfs}{STFangsong}
-}{
-  \setCJKmainfont[BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
-  \setCJKsansfont[BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
-  \setCJKmonofont{FandolFang-Regular.otf}
-  \setCJKfamilyfont{zhsong}[BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
-  \setCJKfamilyfont{zhhei}[BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
-  \setCJKfamilyfont{zhkai}{FandolKai-Regular.otf}
-  \setCJKfamilyfont{zhfs}{FandolFang-Regular.otf}
+% 正文沿用数模参考稿的宋体与 Times New Roman。
+\IfFontExistsTF{Times New Roman}{%
+  \setmainfont{Times New Roman}
+  \setsansfont{Times New Roman}
+  \setmonofont{Times New Roman}
+}{%
+  \setmainfont{texgyretermes-regular.otf}[BoldFont=texgyretermes-bold.otf,ItalicFont=texgyretermes-italic.otf,BoldItalicFont=texgyretermes-bolditalic.otf]
+  \setsansfont{texgyretermes-regular.otf}[BoldFont=texgyretermes-bold.otf]
+  \setmonofont{texgyretermes-regular.otf}[BoldFont=texgyretermes-bold.otf]
 }
+\setCJKmainfont[AutoFakeBold=2.5]{FandolSong-Regular.otf}
+\setCJKsansfont[AutoFakeBold=2.5]{FandolSong-Regular.otf}
+\setCJKmonofont[AutoFakeBold=2.5,ItalicFont=FandolSong-Regular.otf]{FandolSong-Regular.otf}
+\setCJKfamilyfont{zhsong}[AutoFakeBold=2.5]{FandolSong-Regular.otf}
+\setCJKfamilyfont{zhkai}{FandolKai-Regular.otf}
+\setCJKfamilyfont{zhfs}{FandolFang-Regular.otf}
+% 封面继续使用原有字形。
+\newfontfamily\coverroman[BoldFont=lmroman12-bold.otf]{lmroman12-regular.otf}
+\setCJKfamilyfont{coversong}[BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
+\setCJKfamilyfont{coverhei}[BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
+\xeCJKsetup{CheckSingle=true,WidowPenalty=10000}
 \input{setup/package}
+\DeclareSymbolFont{operators}{TU}{\rmdefault}{m}{n}
+\SetSymbolFont{operators}{bold}{TU}{\rmdefault}{b}{n}
+\DeclareMathAlphabet{\mathrm}{TU}{\rmdefault}{m}{n}
+\DeclareMathAlphabet{\mathsf}{TU}{\sfdefault}{m}{n}
+\SetMathAlphabet{\mathsf}{bold}{TU}{\sfdefault}{b}{n}
 \input{setup/commands}
 \graphicspath{{figures/}{figures/srs/}{figures/report/}{figures/cross/}{figures/screenshots/}}
 
@@ -32,10 +42,15 @@
     \fancyfoot[C]{\song\xiaowu~\thepage~}
   }
 
-  \makecover
+  \begingroup
+    \renewcommand{\song}{\CJKfamily{coversong}}
+    \renewcommand{\hei}{\CJKfamily{coverhei}}
+    \makecover
+  \endgroup
   \input{setup/toc}
 
-  \mainmatter\hypersetup{pageanchor=true}\defaultfont\sloppy\raggedbottom
+  \mainmatter\hypersetup{pageanchor=true}\defaultfont\raggedbottom
+  \tolerance=1800 \emergencystretch=1.8em
   \makeatletter
   \fancypagestyle{plain}{
     \fancyhf{}
@@ -46,7 +61,6 @@
   }
   \makeatother
   \setcounter{page}{1}
-  \titleformat{\chapter}{\centering\xiaosan\hei}{\chaptername}{2em}{}
 
   \input{body/ch1_team}
   \input{body/ch2_definition}
@@ -55,4 +69,27 @@
   \input{body/ch5_delivery}
   \input{body/ch6_ai_empowerment}
   \input{body/ch7_retrospective}
+  \appendix
+  \titleformat{\chapter}{\centering\hei\bfseries\fontsize{18bp}{21.6bp}\selectfont}{附录\ \thechapter}{1em}{}
+  \renewcommand{\thetable}{\thechapter-\arabic{table}}
+  \renewcommand{\thefigure}{\thechapter-\arabic{figure}}
+  \renewcommand{\theequation}{\thechapter-\arabic{equation}}
+
+  \chapter{项目范围与工程基线}\label{app:project}
+  \input{body/appendix_a_project}
+  \chapter{数据库表结构与迁移}\label{app:db}
+  \input{body/ch2_db_specs}
+  \input{body/appendix_b_design}
+  \chapter{接口契约与验证用例}\label{app:api}
+  \input{body/appendix_c_status}
+  \input{body/ch2_api_specs}
+  \chapter{质量验证与部署配置}\label{app:tests}
+  \input{body/ch5_test_tables}
+  \input{body/appendix_d_delivery}
+  \chapter{界面路由与视觉规范}\label{app:ui}
+  \input{body/appendix_e_ui}
+  \chapter{团队协作与迭代记录}\label{app:process}
+  \input{body/appendix_f_process}
+  \chapter{AI 人工复核与演进事项}\label{app:ai}
+  \input{body/appendix_g_ai}
 \end{document}

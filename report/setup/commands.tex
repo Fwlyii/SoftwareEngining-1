@@ -9,14 +9,19 @@
 
 \DeclareRobustCommand{\code}[1]{{\small\def\UrlBreaks{\do a\do b\do c\do d\do e\do f\do g\do h\do i\do j\do k\do l\do m\do n\do o\do p\do q\do r\do s\do t\do u\do v\do w\do x\do y\do z\do A\do B\do C\do D\do E\do F\do G\do H\do I\do J\do K\do L\do M\do N\do O\do P\do Q\do R\do S\do T\do U\do V\do W\do X\do Y\do Z\do 0\do 1\do 2\do 3\do 4\do 5\do 6\do 7\do 8\do 9\do\/\do\.\do\-\do\_\do\:\do\{\do\}}\nolinkurl{#1}}}
 \newcommand{\note}[1]{\begin{quote}\wuhao #1\end{quote}}
-\newcommand{\fullfig}[3]{\begin{figure}[H]\centering\includegraphics[width=\linewidth,height=.64\textheight,keepaspectratio]{figures/srs/#1}\caption{#2}\label{#3}\end{figure}}
+\newlist{reportpoints}{itemize}{1}
+\setlist[reportpoints]{%
+  label={\raisebox{.12ex}{\ensuremath{\scriptstyle\triangleright}}},
+  leftmargin=2em,labelsep=.55em,topsep=4pt,itemsep=2pt,parsep=0pt,partopsep=0pt
+}
+\newcommand{\fullfig}[3]{\begin{figure}[!htbp]\centering\includegraphics[width=\linewidth,height=.64\textheight,keepaspectratio]{figures/srs/#1}\caption{#2}\label{#3}\end{figure}}
 
 % 通用插图命令（带缺失回退提示）
 \newcommand{\reportfig}[4][0.88\linewidth]{%
-  \begin{figure}[H]
+  \begin{figure}[!htbp]
     \centering
     \IfFileExists{#2}{%
-      \includegraphics[width=#1,height=0.64\textheight,keepaspectratio]{#2}%
+      \includegraphics[width=#1,height=0.58\textheight,keepaspectratio]{#2}%
     }{%
       \fbox{\parbox[c][3.6cm][c]{0.86\linewidth}{%
         \centering\hei【待补充截图】#3\\[0.5em]
@@ -30,10 +35,10 @@
 
 % 本地待补截图占位符（带操作路径与画面内容说明）
 \newcommand{\placeholderfig}[5][0.84\linewidth]{%
-  \begin{figure}[H]
+  \begin{figure}[!htbp]
     \centering
     \IfFileExists{#2}{%
-      \includegraphics[width=#1,height=0.64\textheight,keepaspectratio]{#2}%
+      \includegraphics[width=#1,height=0.58\textheight,keepaspectratio]{#2}%
     }{%
       \fcolorbox{tjublue}{lightblue}{%
         \parbox{0.88\linewidth}{%
@@ -52,9 +57,9 @@
 
 % 高清大图（SRS/架构/流程单页展示）
 \newcommand{\srsfig}[4][0.96\linewidth]{%
-  \begin{figure}[H]
+  \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=#1,height=0.66\textheight,keepaspectratio]{#2}%
+    \includegraphics[width=#1,height=0.60\textheight,keepaspectratio]{#2}%
     \caption{#3}%
     \label{#4}%
   \end{figure}%
@@ -62,9 +67,9 @@
 
 % 单幅高清运行界面截图
 \newcommand{\uifig}[4][0.56\linewidth]{%
-  \begin{figure}[H]
+  \begin{figure}[!htbp]
     \centering
-    \fbox{\includegraphics[width=#1,height=0.64\textheight,keepaspectratio]{#2}}%
+    \fbox{\includegraphics[width=#1,height=0.58\textheight,keepaspectratio]{#2}}%
     \caption{#3}%
     \label{#4}%
   \end{figure}%
@@ -72,16 +77,16 @@
 
 % 双栏高清界面对比截图
 \newcommand{\uitwofig}[6]{%
-  \begin{figure}[H]
+  \begin{figure}[!htbp]
     \centering
     \begin{minipage}[t]{.48\linewidth}
       \centering
-      \fbox{\includegraphics[width=\linewidth,height=0.56\textheight,keepaspectratio]{#1}}\\[-2pt]
+      \fbox{\includegraphics[width=\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax,height=0.56\textheight,keepaspectratio]{#1}}\\[-2pt]
       \small #2
     \end{minipage}\hfill
     \begin{minipage}[t]{.48\linewidth}
       \centering
-      \fbox{\includegraphics[width=\linewidth,height=0.56\textheight,keepaspectratio]{#3}}\\[-2pt]
+      \fbox{\includegraphics[width=\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax,height=0.56\textheight,keepaspectratio]{#3}}\\[-2pt]
       \small #4
     \end{minipage}
     \caption{#5}
@@ -90,7 +95,7 @@
 }
 
 \lstset{
-  basicstyle=\ttfamily\small,
+  basicstyle=\linespread{1}\ttfamily\fontsize{9bp}{11.3bp}\selectfont,
   breaklines=true,
   frame=single,
   rulecolor=\color{black!20},

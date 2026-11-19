@@ -9,7 +9,7 @@
 \newcommand{\song}{\CJKfamily{zhsong}}  % 宋体
 \newcommand{\fs}{\CJKfamily{zhfs}}      % 仿宋体
 \newcommand{\kai}{\CJKfamily{zhkai}}    % 楷体
-\newcommand{\hei}{\CJKfamily{zhhei}}    % 黑体
+\newcommand{\hei}{\CJKfamily{zhsong}\bfseries} % 正文标题采用与报告正文相同的宋体粗体
 \newcommand{\li}{\CJKfamily{zhsong}}    % 隶书无对应字体时回退到宋体
 \newcommand{\yihao}{\fontsize{26pt}{26pt}\selectfont}       % 一号, 单倍行距
 \newcommand{\xiaoyi}{\fontsize{24pt}{24pt}\selectfont}      % 小一, 单倍行距
@@ -50,15 +50,15 @@
 
 \makeatletter
 \renewcommand\normalsize{
-  \@setfontsize\normalsize{12pt}{12pt} % 小四对应 12 pt
+  \@setfontsize\normalsize{12bp}{12bp} % 正文字号 12 bp
   \setlength\abovedisplayskip{4pt}
   \setlength\abovedisplayshortskip{4pt}
   \setlength\belowdisplayskip{\abovedisplayskip}
   \setlength\belowdisplayshortskip{\abovedisplayshortskip}
   \let\@listi\@listI}
-\def\defaultfont{\renewcommand{\baselinestretch}{1.63}\normalsize\selectfont} % 设置行距
+\def\defaultfont{\renewcommand{\baselinestretch}{1.5}\normalsize\selectfont} % 设置行距
 
-\renewcommand{\CJKglue}{\hskip -0.1 pt plus 0.08\baselineskip} % 控制字间距，使每行 34 个汉字
+\renewcommand{\CJKglue}{\hskip 0pt plus .045\baselineskip minus .025em} % 控制字间距，使每行 34 个汉字
 \makeatother
 
 %%%%%%%%%%%%% Contents %%%%%%%%%%%%%%%%%
@@ -66,21 +66,25 @@
 \setcounter{tocdepth}{2} % 控制目录深度
 
 %%%%%%%%%% Chapter and Section %%%%%%%%%%%%%
-\setcounter{secnumdepth}{4}
+\setcounter{secnumdepth}{3}
 \setlength{\parindent}{2em}
+\setlength{\parskip}{1pt plus .5pt}
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
 
 \renewcommand{\chaptername}{\prechaptername\thechapter\postchaptername}
-\titleformat{\chapter}{\centering}{\xiaosan\song}{\chaptername}{} %{2em}
-\titlespacing{\chapter}{0pt}{0.1\baselineskip}{0.8\baselineskip}
+\titleformat{\chapter}{\centering\hei\bfseries\fontsize{18bp}{21.6bp}\selectfont}{\chaptername}{1em}{}
+\titlespacing{\chapter}{0pt}{2pt}{14pt}
 
-\titleformat{\section}{\sihao\hei}{\thesection}{1em}{}
-\titlespacing{\section}{0pt}{0.15\baselineskip}{0.25\baselineskip}
-
-\titleformat{\subsection}{\sihao\hei}{\thesubsection}{1em}{}
-\titlespacing{\subsection}{0pt}{0.1\baselineskip}{0.3\baselineskip}
-
-\titleformat{\subsubsection}{\sihao\hei}{\thesubsubsection}{1em}{}
-\titlespacing{\subsubsection}{0pt}{0.05\baselineskip}{0.1\baselineskip}
+\titleformat{\section}{\hei\bfseries\fontsize{15bp}{18bp}\selectfont}{\thesection}{.75em}{}
+\titlespacing{\section}{0pt}{11pt plus 2pt minus 2pt}{5pt}
+\titleformat{\subsection}{\hei\bfseries\fontsize{12bp}{14.4bp}\selectfont}{\thesubsection}{.75em}{}
+\titlespacing{\subsection}{0pt}{8pt plus 2pt minus 1pt}{3pt}
+\titleformat{\subsubsection}{\hei\bfseries\normalsize}{\thesubsubsection}{.75em}{}
+\titlespacing{\subsubsection}{0pt}{6pt plus 1pt}{3pt}
+\titleformat{\paragraph}[runin]{\normalfont\normalsize\bfseries}{}{0pt}{}
+\titlespacing{\paragraph}{0pt}{4pt}{.75em}
 
 %%%%%%%%%% Table, Figure and Equation %%%%%%%%%%%%%%%%%
 \renewcommand{\tablename}{表}                                     % 插表题头
@@ -89,19 +93,16 @@
 \renewcommand{\thetable}{\arabic{chapter}-\arabic{table}}         % 使表编号为 7-1 的格式
 \renewcommand{\theequation}{\arabic{chapter}-\arabic{equation}}   % 使公式编号为 7-1 的格式
 
-%%%%%% 定制浮动图形和表格标题样式 %%%%%%
-\makeatletter
-\long\def\@makecaption#1#2{
-   \vskip\abovecaptionskip
-   \sbox\@tempboxa{\centering\wuhao\song{#1\qquad #2} }
-   \ifdim \wd\@tempboxa >\hsize
-     \centering\wuhao\song{#1\qquad #2} \par
-   \else
-     \global \@minipagefalse
-     \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}
-   \fi
-   \vskip\belowcaptionskip}
-\makeatother
+\setlength{\textfloatsep}{12pt plus 3pt minus 3pt}
+\setlength{\floatsep}{10pt plus 3pt minus 2pt}
+\setlength{\intextsep}{10pt plus 3pt minus 2pt}
+\renewcommand{\topfraction}{.91}
+\renewcommand{\bottomfraction}{.80}
+\renewcommand{\textfraction}{.08}
+\renewcommand{\floatpagefraction}{.62}
+\setcounter{topnumber}{4}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{5}
 
 %%%%%%%%%% Page: number, header and footer  %%%%%%%%%%%%%%%%%
 
@@ -186,11 +187,12 @@
     \pdfbookmark[-1]{\@ccovertitle~\@ctitle}{ctitle}
 
     \begin{titlepage}
+      \coverroman
       \vspace*{10pt}
       \begin{center}
 
       {\hei\yihao\textbf{天津大学}}\\[3pt]
-      {\rmfamily\sanhao\textbf{TIANJIN UNIVERSITY}}\\[15pt]
+      {\coverroman\sanhao\textbf{TIANJIN UNIVERSITY}}\\[15pt]
       \hei\erhao{\textbf{\@ccovertitle}} \\[22pt]
       \hei\erhao{\textbf{\@ctitle}} \\[18pt]
       {\song\sanhao\textbf{\@cproject}}

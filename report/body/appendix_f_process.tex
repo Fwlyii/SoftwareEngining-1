@@ -1,0 +1,363 @@
+\begingroup
+\renewcommand{\reporttablesize}{%
+  \renewcommand{\baselinestretch}{1}%
+  \fontsize{10bp}{12.8bp}\selectfont%
+  \renewcommand{\arraystretch}{1.02}%
+}
+\setlength{\LTpre}{4pt}
+\setlength{\LTpost}{4pt}
+
+\section{团队分工与培训}
+
+表~\ref{tab:code-ownership} 按成员列出主要代码与文档，培训安排和演练过程见第~\ref{sec:report-team}~章。
+
+
+\begin{longtable}{L{.12\linewidth}L{.375\linewidth}L{.425\linewidth}}
+\caption{团队成员主要制品归属}\label{tab:code-ownership}\\
+\toprule
+\textbf{成员} & \textbf{后端与数据库} & \textbf{前端与文档} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{成员} & \textbf{后端与数据库} & \textbf{前端与文档} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+李承文 & \code{AuthenticationRestController}、\code{UserRestController}、\code{OrderController}、\code{AssetController}、\code{DeliveryOrderController}、\code{Admin*Controller} & \code{authGuard.js}、\code{checkout.js}、\code{docker-compose.demo.yml}、\code{docs/DEPLOYMENT.md} \\
+范文丽 & \code{BusinessController}、\code{FoodController}（联合联调）、\code{PreferenceController} & \code{Login.vue}、\code{Index.vue}、\code{BusinessInfo.vue}、\code{Cart.vue}、\code{AiChat.vue}、\code{Preferences.vue}、\code{Merchant*}、\code{AdminHome.vue} \\
+赵紫怡 & \code{elm_v2.sql}、\code{001}--\code{006} 迁移、\code{AiChatController}、\code{AssistantController}、\code{NotificationController} & \code{docs/SRS.pdf}（UML 建模图、用例规格）、飞书知识库、实验报告数据库与 AI 章节 \\
+仲禹潼 & \code{MapController}、\code{RiderController}、\code{DeliveryTaskController}、后端测试回归 & \code{RiderDashboard.vue}、\code{MapLocationPicker}、WPS 缺陷台账、交叉测试报告与测试证据 \\
+\end{longtable}
+
+
+
+\noindent
+\begin{minipage}[t]{.48\linewidth}
+  \centering\vspace{0pt}
+  \captionsetup{hypcap=false}
+  \captionof{table}{培训分组}\label{tab:training-roles}
+  \reporttablesize
+  \begin{tabular}{@{}L{.31\linewidth}L{.58\linewidth}@{}}
+    \toprule
+    \textbf{分层} & \textbf{人员与重点} \\
+    \midrule
+    公共基础 & 全体。Scrum、Git/PR、环境启动和四端走读。 \\
+    前端与交互 & 范文丽、仲禹潼。路由、主题、地图与适配。 \\
+    后端与数据 & 李承文、赵紫怡。鉴权、交易、快照与 AI 适配。 \\
+    质量与运维 & 仲禹潼、李承文。TDD、边界验证及部署排查。 \\
+    \bottomrule
+  \end{tabular}
+\end{minipage}\hfill
+\begin{minipage}[t]{.48\linewidth}
+  \centering\vspace{0pt}
+  \captionsetup{hypcap=false}
+  \captionof{table}{培训验收结果}\label{tab:training-eval}
+  \reporttablesize
+  \begin{tabular}{@{}L{.31\linewidth}L{.58\linewidth}@{}}
+    \toprule
+    \textbf{维度} & \textbf{检查结果} \\
+    \midrule
+    工程环境 & 4/4 成员可独立启动本地环境并登录。 \\
+    协同提交 & 合入前由同伴或 SM 复核，累计合入 34 个 PR。 \\
+    安全规范 & JWT、金额和快照等安全用例通过。 \\
+    自动化验证 & 关键模块补齐回归，575 项通过。 \\
+    \bottomrule
+  \end{tabular}
+\end{minipage}\par
+
+\section{过程映射与会议纪要}
+
+
+\begin{longtable}{L{.19\linewidth}L{.38\linewidth}L{.35\linewidth}}
+\caption{过程域、项目实践与证据}\label{tab:cmm3-mapping}\\
+\toprule
+\textbf{过程域} & \textbf{采用的做法} & \textbf{主要记录} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{过程域} & \textbf{采用的做法} & \textbf{主要记录} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+REQM 需求管理 & SRS 从 1.0 更新至 2.0，按用户故事关联接口与测试。 & \code{docs/SRS.pdf}、飞书需求及反馈 \\
+PP 项目策划 & MoSCoW 分级、WBS 分解与 PERT 估算。 & 22 个用户故事、里程碑及估算表 \\
+PMC 项目监控 & 以提交、PR、组会和燃尽曲线跟踪偏差。 & 34 个 PR、9 次组会纪要、Git 统计 \\
+CM 配置管理 & 特性分支经 PR 合入，编号 SQL 单独管理增量。 & 分支记录、\code{001}--\code{006} 迁移 \\
+PPQA 过程质量 & 合入前自测、评审并执行 \code{check-repository.mjs}。 & 仓库校验脚本、评审与合入记录 \\
+VER / VAL 验证和确认 & TDD、前后端自动化、WPS 台账与跨组验收。 & 53 个后端测试类、28 个前端测试文件及 25 项交叉验收证据 \\
+OPF 过程改进 & 在迭代回顾中整理接口协作和 AI 使用的改进动作。 & 回顾行动项、SRS 与代码差异清单 \\
+\end{longtable}
+
+
+\begin{longtable}{L{.15\linewidth}L{.27\linewidth}L{.50\linewidth}}
+\caption{九次线上组会主要议题与行动}\label{tab:meeting-log}\\
+\toprule
+\textbf{次序与日期} & \textbf{议题} & \textbf{行动与归档} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{次序与日期} & \textbf{议题} & \textbf{行动与归档} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1（9.1） & 立项及工具链 & 确认四人分工，初始化主仓（\code{4fcbf00}），建立飞书空间。 \\
+2（9.3） & SRS 初版与绘图 & 审阅 \code{6e39d85}，统一 draw.io 编号并输出 17 张建模图。 \\
+3（9.5） & 接口契约对齐 & 对齐 JWT、商家与商品字段、购物车和订单状态 0--9 映射。 \\
+4（9.6） & 中期检查 & 梳理登录跳转、字段遗漏和自取问题，补 \code{003} 快照迁移与自取逻辑。 \\
+5（9.10） & 分支合并与扩展 & 统一四端后端鉴权，新接口采用 \code{/api/v1/}，安排看板、资产、AI 和地图联调。 \\
+6（9.12） & 第一次集中联调 & 启用 WPS 台账，按步骤、截图、修改建议跟踪 11 类以上体验问题。 \\
+7（9.15） & 封板与导航修复 & 合入 AI、公共壳层和导航修复，复核 SRS 与代码差异及 PR~\#34/\#35。 \\
+8（9.16） & 交叉验收与演示 & 整理边界用例，提交 \code{17f80ab} 高德集成与演示数据，复核降级。 \\
+9（9.19） & 复盘与归档 & 整理交叉验收、测试统计、AI 使用与归档材料。 \\
+\end{longtable}
+
+
+
+\section{各轮任务与站会记录}
+
+任务表列出对应用户故事、分工、前置依赖及估算工时。表中二级任务均已完成。站会表按日期给出阶段进展与提交线索，关键缺陷的处理过程见正文各轮迭代。
+
+
+\subsection{Sprint 1}
+
+\begin{longtable}{L{.083\linewidth}L{.36\linewidth}L{.13\linewidth}L{.136\linewidth}R{.07\linewidth}L{.12\linewidth}}
+\caption{Sprint 1 任务总表}\label{tab:sprint1-tasks}\\
+\toprule
+\textbf{任务} & \textbf{主要工作} & \textbf{故事} & \textbf{负责人} & \textbf{工时} & \textbf{前置} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{任务} & \textbf{主要工作} & \textbf{故事} & \textbf{负责人} & \textbf{工时} & \textbf{前置} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+T101 & SRS 初版编写与 17 张 UML/draw.io 建模图绘制 & 全部 & 赵紫怡 & 10 & 无 \\
+T102 & \code{elm_v2.sql} 基线及 \code{001}--\code{003} 迁移脚本 & \code{US001/004/006} & 赵紫怡 & 8 & T101 \\
+T103 & 注册/登录接口、Spring Security 与 JWT 鉴权 & US001 & 李承文 & 8 & T102 \\
+T104 & 店铺分类检索、商品详情与购物车 CRUD 接口 & \code{US003/005} & 李承文 & 10 & T102 \\
+T105 & 订单提交事务、库存条件扣减与取消回退 & \code{US006/007} & 李承文 & 12 & T104 \\
+T106 & 首页 \code{Index.vue}、分类商铺与详情页面联调 & US003 & 范文丽 & 10 & T104 \\
+T107 & 地址管理、购物车结算与订单列表前端页面 & \code{US004--007} & 范文丽 & 14 & T105 \\
+T108 & Docker 基础编排、认证与下单自动化测试用例 & \code{US001--007} & 仲禹潼 & 8 & T103/105 \\
+\end{longtable}
+
+
+\begin{longtable}{L{.14\linewidth}L{.78\linewidth}}
+\caption{Sprint 1 站会进展与提交索引}\label{tab:sprint1-daily}\\
+\toprule
+\textbf{日期} & \textbf{主要进展与处理} \\
+\midrule
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{日期} & \textbf{主要进展与处理} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+9.1 & 主仓初始化（\code{4fcbf00}），确定按四端角色拆分用例和权限。 \\
+9.2 & 梳理四端范围、目录与 UI 结构，确定模拟钱包和模拟支付。 \\
+9.3 & SRS 初版（\code{6e39d85}）经 PR~\#1 合入，校正连线后重新导出 17 张图。 \\
+9.4 & 清理仓库、优化配图、准备测试数据，补充 \code{.gitignore}（\code{8d19834}）。 \\
+9.5 & 重构用例与图号，制定 \code{003} 迁移和成交快照。 \\
+9.6 & 推进 Spring Boot 与持久化骨架，合入 SRS 2.0，图件统一到 \code{figures/srs/}。 \\
+9.7 & 完成基础编排（\code{03be626}）、认证 TDD（PR~\#10）和商品联调，按履约方式区分结算。 \\
+\end{longtable}
+
+
+\subsection{Sprint 2}
+
+\begin{longtable}{L{.083\linewidth}L{.36\linewidth}L{.13\linewidth}L{.136\linewidth}R{.07\linewidth}L{.12\linewidth}}
+\caption{Sprint 2 任务总表}\label{tab:sprint2-tasks}\\
+\toprule
+\textbf{任务} & \textbf{主要工作} & \textbf{故事} & \textbf{负责人} & \textbf{工时} & \textbf{前置} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{任务} & \textbf{主要工作} & \textbf{故事} & \textbf{负责人} & \textbf{工时} & \textbf{前置} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+T201 & 商家入驻审核、店铺营业配置与菜品库存接口 & \code{US011/012} & 李承文 & 8 & Sprint 1 \\
+T202 & 商家接单/出餐与骑手抢单/到店/取餐/送达状态机 & \code{US013/015/016} & 李承文 & 12 & T201 \\
+T203 & 钱包、积分、优惠券、会员与资产流水服务 & US009 & 李承文 & 10 & Sprint 1 \\
+T204 & 商家工作台、商品管理、订单与评价回复页面 & \code{US011--014} & 范文丽 & 12 & T201/202 \\
+T205 & 骑手申请与工作台 \code{RiderDashboard.vue} 开发 & \code{US015/016} & 仲禹潼/范文丽 & 10 & T202 \\
+T206 & 购物车备注迁移 \code{005}、评价与通知表接口 & \code{US005/008} & 赵紫怡 & 8 & Sprint 1 \\
+T207 & 登录页重构、AI 入口迁移与 WPS 集中缺陷筛查 & \code{US008--019} & 范文丽/仲禹潼 & 8 & T202--205 \\
+\end{longtable}
+
+
+\begin{longtable}{L{.14\linewidth}L{.78\linewidth}}
+\caption{Sprint 2 站会进展与提交索引}\label{tab:sprint2-daily}\\
+\toprule
+\textbf{日期} & \textbf{主要进展与处理} \\
+\midrule
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{日期} & \textbf{主要进展与处理} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+9.8 & 骑手配送 TDD（\code{ed0e07a}--\code{39c5469}），交付资产、偏好、评价与推荐。抢单使用 \code{version} 条件更新。 \\
+9.9 & 修复收藏部分更新与历史快照，补齐测试归档（\code{21f7ec1}）和个人记录（\code{d80eaba}）。 \\
+9.10 & 统筹资产、AI 及看板合并，新接口采用 \code{/api/v1/}，加入新人券判重。 \\
+9.11 & 合入 AI 基线（\code{2fffed2}、\code{bd1b0d1}），重构登录外观并隔离组件样式。 \\
+9.12 & 启用 WPS 台账，修正登录素材与 AI 工具栏，补齐游客访问时的登录状态判断。 \\
+\end{longtable}
+
+
+\subsection{Sprint 3}
+
+\begin{longtable}{L{.083\linewidth}L{.36\linewidth}L{.13\linewidth}L{.136\linewidth}R{.07\linewidth}L{.12\linewidth}}
+\caption{Sprint 3 任务总表}\label{tab:sprint3-tasks}\\
+\toprule
+\textbf{任务} & \textbf{主要工作} & \textbf{故事} & \textbf{负责人} & \textbf{工时} & \textbf{前置} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{任务} & \textbf{主要工作} & \textbf{故事} & \textbf{负责人} & \textbf{工时} & \textbf{前置} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+T301 & 管理员入驻审批、账号启停、评价隐藏与异常仲裁 & \code{US017/018/021} & 李承文 & 10 & Sprint 2 \\
+T302 & 管理员全局统计看板接口与 CSV 导出 & US022 & 李承文/范文丽 & 8 & T301 \\
+T303 & AI 意图分流、候选商品推荐、熔断与多模态适配 & \code{US019/020} & 赵紫怡 & 12 & Sprint 2 \\
+T304 & 高德地图后端代理、GCJ-02 坐标距离与选址弹窗 & US004/\allowbreak{}016 & 仲禹潼 & 10 & Sprint 2 \\
+T305 & 首页分类动效、View Transitions、4 套主题与 AI 前端 & \code{US010/019/020} & 范文丽 & 14 & T303 \\
+T306 & 商家/管理员看板图表及多端壳层响应式统一 & \code{US014/022} & 范文丽 & 10 & T302 \\
+T307 & 返回死循环 TDD 修复与云端无本地依赖部署解耦 & 全部 & 李承文 & 8 & T305 \\
+T308 & 575 项全量回归验证与 9 月 16 日跨组交叉验收 & 全部 & 仲禹潼/全体 & 10 & T301--307 \\
+\end{longtable}
+
+
+\begin{longtable}{L{.14\linewidth}L{.78\linewidth}}
+\caption{Sprint 3 站会进展与提交索引}\label{tab:sprint3-daily}\\
+\toprule
+\textbf{日期} & \textbf{主要进展与处理} \\
+\midrule
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{日期} & \textbf{主要进展与处理} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+9.13 & 设计首页动效，联调管理侧仲裁与助手，将外部模型请求移出数据库事务。 \\
+9.14 & 交付首页、分类及 AI 转场（\code{9b1a849}--\code{28b5666}），按 \code{prefers-reduced-motion} 减弱动画。 \\
+9.15 & 合入 AI 分支，复测导航、窄屏、自取、主题与游客浏览。关闭语音抽屉时释放音轨（\code{ddbeb3a}），云端部署解耦（\code{5418af1}）。 \\
+9.16 & 以 \code{17f80ab} 集成高德选址和 GCJ-02 距离，修复离线路径（\code{74e8dbc}）并准备交叉验收。 \\
+9.17--19 & 核对 25 项交叉证据，复跑后端 340 项、前端 235 项，归档设计差异和无密钥降级验证。 \\
+\end{longtable}
+
+
+
+\section{三级任务拆解示例}
+
+本表摘取三轮迭代中的代表任务。前节保留各轮任务总表，正文说明子任务为什么拆分，以及联调时按什么顺序验收。
+
+
+\begin{longtable}{L{.16\linewidth}L{.52\linewidth}L{.14\linewidth}R{.08\linewidth}}
+\caption{三个 Sprint 的三级任务示例}\label{tab:wbs-detail}\\
+\toprule
+\textbf{编号} & \textbf{拆解与交付物} & \textbf{负责人} & \textbf{工时} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{编号} & \textbf{拆解与交付物} & \textbf{负责人} & \textbf{工时} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\code{T105-1} & \code{OrderPricingService} 计算优惠、配送费并处理自取豁免。 & 李承文 & 4.0 \\
+\code{T105-2} & \code{OrderSubmissionService} 扣库存、写快照、校验提交幂等。 & 李承文 & 4.5 \\
+\code{T105-3} & 验证本人待处理订单，原子恢复库存与资产。 & 李承文 & 3.5 \\
+\code{T202-1} & 商家接单、拒单退款与出餐后等待骑手。 & 李承文 & 4.0 \\
+\code{T202-2} & 实现骑手申请、上线与外送可接任务查询。 & 李承文 & 3.5 \\
+\code{T202-3} & 按 \code{version} 处理抢单，依次同步到店、取餐和送达。 & 李承文 & 4.5 \\
+\code{T307-1} & 增加 AI 与页面返回回归，完成 TDD 导航修复。 & 李承文 & 3.5 \\
+\code{T307-2} & 抽离环境变量与本机路径，配置 Nginx 并更新 \code{DEPLOYMENT.md}。 & 李承文 & 4.5 \\
+\end{longtable}
+
+
+
+\section{风险登记与跟踪}
+
+风险清单和处置结果采用同一编号。概率与影响分为高、中、低三个等级。
+
+
+\begin{longtable}{L{.145\linewidth}C{.12\linewidth}L{.25\linewidth}L{.405\linewidth}}
+\caption{风险登记与预案（R001--R012）}\label{tab:risk-register}\\
+\toprule
+\textbf{编号} & \textbf{概率／影响} & \textbf{触发情形} & \textbf{预案} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{编号} & \textbf{概率／影响} & \textbf{触发情形} & \textbf{预案} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+R001 集成 & 高／高 & 接口或状态含义不一致。 & 合并前核对字段与 0--9 状态，运行契约测试。 \\
+R002 数据 & 中／高 & 改名或改价影响历史交易。 & 订单明细写入菜名与成交单价，历史查询读取快照。 \\
+R003 并发 & 中／高 & 抢单撞单、重复下单与超卖。 & 按状态、版本做条件更新，以 \code{idempotencyKey} 和唯一键去重。 \\
+R004 安全 & 中／高 & 请求伪造资源所属身份。 & 由 JWT 上下文确认身份，标记只读字段并测试跨用户、跨商家隔离。 \\
+R005 模型 & 高／中 & 模型超时、密钥缺失或费用超出预期。 & 外部调用移出数据库事务，使用意图分流、重试上限、熔断和本地帮助。 \\
+R006 地图 & 中／中 & 未配置地图或定位失败影响选址。 & 保留离线区域选择与文本地址，显示距离暂无。 \\
+R007 计价 & 中／高 & 外送与自取规则混用，券重复核销。 & \code{OrderPricingService} 按履约方式计价，券核销采用事务状态锁。 \\
+R008 界面 & 中／中 & 返回循环、窄屏溢出。 & 统一返回规则，以 TDD 检查导航，并测试 375~px 窄屏与减弱动效。 \\
+\pagebreak[4]
+R009 协作 & 高／中 & 视图与接口多人并行引发合并冲突。 & 特性分支小步提交，关键整合由 SM 组织复核与构建检查。 \\
+R010 进度 & 中／高 & 范围扩大挤占主流程验收时间。 & MoSCoW 分级，本期采用模拟支付，实时 GPS 轨迹独立排期。 \\
+R011 角色 & 中／高 & 顾客、商家、骑手与管理员串端。 & \code{LoginRolePolicy} 与 \code{authGuard.js} 校验角色，切端清理私有缓存。 \\
+R012 运维 & 中／中 & 云端与本地的数据库、上传或字体配置不同。 & 环境变量与持久化卷分离，\code{ensure-demo-env.sh} 初始化运行环境。 \\
+\end{longtable}
+
+
+\begin{longtable}{L{.10\linewidth}L{.19\linewidth}L{.63\linewidth}}
+\caption{风险处置与后续检查（R001--R012）}\label{tab:risk-closure}\\
+\toprule
+\textbf{编号} & \textbf{节点与状态} & \textbf{处置依据与检查} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename\ \thetable{} 续表}\\
+\toprule
+\textbf{编号} & \textbf{节点与状态} & \textbf{处置依据与检查} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+R001 & 9.15 已解决 & 以 PR 和 \code{api-contract-cleanup.test.mjs}、\code{ApiContractCleanupTest} 固化契约，新接口同步更新断言。 \\
+R002 & 9.5 已解决 & 菜名快照迁移与 \code{OrderNameSnapshotJourneyTest} 通过，继续核对历史查询的数据来源。 \\
+R003 & 9.8 已解决 & 库存条件更新、\code{delivery_task.version} 和订单幂等索引已落地，压测关注行锁冲突。 \\
+R004 & 9.15 已解决 & \code{RequestIdentityBoundaryTest}、\code{SecurityHardeningTest} 验证，新增接口检查鉴权上下文。 \\
+R005 & 9.15 已缓解 & \code{AiCircuitBreaker} 与 \code{DeepSeekDeadlineTest} 验证，本地帮助可用，持续关注预算与限流。 \\
+R006 & 9.16 已解决 & \code{74e8dbc} 修复离线选址，\code{17f80ab} 补坐标与缺少配置时的提示。 \\
+R007 & 9.15 已解决 & \code{076b45a} 修复自取，\code{OrderPricingServiceTest} 覆盖算价分支，资产流水只追加。 \\
+R008 & 9.15 已解决 & \code{06780ac}--\code{d319c5e} 与 \code{061e7f3} 修复返回、白屏和溢出，构建前运行 \code{npm test}。 \\
+R009 & 9.16 已解决 & 评审并合入 34 个 PR，\code{e06d806} 整合界面与安全基线，继续保护主干。 \\
+R010 & 9.19 已关闭 & 在 SRS 与差异清单中明确模拟支付范围，后续演进单独立项。 \\
+R011 & 9.15 已解决 & \code{LoginRolePolicyTest} 及前端守卫测试验证拦截。新路由须声明 \code{meta.role}。 \\
+R012 & 9.15 已解决 & \code{5418af1} 解除云端的本机路径依赖，按 \code{DEPLOYMENT.md} 启动后检查健康端点。 \\
+\end{longtable}
+
+复查时可以用原编号把预案与验收记录对在一起。R008 的返回规则可沿所列提交找到失败用例、修复和重构，再用同一组入口核对退出路径。R012 按部署说明核对环境变量和数据卷，启动后用表~\ref{tab:deploy-endpoints} 所列的地址逐个验证服务入口。
+
+\endgroup

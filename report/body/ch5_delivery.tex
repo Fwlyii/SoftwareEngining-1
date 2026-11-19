@@ -1,44 +1,44 @@
 \chapter{项目交付}
 
-项目交付围绕“软件制品质量验证（测试文档）”与“可复现环境交付（部署文档）”两方面展开。本章基于仓库真实的 53 个后端测试类（340 项）、28 个前端测试文件（235 项）、TDD 红--绿--重构提交链、WPS 人工缺陷筛查台账、本系统四端实机浏览器验证、2026 年 9 月 16 日跨组交叉验收记录及 \code{docker-compose.demo.yml} 容器编排配置，完整记录测试与部署交付物。
+交付前，我们从顾客下单开始，把同一个订单号带到商家、骑手和管理员的页面上。各端都能打开只是第一步。轮到谁处理、处理后另一端看到什么，才是这条流程要回答的问题。课上讲验证和确认，我们在这里用到了两种检查。先用自动化测试核对实现是否符合已经写下的规则，再到实机上走完整条路径，看角色能不能完成自己要做的事。交付还包括把环境交给别人，拿到仓库的同学要能照部署说明启动同一套系统。
 
 \section{项目测试文档}
 
 \subsection{测试计划与测试策略}
 
 \subsubsection{分层测试体系}
-本组采用“自动化测试保底线 + TDD 回归防反弹 + 人工四端走查 + 跨组交叉验收”四层质量保障策略：
-\begin{enumerate}
-  \item \textbf{后端单元测试与集成测试（JUnit 5 + Mockito + MockMvc + H2）：} 共包含 53 个测试类（340 项测试用例），覆盖认证授权边界、请求身份防伪造、订单定价与结算事务、库存条件扣减、历史商品名快照、骑手抢单状态机、AI 意图分流与熔断及高德地图适配器。
-  \item \textbf{前端逻辑与源码契约测试（Node Test Runner）：} 共包含 28 个 \code{.test.mjs} 测试文件（235 项测试用例），覆盖购物车备注、结算校验、页面返回导航、高德距离计算、主题切换、接口契约清理与管理端状态逻辑。
-  \item \textbf{TDD（红--绿--重构）缺陷驱动实践：} 针对联调中反复出现的“历史订单菜名随商家改价漂移”“未登录/AI 页返回陷入路由死循环”等回归问题，团队严格遵循“先写失败测试（RED）$\rightarrow$ 最小修复通过（GREEN）$\rightarrow$ 集中整理规则（REFACTOR）”三步提交，用自动化断言锁定行为。表~\ref{tab:tdd-trace} 列出了仓库可追溯的 TDD 提交链。
-  \item \textbf{人工功能筛查与跨组交叉验收：} 仲禹潼牵头建立 WPS 缺陷登记台账（图~\ref{fig:test-bug-register}），按模块、复现步骤、截图与修复状态闭环管理；9 月 16 日按对照 SRS 功能编号执行跨组交叉验收并留存 24 项页面与边界截图证据。
-\end{enumerate}
 
-\begin{longtable}{L{.18\linewidth}L{.14\linewidth}L{.14\linewidth}L{.14\linewidth}L{.31\linewidth}}
-\caption{仓库典型 TDD（红--绿--重构）缺陷驱动提交追溯表}\label{tab:tdd-trace}\\
-\toprule
-\textbf{回归专题} & \textbf{RED（失败）} & \textbf{GREEN（通过）} & \textbf{REFACTOR} & \textbf{固化的工程不变量} \\
-\midrule
-角色登录权限旅程 & \code{7829525} & \code{eada408} & \code{51b4136} & 角色校验与会话原子发布，失败全回滚。 \\
-商家目录管理旅程 & \code{f81c785} & \code{65ae05d} & \code{5212a82} & 跨商家店铺及菜品修改权限严格隔离。 \\
-骑手配送状态旅程 & \code{ed0e07a} & \code{99c7c24} & \code{108f5d9} & 抢单并发乐观锁及到店/取餐/送达流转。 \\
-资产与偏好旅程 & \code{bff3c7e} & \code{cbd2de8} & \code{401d90d} & 资产流水只增不改，偏好持久化恢复。 \\
-订单商品名快照 & \code{3e42fa9} & \code{f4c92ca} & \code{a1af8b7} & 移除实时商品联表，历史单强制读快照。 \\
-AI 与页面返回规则 & \code{06780ac} & \code{12c3d6e} & \code{d319c5e} & 集中处理返回兜底，消除未登录死循环。 \\
-\end{longtable}
+库存、金额和角色权限一类的判断，每次改动都要重查，适合写成能重复运行的用例。页面上的按钮、提示和不同角色之间的交接，则放到浏览器里看。我们把内部走查遇到的问题记在 WPS 缺陷台账，9 月 16 日的跨组验收另留了记录。
 
-\reportfig[0.96\linewidth]{figures/report/process/bug-register.png}{内部人工功能筛查与缺陷登记台账（WPS 跟踪记录）}{fig:test-bug-register}
+\begin{reportpoints}
+  \item 后端使用 JUnit 5、Mockito、MockMvc 和 H2 验证权限、交易、库存、历史快照、配送状态，以及 AI 和地图适配。套件有 53 个测试类。
+  \item 前端使用 Node Test Runner 运行 28 个测试文件，检查页面返回、结算校验、备注、主题等交互逻辑，以及与后端约定的字段。
+  \item 联调中出现的回归问题用 TDD 处理。先提交能够复现问题的失败测试，再修复并重构相关逻辑。表~\ref{tab:tdd-trace} 保留了相应的提交记录。
+  \item 仲禹潼牵头组织四端人工走查，在台账中登记复现步骤、截图和修复状态。跨组验收按对方 SRS 功能编号执行，留存 24 张正常操作与边界检查截图。
+\end{reportpoints}
+
+游客反复跳回登录弹窗时，台账记下了“未登录、进入店铺、再返回”的顺序。后来复测的人起点一样，看到的结果也可以直接和原截图对比。我们把现象、模块、复现步骤、截图和修复状态放在一行，界面建议另记，先修会卡住操作的问题。
+
+重复领券要从一位已经领过新人券的用户开始测。我们把这条现象记为 BUG-04，从领取前后的券列表和资产流水判断服务有没有多发一张券。后端的 \code{AssetServiceTest} 还把三种情况拆开检查。成功发券时写入应按顺序执行，用户已经领过就拒绝写入，发券失败则不记成功流水。有了这组断言，页面刷新后即使显示正常，重复写入也能被测出来。
+
+换到另一个角色时，我们记下它从哪里进入、看到订单处于哪一步、当时有哪些动作可做。顾客的进度和工作台对不上时，记录可以帮我们找出最后一个一致的状态，再去查下一次操作。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.96\linewidth,height=.58\textheight,keepaspectratio]{figures/report/process/bug-register.png}
+  \caption{内部人工功能筛查与缺陷登记台账（WPS 跟踪记录）}\label{fig:test-bug-register}
+\end{figure}
 
 \subsection{测试报告}
 
 \subsubsection{自动化测试执行结果汇总}
-团队先后于源码快照 \code{17f80ab2} 与 2026 年 11 月 16 日最终文档审计快照 \code{6ddb219} 上执行全量自动化测试套件。2026 年 11 月 16 日在本服务器以 Node.js 22.16.0、OpenJDK 17.0.21 与 Maven Wrapper 重新执行全量回归的结果仍为 \textbf{前端 235 项通过、后端 340 项通过，失败、错误与跳过均为 0（100\% 通过率）}（表~\ref{tab:auto-test-summary}）。
 
-图~\ref{fig:test-terminal-placeholder} 将本次真实日志摘要排版后由浏览器截图，原始前端输出、后端日志摘要及 53 份 Surefire XML 统计归档在 \code{report/evidence/2026-11-16/}。图~\ref{fig:test-domain-dist} 进一步按测试领域可视化展示了 575 项自动化用例的分布情况。
+我们在源码快照 \code{17f80ab2} 和 \code{6ddb219} 先后跑了全量测试，报告与后一次快照核对。2026 年 11 月 16 日复跑时，前端用 Node.js 22.16.0，后端用 OpenJDK 17.0.21 和 Maven Wrapper。表~\ref{tab:auto-test-summary} 汇总了结果。\textbf{前端 235 项、后端 340 项均通过}，失败、错误和跳过均为 0。
 
-\begin{longtable}{L{.24\linewidth}L{.26\linewidth}C{.12\linewidth}C{.10\linewidth}C{.10\linewidth}C{.10\linewidth}}
-\caption{全量自动化测试执行结果汇总表（快照 \texttt{6ddb219} 实测）}\label{tab:auto-test-summary}\\
+\begin{table}[!htbp]
+\centering\small
+\caption{全量自动化测试执行结果汇总表（快照 \texttt{6ddb219} 实测）}\label{tab:auto-test-summary}
+\begin{tabular}{L{.24\linewidth}L{.26\linewidth}C{.12\linewidth}C{.10\linewidth}C{.10\linewidth}C{.10\linewidth}}
 \toprule
 \textbf{测试套件} & \textbf{运行环境与工具} & \textbf{通过数} & \textbf{失败} & \textbf{错误/跳过} & \textbf{通过率} \\
 \midrule
@@ -47,10 +47,16 @@ AI 与页面返回规则 & \code{06780ac} & \code{12c3d6e} & \code{d319c5e} & �
 \midrule
 \textbf{合计} & \textbf{前后端自动化测试总计} & \textbf{575} & \textbf{0} & \textbf{0} & \textbf{100\%} \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{table}
 
-\begin{figure}[H]
+图~\ref{fig:test-terminal-placeholder} 保留了运行日志，图~\ref{fig:test-domain-dist} 把结果按检查的业务分开。课上讲到，度量之前先要想清楚要判断什么。这里我们关心能否按各端规则走完交易，所以除了记录通过数，还按导航、结算和权限这些问题查对应的用例。附录表~\ref{tab:all-backend-tests}、\ref{tab:all-frontend-tests} 收录了代表性套件。完整前端输出、后端日志摘要和 53 份 Surefire XML 的统计随版本留在 \code{report/evidence/2026-11-16/}，以后复跑也能查到使用的代码与环境。
+
+\begin{figure}[!htbp]
   \centering
+  \begin{minipage}[c]{.74\linewidth}
+    \centering
+    \resizebox{\linewidth}{!}{%
   \begin{tikzpicture}[x=0.072cm,y=0.58cm]
     \draw[->] (0,0) -- (125,0) node[right,font=\scriptsize] {用例数};
     \draw[->] (0,0) -- (0,8.2);
@@ -71,114 +77,127 @@ AI 与页面返回规则 & \code{06780ac} & \code{12c3d6e} & \code{d319c5e} & �
     \fill[accentorange!70] (0,1.7) rectangle (78,2.3); \node[right,font=\scriptsize] at (78,2.0) {78};
     \node[left,font=\scriptsize] at (-1,1.0) {后端 AI 熔断与高德地图};
     \fill[accentgreen!65] (0,0.7) rectangle (74,1.3); \node[right,font=\scriptsize] at (74,1.0) {74};
-  \end{tikzpicture}
+  \end{tikzpicture}}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{.23\linewidth}
+    \raggedright\small
+    \textbf{覆盖范围}\par\smallskip
+    前端 235 项覆盖导航、下单设置与交互逻辑。后端 340 项覆盖交易、权限、配送、AI 与地图适配。
+  \end{minipage}
   \caption{前后端 575 项自动化测试用例按工程域分布统计图}\label{fig:test-domain-dist}
 \end{figure}
 
-\placeholderfig[0.92\linewidth]{figures/screenshots/test-terminal-results.png}{前后端测试真实日志摘要（浏览器排版展示）}{实际运行前后端自动化测试后，将本次日志摘要与运行环境一并展示。}{fig:test-terminal-placeholder}
+例如返回路径出问题时，我们在 \code{navigation.test.mjs} 里找具体入口和返回目标。查历史订单则看快照回归的菜名断言。汇总数字里的一项通过，回到这里就能知道它究竟查了什么。
 
-\input{body/ch5_test_tables}
+\reportfig[0.86\linewidth]{figures/screenshots/test-terminal-results.png}{前后端测试真实日志摘要（浏览器排版展示）}{fig:test-terminal-placeholder}
+
+\subsubsection{从失败用例到回归保护}
+
+我们先下一笔单，再用商家账号修改菜名。回到原订单时，页面上的菜名也一起变了。单看接口是否成功，这次读取是正常的，所以我们把断言加到 \code{OrderNameSnapshotJourneyTest} 的订单明细上。数据库迁移 \code{003} 添加商品名快照，读取旧订单也改用当时留存的名称。改完以后，菜单仍显示新名字，顾客查旧账单时看到的还是付款时那一道菜。
+
+另一个问题出现在游客从店铺或 AI 页面返回时。各视图直接调用 \code{router.back()}，没有合适的上一页时，某些入口就会反复回到原来的页面。我们先把两条实际入口写进失败用例，再把返回规则收在同一个地方。\code{navigation.test.mjs} 的 42 项用例既会查正常返回，也会查缺少上一页时的去向。表~\ref{tab:tdd-trace} 记下了失败用例、修复和重构的三个提交。
+
+这两个问题的复测做法不同。库存和结算取决于库里的价格与状态，后端用固定的输入核对写入结果。前端测试能遍历多个入口，契约测试则锁定请求字段。我们还会在浏览器上重走那条路径，对照按钮、提示和真实的提交结果。这样一来，修复过的场景就成了以后改代码时可以再跑的检查。
 
 \subsubsection{本组系统四端端到端实机验证与缺陷闭环}
-为弥补纯单元测试对页面交互渲染覆盖的不足，团队在独立 MySQL 8.0.46 演示数据库环境下启动完整后端与前端服务，围绕“黑盒等价类、边界值、跨角色权限隔离与故障降级”四大维度开展浏览器端到端检查。表~\ref{tab:e2e-own-cases} 汇总了本系统核心 E2E 检查结果，相关实景画面可与第 2 章图~\ref{fig:def-ui-auth} 至图~\ref{fig:def-ui-amap} 互证；内部 WPS 台账及集成回归共闭环修复 12 类核心缺陷（表~\ref{tab:bug-closure}）。
 
-\begin{longtable}{L{.10\linewidth}L{.20\linewidth}L{.38\linewidth}C{.09\linewidth}L{.14\linewidth}}
-\caption{本组系统（\texttt{lightweight-takeout-platform}）四端核心 E2E 功能与边界验收表}\label{tab:e2e-own-cases}\\
+我们用独立的 MySQL 8.0.46 演示库走查。演示账号走真实认证接口，前端请求也发给项目后端。每个角色从自己的首页开始，既走正常操作，也查边界输入和跨角色访问。附录表~\ref{tab:e2e-own-cases} 列了八项验收，第 2 章图~\ref{fig:def-ui-auth} 至图~\ref{fig:def-ui-amap} 保留了对应的页面。
+
+我们先用游客身份打开首页和商品详情。遇到未营业的店铺，页面要在提交订单前告诉顾客等待营业。登录后再从购物车查商品、备注和结算入口，随后用订单页面的菜名、单价和时间线对照刚下的单。从商家、骑手和管理员入口回看时，分别检查店铺订单、可接任务和治理列表。这里要看的是一个订单状态到了各端以后，系统给相应角色留了什么动作。
+
+有些结果只有刷新后才看得出来。演示账号初始有 100.00 元余额、1200 积分和 2 张红包。我们在这个账号上切换到薄荷青，再刷新页面，检查主题能否从已保存的设置恢复。高德配置缺失时，选址弹窗会提示继续填写地址。图~\ref{fig:def-ui-placeholders} 与图~\ref{fig:def-ui-amap} 分别记录了这两个结果，便于下一轮改动后对照。
+
+内部 WPS 台账和集成回归共留下 12 类核心缺陷的修复记录。到店自取曾被起送费和地址检查卡住，查的时候要把前端提示与后端选择的履约模式放到一起。管理员快速检索时，较早的请求偶尔最后才回来，页面便会显示旧结果。修复后，测试会检查页面是否保留最新一次查询。附录表~\ref{tab:bug-closure} 按现象、根因和验证方式记录这些问题，也能查到相应提交。
+
+实机走查给了我们一项自动化结果之外的证据。比如没有配置地图时，接口告知功能不可用，到了顾客端还得能找到手填地址的入口并继续下单。所以我们把页面截图和测试日志一起留在记录里，下一次复测从同一个场景入手。
+
+\clearpage
+\subsubsection{对第 10 组项目的交叉测试}\label{app:cross-checks}
+
+2026 年 9 月 16 日，我们根据 \code{sep-elm} 的 \code{docs/SRS.md} 在本地执行交叉验收。用户 A 和 B 分别检查顾客功能，商家用户 C 检查店铺工作台。三类独立演示账号分别为 \code{13800000001}、\code{13800000002} 和 \code{13800000003}。验收时保留对应的需求编号，便于对方根据记录切换到同一个角色和页面。
+
+我们先用顾客账号看首页和店铺详情，再把错误密码和不符合长度要求的输入分开试。登录失败后留在原页面、密码修改时给出边界提示，各有自己的记录。个人资料还多做一次刷新，看看刚才保存的内容能不能读回来。图~\ref{fig:cross-auth-shop}、\ref{fig:cross-profile-pwd} 并列保留了浏览结果和登录边界。
+
+图~\ref{fig:cross-auth-shop} 中，首页与详情页显示的是同一家验收店铺，起送价均为 10 元，配送费均为 2 元。详情页补充了营业状态、商品单价和库存。我们沿用图中的牛肉饭检查加购和订单明细，前后便可以用店名、商品名、单价和数量核对同一笔操作。
+
+\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-01-用户首页.png}{（a）被测系统用户首页与店铺列表}{figures/cross/2026-9-16-sep-elm-SRS验收截图-02-店铺商品.png}{（b）被测系统店铺详情与商品展示}{跨组交叉测试的用户首页与店铺商品截图（\texttt{sep-elm}）}{fig:cross-auth-shop}
+
+错误密码用例中，登录弹窗仍显示在原页面上，顶部给出“手机号或密码错误”。密码修改在个人信息页内单独操作，验收记录核对了错误原密码及不符合格式的新密码。对昵称的检查则要多一步，用户 A 修改并保存后重新加载页面，首页右上角继续显示修改后的昵称。
+
+\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-错误密码登录.png}{（a）错误密码登录拒绝提示}{figures/cross/2026-9-16-sep-elm-SRS验收截图-密码边界.png}{（b）注册/修改密码格式边界拦截}{跨组交叉测试的认证与密码边界截图（\texttt{sep-elm}）}{fig:cross-profile-pwd}
+
+\clearpage
+\paragraph{购物车与订单}
+我们先在同一家店加购，改动数量以后核对明细和总价，再加一家店的商品，看看能否分组后只清空指定店铺。提交正常订单以后，我们打开明细看状态，再从待处理订单上执行取消。状态更新时，原取消按钮随之消失。图~\ref{fig:cross-cart} 与图~\ref{fig:cross-order} 分别记录了提交前后的结果。
+
+回到订单列表，我们用同一个订单号对照详情，两处要显示相同的状态。超库存另做一次操作，这样就能从记录中分清是哪一个条件触发了提示。
+
+图~\ref{fig:cross-cart} 左侧只有餐厅 X 的牛肉饭，单价和小计均为 18 元。加购餐厅 Y 的奶茶后，右侧出现两个独立的分组，分别显示 18 元和 12 元的提交入口。验收时单独清空 X，Y 的奶茶继续保留。结合两次显示结果，可以核对列表、金额和清空操作是否都按同一店铺划分。
+
+\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-03-购物车.png}{（a）购物车加购与合计状态}{figures/cross/2026-9-16-sep-elm-SRS验收截图-跨店购物车.png}{（b）跨店加购后按店铺分组}{跨组交叉测试的购物车加购与按店分组截图（\texttt{sep-elm}）}{fig:cross-cart}
+
+订单详情的两幅画面中，下单时间、牛肉饭数量及 18 元合计都一致。“待处理”改为“已取消”后，页面保留原来的成交明细，底部的取消按钮随状态消失。这几个位置一起核对，可以确认取消前后的页面指向同一笔订单。
+
+\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-04-新订单详情.png}{（a）新订单提交与明细详情}{figures/cross/2026-9-16-sep-elm-SRS验收截图-05-取消订单.png}{（b）订单取消后状态同步与按钮隐藏}{跨组交叉测试的订单创建与取消截图（\texttt{sep-elm}）}{fig:cross-order}
+
+\clearpage
+\paragraph{用户会话隔离}
+用户 A 的订单和购物车已有数据，我们再登录用户 B，打开同一组入口。图~\ref{fig:cross-isolation} 记录了切换账号后两个页面的状态。两边都看过，才能知道空列表来自当前账号的查询结果。
+
+\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-用户B订单隔离.png}{（a）用户 B 登录后订单列表隔离验证}{figures/cross/2026-9-16-sep-elm-SRS验收截图-用户B购物车隔离.png}{（b）用户 B 购物车数据隔离验证}{跨组交叉测试的用户数据隔离截图（\texttt{sep-elm}）}{fig:cross-isolation}
+
+两幅截图右上角都是用户 B。订单页提示“还没有订单”，购物车也为空。与用户 A 的详情和购物车对照，页面入口一样，返回内容随登录账号变化。这一轮证据来自页面列表查询。后续若要验收到订单详情接口，可以保留这两个测试账号，再记录服务端对另一账号订单详情请求的响应。
+
+我们把这轮检查与对方 SRS 的需求编号对在一起，见表~\ref{tab:cross-cases}。对方拿到记录，可以按账号角色和页面状态回到当时操作的地方。
+
+\begin{table}[!htbp]
+\centering
+\caption{跨组交叉验收与需求编号对照}\label{tab:cross-cases}
+\reporttablesize
+\begin{tabular}{L{.14\linewidth}L{.19\linewidth}L{.36\linewidth}L{.23\linewidth}}
 \toprule
-\textbf{用例ID} & \textbf{验证场景} & \textbf{执行步骤与核心检查点} & \textbf{结果} & \textbf{实机佐证} \\
+\textbf{需求编号} & \textbf{模块与账号} & \textbf{验收操作} & \textbf{结果与证据} \\
 \midrule
-\endfirsthead
-\multicolumn{5}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{用例ID} & \textbf{验证场景} & \textbf{执行步骤与核心检查点} & \textbf{结果} & \textbf{实机佐证} \\
-\midrule
-\endhead
+FR-USER-01/03/04 & 用户注册、登录与资料（用户 A） & 验证注册防重、错误密码统一拒绝提示、密码长度边界校验与个人资料持久化保存。 & 主流程通过，见图~\ref{fig:cross-auth-shop}、图~\ref{fig:cross-profile-pwd} \\
+FR-BIZ/FOOD & 店铺浏览、营业状态与商家端（用户 C） & 验证首页店铺展示与休息状态标签、商家工作台与店铺资料更新。 & 通过，见图~\ref{fig:cross-merchant}、图~\ref{fig:cross-rest-stock} \\
+FR-CART-01 至 04 & 购物车增删、分组与隔离 & 验证正常加购、按店分组、指定店铺清空、超库存数量回退及用户 B 的购物车数据隔离。 & 页面主流程通过，见图~\ref{fig:cross-cart}、\ref{fig:cross-isolation}、\ref{fig:cross-rest-stock} \\
+FR-ORDER-01/04/05 & 订单创建、取消与查询 & 验证生成新订单、待处理订单自助取消及用户 B 的订单数据隔离。 & 通过，见图~\ref{fig:cross-order}、图~\ref{fig:cross-isolation} \\
 \bottomrule
-\endfoot
-E2E-01 & 四端登录与路由隔离 & 分别使用 \code{demo_user}/\code{demo_merchant}/\code{demo_rider}/\code{demo_admin} 登录；跨端访问受保护路由自动重定向。 & 通过 & 图~\ref{fig:def-ui-auth} \\
-E2E-02 & 游客浏览与店铺休息拦截 & 未登录访问 \code{/index} 与 \code{/businessInfo}；查看在售库存，休息状态店铺禁用下单按钮。 & 通过 & 图~\ref{fig:def-ui-cust-browse} \\
-E2E-03 & 购物车加购与订单快照 & 加购菜品进入 \code{/cart} 结算；查看 \code{/listDetail} 验证下单菜名快照、单价与状态时间线。 & 通过 & 图~\ref{fig:def-ui-cust-cart-orders} \\
-E2E-04 & 钱包资产与主题持久化 & 查看余额 \yen 100.00、1200 积分与 2 张红包；切换“薄荷青”主题后刷新保持生效。 & 通过 & 图~\ref{fig:def-ui-placeholders} \\
-E2E-05 & 商家工作台、菜品与接单 & 登录 \code{demo_merchant} 查看店铺列表、菜品库存分类管理、订单面板及顾客评价回复。 & 通过 & 图~\ref{fig:def-ui-merchant-biz}--\ref{fig:def-ui-merchant-orders} \\
-E2E-06 & 骑手工作台与任务抢单 & 登录 \code{demo_rider} 查看在线开关、可接任务、收益里程及高德导航入口。 & 通过 & 图~\ref{fig:def-ui-rider} \\
-E2E-07 & 管理员看板与三方治理 & 登录 \code{demo_admin} 查看趋势看板、CSV 导出、用户启停、商家审核与骑手/异常仲裁。 & 通过 & 图~\ref{fig:def-ui-admin-home}--\ref{fig:def-ui-admin-users-riders} \\
-E2E-08 & 无密钥外部服务优雅降级 & 服务端未配置高德/DeepSeek/DashScope 密钥时，选址展示降级提示，AI 筛选走本地菜单，识菜禁用提示明确。 & 通过 & 图~\ref{fig:def-ui-amap}、图~\ref{fig:ai-runtime-placeholder} \\
-\end{longtable}
+\end{tabular}
+\end{table}
 
-\begin{longtable}{L{.10\linewidth}L{.26\linewidth}L{.22\linewidth}L{.33\linewidth}}
-\caption{核心缺陷发现、根因定位与回归验证闭环记录（BUG-01--BUG-12）}\label{tab:bug-closure}\\
-\toprule
-\textbf{缺陷编号} & \textbf{缺陷现象} & \textbf{根因定位} & \textbf{修复方案与验证提交} \\
-\midrule
-\endfirsthead
-\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{缺陷编号} & \textbf{缺陷现象} & \textbf{根因定位} & \textbf{修复方案与验证提交} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-BUG-01 & 到店自取仍校验起送费与收货地址 & 未区分履约模式的统一计价校验 & 在 \code{OrderPricingService} 与 \code{Cart.vue} 分离自取路径（\code{076b45a}）。 \\
-BUG-02 & 未登录进入店铺或 AI 页返回陷入死循环 & 各视图分散调用 \code{router.back()} 缺少回退兜底 & TDD 红-绿-重构（\code{06780ac} $\rightarrow$ \code{12c3d6e} $\rightarrow$ \code{d319c5e}）集中返回规则。 \\
-BUG-03 & 连续切页偶发白屏与窄屏登录表单溢出 & 视图转场生命周期异常与登录框固定宽度 & 提交 \code{6a9f3af}、\code{061e7f3} 修复壳层样式与切页守卫。 \\
-BUG-04 & 新人优惠券可被重复领取 & 领取接口缺少已领取幂等与唯一判重 & 后端补充优惠券领取次数约束并新增 \code{AssetServiceTest} 断言。 \\
-BUG-05 & 语音抽屉关闭后麦克风权限未释放 & 延迟回调触发时未判断抽屉当前激活态 & 提交 \code{ddbeb3a} 在关闭与迟到回调中主动释放音轨。 \\
-BUG-06 & 商家修改商品名导致历史订单显示失真 & 旧查询联表读取实时 \code{food.food_name} & 迁移 \code{003} 增加快照列，提交 \code{a1af8b7} 移除联表依赖。 \\
-BUG-07 & 骑手并发点击同一任务发生覆盖撞单 & 抢单更新 SQL 缺少状态与版本前置条件 & 在 \code{delivery_task} 引入 \code{version} 乐观锁并新增并发单测。 \\
-BUG-08 & 游客访问分类店铺页触发加载异常 & 店铺分类接口未向匿名端放行或字段缺失 & 提交 \code{52be48e} 修复游客浏览与商家分类加载。 \\
-BUG-09 & 下单页未配置高德密钥时地址选择阻塞 & 地图选址组件强依赖在线 JS API 初始化 & 提交 \code{74e8dbc} 修复离线区域选择与无密钥文本地址降级。 \\
-BUG-10 & 登录页重构样式污染其他路由背景 & 全局样式未做组件作用域或类名隔离 & 提交 \code{7460b46} 移除跨组件全局背景覆盖并新增视觉回归。 \\
-BUG-11 & 管理员用户检索快速输入出现旧响应覆盖新结果 & 异步列表请求未做竞态序号丢弃处理 & 提交请求时序保护并由 \code{adminAccountApi.test.mjs} 锁定。 \\
-BUG-12 & AI 悬浮球在小视口下超出统一页面壳层边界 & 固定定位参考系脱离共享容器宽度 & 提交 \code{48fd4e3} 收敛至页面壳层内部并新增布局测试。 \\
-\end{longtable}
+\clearpage
+\paragraph{商家营业状态与库存边界}
+商家侧从工作台进入订单视图，检查订单入口和店铺资料保存。图~\ref{fig:cross-merchant} 左侧保留了店铺、商品及库存的对应关系，右侧的订单管理可以按订单号查看金额和状态。顾客侧完成取消后，商家视图也能看到“已取消”，因此订单状态在两端都有可供对照的记录。
 
-\subsubsection{跨组交叉测试报告（对第 10 组 \texttt{sep-elm} 项目）}
-除完成本组系统自测外，2026 年 9 月 16 日团队作为交叉测试方，依据《第十组交叉测试报告》规范对兄弟小组项目 \code{test10}（\code{sep-elm}）按照其 \code{docs/SRS.md} 需求编号逐项开展了本地实机浏览与边界隔离测试（使用独立测试账号用户 A \code{13800000001}、用户 B \code{13800000002} 及商家用户 C \code{13800000003}）。表~\ref{tab:cross-cases} 汇总了该轮跨组交叉测试的代表性检查点，图~\ref{fig:cross-auth-shop} 至图~\ref{fig:cross-isolation} 为 2026 年 9 月 16 日对 \code{sep-elm} 项目实机验收的归档截图证据（注：以下截图测试对象为被测项目 \code{sep-elm}，用于体现本组承担跨组 QA 验收的工程实绩）。
+店铺资料采用单字段更新来核对。商家 C 只修改公告，工作台提示更新成功，其余字段保留原值。顾客端详情图也保留了更新后的公告文本，旁边仍显示原来的起送价与配送费。把保存结果和顾客可读的字段一起看，可以查出修改是否超出了操作范围。
 
-\begin{longtable}{L{.14\linewidth}L{.20\linewidth}L{.38\linewidth}L{.19\linewidth}}
-\caption{跨组交叉测试（对 \texttt{sep-elm} 项目）代表性用例与结果汇总表}\label{tab:cross-cases}\\
-\toprule
-\textbf{对方 SRS 编号} & \textbf{测试模块与账号} & \textbf{验收操作与边界核验要点} & \textbf{验收结论与证据} \\
-\midrule
-\endfirsthead
-\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
-\toprule
-\textbf{对方 SRS 编号} & \textbf{测试模块与账号} & \textbf{验收操作与边界核验要点} & \textbf{验收结论与证据} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-FR-USER-01/03/04 & 用户注册、登录与资料（用户 A） & 验证注册防重、错误密码统一拒绝提示、密码长度边界校验与个人资料持久化保存。 & 主流程通过；见图~\ref{fig:cross-auth-shop}、图~\ref{fig:cross-profile-pwd} \\
-FR-BIZ/FOOD & 店铺浏览、营业状态与商家端（用户 C） & 验证首页店铺展示、店铺休息状态消费者的拦截提示、商家工作台与店铺资料更新。 & 通过；见图~\ref{fig:cross-merchant}、图~\ref{fig:cross-rest-stock} \\
-FR-CART-01/03 & 购物车增删、跨店与清空 & 验证加购合并、跨店加购提示、指定店铺清空及用户 B 跨用户购物车数据隔离。 & 通过；见图~\ref{fig:cross-cart}、图~\ref{fig:cross-isolation} \\
-FR-ORDER-01/04 & 订单创建、取消与超库存边界 & 验证生成新订单、待处理订单自助取消、超库存购买拦截及用户 B 跨用户订单隔离。 & 通过；见图~\ref{fig:cross-order}、图~\ref{fig:cross-rest-stock} \\
-\end{longtable}
+\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-06-商家工作台.png}{（a）被测系统商家工作台界面}{figures/cross/2026-9-16-sep-elm-SRS验收截图-07-商家订单.png}{（b）被测系统商家订单处理视图}{跨组交叉测试的商家工作台与订单截图（\texttt{sep-elm}）}{fig:cross-merchant}
 
-\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-01-用户首页.png}{（a）被测系统用户首页与店铺列表}{figures/cross/2026-9-16-sep-elm-SRS验收截图-02-店铺商品.png}{（b）被测系统店铺详情与商品展示}{跨组交叉测试（\texttt{sep-elm}）：用户首页与店铺商品验收截图}{fig:cross-auth-shop}
+营业状态按商家改动、顾客回看两个步骤验收。商家 C 设置临时休息后，用户 A 刷新首页，原店铺卡片显示“休息中”。商家恢复营业后，页面重新显示“营业中”。店铺在两种状态下仍保留在列表中，顾客可以先看标签再决定是否进入详情。
 
-\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-错误密码登录.png}{（a）错误密码登录拒绝提示}{figures/cross/2026-9-16-sep-elm-SRS验收截图-密码边界.png}{（b）注册/修改密码格式边界拦截}{跨组交叉测试（\texttt{sep-elm}）：认证与密码边界验收截图}{fig:cross-profile-pwd}
+我们把库存检查分开做。购物车里，数量从 1 改到 2 时小计随之变化，输入超过库存的 7 后回到 1。图~\ref{fig:cross-rest-stock} 右图就是回退后的样子。SRS 约定的 HTTP 400 要从接口日志另行核对。
 
-\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-03-购物车.png}{（a）购物车加购与合计状态}{figures/cross/2026-9-16-sep-elm-SRS验收截图-跨店购物车.png}{（b）跨店购物车加购冲突提示}{跨组交叉测试（\texttt{sep-elm}）：购物车功能与跨店冲突截图}{fig:cross-cart}
+\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-消费者侧休息状态.png}{（a）商家设置休息后顾客首页的店铺标签}{figures/cross/2026-9-16-sep-elm-SRS验收截图-超库存边界.png}{（b）超库存输入后购物车数量回退}{跨组交叉测试的营业状态与超库存边界截图（\texttt{sep-elm}）}{fig:cross-rest-stock}
 
-\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-04-新订单详情.png}{（a）新订单提交与明细详情}{figures/cross/2026-9-16-sep-elm-SRS验收截图-05-取消订单.png}{（b）订单取消后状态同步与按钮隐藏}{跨组交叉测试（\texttt{sep-elm}）：订单创建与取消闭环截图}{fig:cross-order}
-
-\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-06-商家工作台.png}{（a）被测系统商家工作台界面}{figures/cross/2026-9-16-sep-elm-SRS验收截图-07-商家订单.png}{（b）被测系统商家订单处理视图}{跨组交叉测试（\texttt{sep-elm}）：商家端工作台与订单验收截图}{fig:cross-merchant}
-
-\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-消费者侧休息状态.png}{（a）店铺切换休息后消费者侧禁用提示}{figures/cross/2026-9-16-sep-elm-SRS验收截图-超库存边界.png}{（b）超出可用库存下单请求拦截}{跨组交叉测试（\texttt{sep-elm}）：营业状态与超库存边界验收截图}{fig:cross-rest-stock}
-
-\uitwofig{figures/cross/2026-9-16-sep-elm-SRS验收截图-用户B订单隔离.png}{（a）用户 B 登录后订单列表隔离验证}{figures/cross/2026-9-16-sep-elm-SRS验收截图-用户B购物车隔离.png}{（b）用户 B 购物车数据隔离验证}{跨组交叉测试（\texttt{sep-elm}）：跨用户隐私与数据隔离验收截图}{fig:cross-isolation}
-
+\clearpage
 \section{项目部署文档}
 
 \subsection{部署架构与环境要求}
 
-系统提供“Docker Compose 一键容器化部署（推荐）”与“Node.js + JDK 17 + MySQL 8 手动开发启动”两种交付方式。图~\ref{fig:deploy-arch} 展示了系统容器化部署拓扑结构：Nginx 静态托管 Vue 3 前端并将 \code{/api} 流量同源反代至 Spring Boot 后端容器，后端连接 MySQL 8 容器并挂载 \code{runtime-uploads/} 持久化媒体文件；可选启用 \code{cloudflared} 临时演示隧道或 Cloudflare Pages 云端部署。
+项目交付时保留了两种启动方式，Docker Compose 用于一套环境一起启动，手动启动用于无法使用 Docker 的主机。Compose 将 Vue 3 前端、Spring Boot 后端和 MySQL 8 放在同一网络。用户打开前端地址，静态资源由 Nginx 提供，\code{/api} 则转到后端。后端用容器内的地址访问数据库，上传的媒体放在挂载的 \code{runtime-uploads/} 里。图~\ref{fig:deploy-arch} 把这些连接画在一起，也标出了 \code{cloudflared} 演示隧道和 Cloudflare Pages 等可选访问方式。
+
+页面和 API 共用访问地址，四种角色用同一个入口登录。数据库端口主要留给本机调试。如果浏览器里接口报错，我们沿图先查 Nginx 有没有正确转发，再看后端返回和认证状态。
+
+排查时我们先打开一个前端业务路由，确认页面资源和路由回退可用，再用登录或商品列表试 \code{/api}。如果能读到业务数据，图片却打不开，下一步就查 \code{/uploads/} 转发和后端挂载目录。图里的每条连接都有一个实际请求可对照，也让接手的人知道应该从哪里开始查。
 
 \srsfig[0.95\linewidth]{figures/srs/17-system-deployment.png}{系统容器化部署架构、反向代理与本地/云端交付拓扑图}{fig:deploy-arch}
 
+\clearpage
 \subsection{部署步骤与运行配置}
 
 \subsubsection{Docker Compose 一键部署流程}
+
 \begin{lstlisting}[language=bash,caption={Docker Compose 一键演示环境初始化与启动命令}]
 # 1. 克隆仓库并进入根目录
 git clone --branch main https://github.com/Fwlyii/lightweight-takeout-platform.git
@@ -192,47 +211,42 @@ docker compose -f docker-compose.demo.yml up -d --build
 docker compose -f docker-compose.demo.yml ps -a
 \end{lstlisting}
 
-首次启动时，\code{mysql} 服务自动创建 \code{elm_v2} 数据库并按序导入 \code{elm_v2.sql} 与 3 份演示种子脚本；随后一次性容器 \code{migrate} 执行 \code{003_order_name_snapshot.sql} 与 \code{005_cart_order_remarks.sql} 后正常退出（\code{Exited (0)}）；待数据库健康检查通过后，\code{backend} 与 \code{frontend} 启动就绪。
+第一次启动时，\code{mysql} 创建 \code{elm_v2}，导入 \code{elm_v2.sql} 和 3 份演示种子脚本。数据库健康检查通过后，\code{migrate} 才执行 \code{003_order_name_snapshot.sql} 和 \code{005_cart_order_remarks.sql}。迁移成功会显示 \code{Exited (0)}，前端和后端则继续运行。查看 \code{ps -a} 时，我们按这个顺序确认启动走到了哪一步。
+
+容器就绪后，我们再用演示账号登录，打开菜单或订单详情，确认页面真正读到了这套库里的数据。用已有数据库启动时，还会回看旧订单的菜名与购物车、订单的备注。前者取自快照列，后两处要有备注列。如果只是这些字段异常，就先查迁移记录，然后再查对应的查询代码。
 
 \subsubsection{端口映射、访问入口与演示账号}
-表~\ref{tab:deploy-endpoints} 列出了默认本地访问入口、服务职责及内建演示账号体系，表~\ref{tab:deploy-env} 列出了外部增强服务的可选环境变量说明。
 
-\begin{longtable}{L{.22\linewidth}L{.30\linewidth}L{.39\linewidth}}
-\caption{默认部署端口、访问入口与演示角色说明}\label{tab:deploy-endpoints}\\
-\toprule
-\textbf{服务/角色} & \textbf{访问地址 / 演示账号} & \textbf{用途与验证说明} \\
-\midrule
-前端应用（Nginx） & \url{http://localhost:18081/index} & 四端统一入口，已配置同源反向代理至后端容器。 \\
-后端服务（Spring Boot） & \url{http://localhost:18080} & 核心 RESTful API 根地址；Swagger 文档见 \code{/swagger-ui/index.html}。 \\
-MySQL 8 数据库 & \code{127.0.0.1:13306}（库 \code{elm_v2}） & 持久化存储 23 张业务表及演示数据，支持本地客户端调试。 \\
-演示账号矩阵 & \code{demo_user}、\code{demo_merchant}、\code{demo_rider}、\code{demo_rider_candidate}、\code{demo_admin} & 覆盖顾客下单、商家接单、骑手申请/抢单与管理员审核；多角色测试建议开启独立浏览器会话。 \\
-\bottomrule
-\end{longtable}
+店铺、骑手和管理员入口共用同一前端。我们测权限和数据隔离时为各角色单独开会话，免得前一次登录的令牌混进这次验收。默认访问入口与演示账号见附录表~\ref{tab:deploy-endpoints}，外部服务配置见表~\ref{tab:deploy-env}。
 
-\begin{longtable}{L{.28\linewidth}L{.24\linewidth}L{.39\linewidth}}
-\caption{关键环境变量与外部服务降级配置表}\label{tab:deploy-env}\\
-\toprule
-\textbf{环境变量} & \textbf{默认值 / 示例} & \textbf{作用域与缺失降级说明} \\
-\midrule
-\code{JWT_SECRET} & 由 \code{ensure-demo-env.sh} 生成 & 必填；后端 JWT 令牌签名密钥，禁止提交至代码仓库。 \\
-\code{APP_DEMO_ENABLED} & \code{false}（演示环境为 \code{true}） & 控制模拟钱包充值、模拟支付与体验会员接口开关。 \\
-\code{DEEPSEEK_API_KEY} & 空（按需注入） & 启用 AI 文字客服外部模型；未配置时自动降级为本地规则与帮助问答。 \\
-\code{DASHSCOPE_API_KEY} / \code{BASE_URL} & 空（按需注入） & 启用 \code{qwen-vl-plus} 图片识菜与 \code{qwen3-asr-flash} 语音草稿；未配置返回 503 并禁用入口。 \\
-\code{AMAP_WEB_KEY} / \code{AMAP_JS_KEY} / \code{AMAP_SECURITY_CODE} & 空（后端环境变量注入） & 启用高德 POI 搜索代理、逆地理编码与前端选址弹窗；未配置时降级为离线地址填写。 \\
-\bottomrule
-\end{longtable}
+默认映射端口只绑定本机。浏览器进入前端端口后，Nginx 从容器网络请求 \code{backend:8080}。后端的映射端口也能直接看 Swagger 文档，数据库端口供本机调试。机器上有另一套演示实例时，我们先核对占用的端口，再看浏览器正在访问的实例和它连接的库，确保记下的是这一次演示的页面和订单。
 
-\subsubsection{非 Docker 本地开发启动与常见故障排查}
-若需在无 Docker 守护进程的受限主机直接部署调试：可依次启动用户态 MySQL 8.0 实例并导入 \code{elm_v2.sql}、迁移与演示种子脚本，注入 \code{SPRING_DATASOURCE_URL}、\code{JWT_SECRET} 与 \code{APP_DEMO_ENABLED=true} 后使用 OpenJDK 17 运行 \code{elm_bk-0.0.1-SNAPSHOT.jar}；前端通过 \code{VUE_APP_API_BASE_URL} 指向后端地址并运行 \code{npm run serve}（2026 年 11 月 16 日服务器实机截图与全量回归均采用此隔离模式成功验证）。常见部署与运行故障排查指南见表~\ref{tab:deploy-troubleshoot}。
+我们在启动说明里把停机恢复也写了进去。MySQL 第一次用空目录启动时才会执行建表和种子脚本，已有目录会继续使用之前的数据。临时停用时可用 \code{stop}，再用 \code{start} 启动原容器。重新创建容器前则保留数据库和 \code{runtime-uploads/} 的备份，恢复时回看以前的订单和图片，验证两个位置都接回来了。
 
-\begin{longtable}{L{.24\linewidth}L{.32\linewidth}L{.35\linewidth}}
-\caption{部署与运行阶段常见故障诊断与排查手册}\label{tab:deploy-troubleshoot}\\
+\clearpage
+\subsubsection{手动部署与运行复核}
+
+2026 年 11 月 16 日做实机截图时，我们在无法启动 Docker 的主机上手动搭了隔离环境。先启动用户态 MySQL 8.0，再导入基表、迁移脚本和演示种子。后端由 OpenJDK 17 运行 \code{elm_bk-0.0.1-SNAPSHOT.jar}，用 \code{SPRING_DATASOURCE_URL} 指定数据库，配置 \code{JWT_SECRET} 并打开 \code{APP_DEMO_ENABLED}。前端设好 \code{VUE_APP_API_BASE_URL} 后，再用 \code{npm run serve} 启动。
+
+这次截图访问的是本机 18381 端口的前端和 18380 端口的后端，浏览器走查连接独立的 MySQL 8.0.46，后端自动化测试仍用 H2。回看截图时，我们从前端入口操作，核对真实服务的返回。复跑自动化则直接执行测试命令，看日志里的失败、错误和跳过。认证、反代和初始化中可能碰到的问题列在表~\ref{tab:deploy-troubleshoot}。
+
+前端会在开发服务启动时读取接口地址。换了后端端口，就要同步改 \code{VUE_APP_API_BASE_URL} 并重启前端。我们先从浏览器请求确认地址，再用本轮演示账号登录，检查读到的是预期的店铺和订单。
+
+出错时，我们先看问题在哪一段出现。启动阶段读不到签名密钥，可以从配置脚本与环境变量传递查起。页面打开后请求仍报错，先看代理路径和访问地址，再检查浏览器里是否还留有旧令牌。若普通浏览和登录都正常，个别订单字段为空，则优先核对旧库迁移与查询依赖。按这个顺序排查，可以保留原有演示数据，集中检查受影响的环节。
+
+\begin{table}[!htbp]
+\centering
+
+\caption{部署运行中的故障诊断}\label{tab:deploy-troubleshoot}
+\reporttablesize
+\begin{tabular}{L{.21\linewidth}L{.31\linewidth}L{.42\linewidth}}
 \toprule
 \textbf{异常现象} & \textbf{常见根因分析} & \textbf{标准排查与处置步骤} \\
 \midrule
 后端启动报错 \code{JWT_SECRET} 缺失 & 未执行 \code{ensure-demo-env.sh} 或环境变量未透传至容器 & 重新运行环境脚本生成 \code{.env}，检查 \code{docker compose config} 注入结果。 \\
 前端接口报 401 或 CORS 拦截 & \code{VUE_APP_API_BASE_URL} 跨端口未走同源反代或密钥变化 & 确认 Nginx \code{/api} 代理指向或统一前端环境变量，清理浏览器旧 \code{localStorage}。 \\
 订单页面显示菜名或备注为空 & 既有旧库未执行增量迁移 \code{003} 或 \code{005} & 按序执行 \code{elm_bk/db/migrations/001--006} 幂等 SQL 脚本。 \\
-点击高德选址或识菜报不可用 & 未配置 \code{AMAP_*} 或 \code{DASHSCOPE_*} 密钥 & 属预期安全降级行为，可通过文本地址或“智能筛选”正常点餐，配置密钥后重启生效。 \\
+点击高德选址或识菜报不可用 & 未配置 \code{AMAP_*} 或 \code{DASHSCOPE_*} 密钥 & 临时使用文本地址或“智能筛选”。启用外部服务时，先配置密钥再重启。 \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{table}

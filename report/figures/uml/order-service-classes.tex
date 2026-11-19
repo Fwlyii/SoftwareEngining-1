@@ -1,0 +1,47 @@
+\begin{tikzpicture}[
+  x=1pt,y=1pt,
+  uml class/.style={draw=black,fill=white,line width=.45pt,inner sep=0pt,outer sep=0pt,
+    font=\fontsize{10.5bp}{12.2bp}\selectfont},
+  dependency/.style={densely dashed,line width=.55pt,-{Straight Barb[length=1.8mm,width=1.55mm]}},
+  realization/.style={densely dashed,line width=.55pt,-{Triangle[open,length=2.9mm,width=2.6mm]}},
+]
+  % The diagram selects operations; ellipses omit their argument lists.
+  \newcommand{\orderUmlClassBox}[2]{%
+    \begin{tabular}{@{}l@{}}
+      \parbox[c][25pt][c]{134pt}{\centering\fontsize{10.25bp}{12pt}\selectfont #1\par}\\
+      \hline
+      \parbox[c][28pt][c]{134pt}{\raggedright\leftskip=6pt #2\par}
+    \end{tabular}%
+  }
+
+  \node[uml class] (controller) at (-144,0) {\orderUmlClassBox{\textbf{OrderController}}{%
+    + orderSubmit(\ldots)\\
+    + setOrderStatus(\ldots)}};
+  \node[uml class] (service) at (0,0) {\orderUmlClassBox{%
+    \shortstack[c]{\textit{«interface»}\\\textbf{OrderService}}}{%
+    + orderSubmit(\ldots)\\
+    + setOrderState(\ldots)}};
+
+  \node[uml class] (pricing) at (-144,-76) {\orderUmlClassBox{\textbf{OrderPricingService}}{%
+    + quote(\ldots)\enspace: OrderQuote}};
+  \node[uml class] (implementation) at (0,-76) {\orderUmlClassBox{\textbf{OrderServiceImpl}}{%
+    + orderSubmit(\ldots)\\
+    + setOrderState(\ldots)}};
+  \node[uml class] (settlement) at (144,-76) {\orderUmlClassBox{\textbf{OrderSettlementService}}{%
+    + settlePayment(\ldots)\\
+    + cancelOrder(\ldots)}};
+
+  \node[uml class] (submission) at (-144,-152) {\orderUmlClassBox{\textbf{OrderSubmissionService}}{%
+    + submit(\ldots)\enspace: Long}};
+  \node[uml class] (transition) at (0,-152) {\orderUmlClassBox{\textbf{OrderStateTransitionService}}{%
+    + transition(\ldots)\\
+    + recordCreated(\ldots)}};
+
+  \draw[dependency] (controller.east) -- (service.west);
+  \draw[realization] (implementation.north) -- (service.south);
+  \draw[dependency] (implementation.east) -- (settlement.west);
+  \draw[dependency] (implementation.south west) -- (submission.north east);
+  \draw[dependency] (implementation.south) -- (transition.north);
+  \draw[dependency] (submission.north) -- (pricing.south);
+  \draw[dependency] (submission.east) -- (transition.west);
+\end{tikzpicture}

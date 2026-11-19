@@ -1,0 +1,44 @@
+\section{运行时 AI 接口与模型}
+表~\ref{tab:runtime-ai-matrix} 汇总接口、模型与本地处理方式。
+
+\begin{longtable}{L{.18\linewidth}L{.30\linewidth}L{.47\linewidth}}
+\caption{系统运行时 AI 服务能力与配置依据表}\label{tab:runtime-ai-matrix}\\
+\toprule
+\textbf{运行时 AI 能力} & \textbf{后端端点与服务类} & \textbf{调用模型与缺失降级策略} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{运行时 AI 能力} & \textbf{后端端点与服务类} & \textbf{调用模型与缺失降级策略} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+结构化智能助手（问答与订单咨询） & \code{/api/v1/assistant/messages}\newline\code{StructuredAssistantServiceImpl} & 接入 DeepSeek（\code{deepseek-chat}）。无 Key 或触发熔断时，自动回退至本地帮助问答与订单查询。 \\
+条件智能推荐（关联真实菜单） & \code{/api/ai/chat/recommendations}\newline\code{RuleBasedRecommendationAdapter} & 查询 MySQL 真实在售有库存菜品，结合用户偏好与历史订单返回结构化候选商品卡片，支持一键加购。 \\
+多轮对话与历史管理 & \code{/api/ai/chat/**}\newline\code{AiChatServiceImpl} & 按 \code{session_id} 持久化至 \code{ai_chat_history}，支持会话查询、单条删除与保留最新 N 条清理。 \\
+图片识菜与菜品匹配 & \code{/api/v1/dish-recognitions}\newline\code{DashScopeImageRecognitionAdapter} & 接入 DashScope 视觉模型（默认 \code{qwen-vl-plus}）。限制图片 5~MB 内。未配置凭证返回 503 提示。 \\
+语音点菜草稿生成 & \code{/api/v1/voice-order-drafts}\newline\code{DashScopeSpeechAdapter} & 接入 DashScope 语音识别（默认 \code{qwen3-asr-flash}）。关闭抽屉主动释放麦克风流。支持文本兜底。 \\
+\end{longtable}
+
+\section{需求与实现对照}
+核对记录见表~\ref{tab:gap-improvement}。
+
+\begin{longtable}{L{.15\linewidth}L{.40\linewidth}L{.40\linewidth}}
+\caption{需求基线与当前实现的核对差异及后续演进清单}\label{tab:gap-improvement}\\
+\toprule
+\textbf{核对主题} & \textbf{当前存在的差异或局限} & \textbf{后续改进与演进计划} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{核对主题} & \textbf{当前存在的差异或局限} & \textbf{后续改进与演进计划} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+订单阶段命名口径 & SRS 中曾将阶段 2 表述为“制作中”，代码注释及枚举中写作“待派单”。前端另设有 \code{ORDER_STATUS} 映射。 & 后续统一为单一口径的阶段枚举与中文标签字典，消除跨端映射歧义。 \\
+高德与多模态外部环境 & 仓库默认示例配置中未填真实 \code{AMAP_*} 与 \code{DASHSCOPE_*} 密钥，服务器实机仅验证了未配置降级状态。 & 在部署前补齐有效 API Key 并执行高德 POI 检索、视觉识菜与语音识别成功链路实测。 \\
+分布式缓存与高并发压测 & Redis 配置仍保留注释备用状态，且当前缺少并发压测与外部 AI 路由限流数据。 & 引入 Redis 令牌黑名单与热门店铺缓存，使用 JMeter/k6 对抢单、下单和 AI 接口开展压测。 \\
+个人与商家财务深化 & 现有钱包与会员均属于课程教学演示模拟能力，未对接真实支付清算与对账结算。 & 若面向真实场景演进，需独立接入第三方支付网关回调验签、对账单与骑手结算模块。 \\
+\end{longtable}

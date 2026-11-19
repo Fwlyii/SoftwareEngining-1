@@ -1,14 +1,16 @@
 \usepackage{graphicx}
-\usepackage[a4paper,top=25.4mm, bottom=25.4mm, left=31.7mm, right=31.7mm, head=6true mm,headsep=6.5true mm,foot=17.5mm]{geometry}
+\usepackage[a4paper,top=25.4mm, bottom=25.4mm, left=29mm, right=29mm, head=6true mm,headsep=6.5true mm,foot=17.5mm]{geometry}
 \usepackage{titlesec}
 \usepackage{fancyhdr}
 \usepackage{color}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage[noOT1]{newtxmath}
 \usepackage[below]{placeins}
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{caption}
 \usepackage{tabularx}
 \usepackage[sort&compress,numbers]{natbib}
 \usepackage{enumitem}
@@ -28,7 +30,18 @@
 \newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
 \newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
 \setlength{\tabcolsep}{2.5pt}
-\AtBeginEnvironment{longtable}{\small}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\reporttablesize}{%
+  \renewcommand{\baselinestretch}{1}%
+  \fontsize{10.5bp}{13.8bp}\selectfont%
+  \renewcommand{\arraystretch}{1.06}%
+}
+\AtBeginEnvironment{longtable}{\reporttablesize}
+\setlength{\LTpre}{5pt}
+\setlength{\LTpost}{6pt}
+\DeclareCaptionFont{reportcaption}{\reporttablesize}
+\captionsetup{font=reportcaption,labelfont=bf,labelsep=quad,skip=5pt,justification=centering}
+\captionsetup[table]{position=top}
 \setlength{\LTcapwidth}{\linewidth}
 
 \usepackage{hyperref}

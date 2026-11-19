@@ -1,0 +1,47 @@
+\section{页面与路由}
+
+\begin{table}[H]
+\centering
+\reporttablesize
+\caption{四端页面与路由索引}\label{tab:ui-mapping}
+\begin{tabularx}{\linewidth}{@{}L{.14\linewidth}Y@{}}
+\toprule
+\textbf{模块} & \textbf{路由与用途} \\
+\midrule
+公共入口 &
+登录 \code{/login}，注册 \code{/register}，站内通知 \code{/notifications}。 \\
+顾客选购 &
+首页 \code{/index}、店铺列表 \code{/businessList}、店铺详情 \code{/businessInfo}、搜索 \code{/search}、收藏 \code{/favorites}。 \\
+顾客交易 &
+购物车 \code{/cart}、支付 \code{/payment}、支付结果 \code{/successfulPayment}、订单列表 \code{/orderList} 和详情 \code{/listDetail}。 \\
+顾客账户 &
+收货地址 \code{/userAddress}、添加 \code{/addUserAddress}、编辑 \code{/editUserAddress}、个人资料 \code{/myInformation}、资产 \code{/assets}、偏好 \code{/preferences}。 \\
+智能点餐 &
+对话 \code{/ai-chat}、推荐 \code{/ai-chat/recommend}、语音 \code{/ai-chat/voice}、图片 \code{/ai-chat/image}。四条路由使用 \code{AiChat.vue}，进入后切换对应功能。 \\
+商家 &
+入驻 \code{/merchant/apply}、资料 \code{/merchant/profile}、店铺列表 \code{/merchant/business}、店铺及菜品 \code{/merchant/businessInfo}、订单 \code{/merchant/orders}、评价 \code{/merchant/reviews}。 \\
+骑手 &
+入驻申请 \code{/rider/apply}、工作台 \code{/rider/dashboard}。工作台提供接单、节点更新、导航和异常上报。 \\
+管理员 &
+运营首页 \code{/admin/home}、用户 \code{/admin/user}、商家 \code{/admin/business}、店铺 \code{/admin/shop}、骑手及异常处理 \code{/admin/riders}。 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{主题与配色}
+
+\begin{table}[H]
+\centering
+\reporttablesize
+\caption{界面主题标识与配色}\label{tab:theme-tokens}
+\begin{tabularx}{\linewidth}{@{}L{.21\linewidth}L{.16\linewidth}Y@{}}
+\toprule
+\textbf{界面名称} & \textbf{主题标识} & \textbf{页面配色} \\
+\midrule
+清爽蓝白 & \code{light} & 默认主题，蓝色用于主要操作，卡片保持白底。 \\
+深海夜色 & \code{dark} & 深蓝底配浅色文字，卡片与表单使用同一套深色变量。 \\
+薄荷青 & \code{mint} & 青绿色调。应用后的界面见图~\ref{fig:def-ui-placeholders}。 \\
+暖阳橙 & \code{warm} & 琥珀色调，价格和主按钮沿用主题强调色。 \\
+\bottomrule
+\end{tabularx}
+\end{table}

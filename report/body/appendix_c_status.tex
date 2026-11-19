@@ -1,0 +1,50 @@
+\section{HTTP 状态与业务错误}
+
+表~\ref{tab:http-error-map} 汇总常见的 HTTP 状态和客户端处理。具体请求的行为还取决于访问角色及业务状态。
+
+\begin{longtable}{C{.14\linewidth}L{.34\linewidth}L{.43\linewidth}}
+\caption{GlobalExceptionHandler HTTP 状态码与业务错误码映射规范表}\label{tab:http-error-map}\\
+\toprule
+\textbf{HTTP 状态码} & \textbf{对应业务错误码（code）} & \textbf{触发场景与客户端处理建议} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{HTTP 状态码} & \textbf{对应业务错误码（code）} & \textbf{触发场景与客户端处理建议} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+200 OK & \code{OK} & 业务执行成功，读取 \code{data} 渲染视图。 \\
+400 Bad Request & \code{PARAM_VERIFIED_FAILED}、\code{PARAM_NOT_MATCHED}、\code{PARAM_NOT_MATCHED_GET}、\code{PARAM_NOT_MATCHED_POST} & 字段校验失败、类型错误或缺少必填参数，按失败原因更正输入。 \\
+401 Unauthorized & \code{AUTHENTICATION_FAILED} 等认证错误 & 登录凭证无效或请求缺少有效凭证，前端引导登录。 \\
+403 Forbidden & \code{UNAUTHORIZED}、\code{NOT_ENOUGH_PERMISSION}、\code{USER_DENIED}、\code{ACCOUNT_DISABLED} & 授权失败、资源归属不符，或账号已停用。 \\
+404 Not Found & \code{NOT_FOUND}、\code{BUSINESS_MISSED}、\code{ORDER_MISSED}、\code{FOOD_MISSED} & 目标店铺、菜品、地址或订单 ID 不存在或已被逻辑删除。 \\
+409 Conflict & \code{WITHOUT_ERROR_CODE}（订单/任务状态冲突） & 并发抢单已被他人抢走、重复支付或订单处于不可取消阶段。 \\
+422 Unprocessable & \code{QUANTITY_ILLEGAL}、\code{CART_EMPTY}、\code{ORDER_SUBMIT_FAILED} & 校验未通过的业务请求，例如商品数量不符合规则或待结算购物车为空。 \\
+503 Unavailable & \code{FEATURE_UNAVAILABLE} & 未配置外部高德地图或 DashScope 多模态密钥，前端进入降级模式。 \\
+\end{longtable}
+
+\section{联调用例速查}
+
+同一类接口共用验证思路。查询同时检查有数据和空列表，写入同时检查响应与数据变化，涉及资金和配送的接口还要核对业务状态。第~\ref{sec:def-api-auth} 至第~\ref{sec:def-api-delivery} 节给出完整联调示例。
+
+\begin{longtable}{@{}L{.19\linewidth}L{.31\linewidth}L{.47\linewidth}@{}}
+\caption{典型输入与预期观察项}\label{tab:api-verify-sample}\\
+\toprule
+\textbf{动作} & \textbf{请求条件} & \textbf{联调检查} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{动作} & \textbf{请求条件} & \textbf{联调检查} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+注册并登录 & 合法账号与角色，另检查字段为空、密码错误 & 核对注册返回与登录角色，错误输入返回相应字段校验或认证错误。 \\
+读取订单或地址 & 自己的资源、另一用户的资源、无有效会话 & 核对数据归属，错误会话与访问他人资源分别得到认证或授权错误。 \\
+订单提交 & 同一顾客、同一幂等键，或已变化的购物车 & 重试核对订单号与库存扣减次数。选择已失效时查看分项提示。 \\
+付款与冲正 & 待支付订单、券不可用、余额不足或重复支付 & 核对扣款状态、余额与积分流水，失败请求不应增加账本记录。 \\
+领取配送任务 & 当前在线骑手、任务已被他人领取 & 核对任务归属和订单状态，冲突后刷新待接列表。 \\
+图片与语音入口 & 正常文件、缺少表单文件、未配置识别服务 & 核对识别结果或草稿。按 HTTP 状态处理输入问题，服务不可用时保留手工入口。 \\
+\end{longtable}

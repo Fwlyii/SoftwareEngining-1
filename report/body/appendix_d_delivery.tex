@@ -1,0 +1,109 @@
+\begingroup
+\renewcommand{\reporttablesize}{\linespread{1}\fontsize{10.5bp}{12.5bp}\selectfont\renewcommand{\arraystretch}{1.03}}
+\setlength{\LTpre}{3pt}
+\setlength{\LTpost}{4pt}
+\Needspace{6\baselineskip}
+\section{缺陷驱动开发与内部验收}
+表~\ref{tab:tdd-trace} 按缺陷主题列出三步提交。四端实机检查与缺陷修复分别按原用例编号和缺陷编号记录。
+
+\begin{longtable}{L{.18\linewidth}L{.14\linewidth}L{.14\linewidth}L{.14\linewidth}L{.31\linewidth}}
+\caption{仓库典型 TDD（红--绿--重构）缺陷驱动提交追溯表}\label{tab:tdd-trace}\\
+\toprule
+\textbf{回归专题} & \textbf{RED（失败）} & \textbf{GREEN（通过）} & \textbf{REFACTOR} & \textbf{固化的工程不变量} \\
+\midrule
+角色登录权限旅程 & \code{7829525} & \code{eada408} & \code{51b4136} & 角色校验与会话原子发布，失败全回滚。 \\
+商家目录管理旅程 & \code{f81c785} & \code{65ae05d} & \code{5212a82} & 跨商家店铺及菜品修改权限严格隔离。 \\
+骑手配送状态旅程 & \code{ed0e07a} & \code{99c7c24} & \code{108f5d9} & 抢单并发乐观锁及到店/取餐/送达流转。 \\
+资产与偏好旅程 & \code{bff3c7e} & \code{cbd2de8} & \code{401d90d} & 资产流水只增不改，偏好持久化恢复。 \\
+订单商品名快照 & \code{3e42fa9} & \code{f4c92ca} & \code{a1af8b7} & 移除实时商品联表，历史单强制读快照。 \\
+AI 与页面返回规则 & \code{06780ac} & \code{12c3d6e} & \code{d319c5e} & 集中处理返回兜底，消除未登录死循环。 \\
+\end{longtable}
+
+\begin{longtable}{L{.10\linewidth}L{.20\linewidth}L{.38\linewidth}C{.09\linewidth}L{.14\linewidth}}
+\caption{本组系统（\texttt{lightweight-takeout-platform}）四端核心 E2E 功能与边界验收表}\label{tab:e2e-own-cases}\\
+\toprule
+\textbf{用例ID} & \textbf{验证场景} & \textbf{执行步骤与核心检查点} & \textbf{结果} & \textbf{实机佐证} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{用例ID} & \textbf{验证场景} & \textbf{执行步骤与核心检查点} & \textbf{结果} & \textbf{实机佐证} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+E2E-01 & 四端登录与路由隔离 & 分别使用 \code{demo_user}/\code{demo_merchant}/\code{demo_rider}/\code{demo_admin} 登录。跨端访问受保护路由时自动重定向。 & 通过 & 图~\ref{fig:def-ui-auth} \\
+E2E-02 & 游客浏览与店铺休息拦截 & 未登录访问 \code{/index} 与 \code{/businessInfo}。查看在售库存，休息状态店铺禁用下单按钮。 & 通过 & 图~\ref{fig:def-ui-cust-browse} \\
+E2E-03 & 购物车加购与订单快照 & 加购菜品进入 \code{/cart} 结算。查看 \code{/listDetail} 验证下单菜名快照、单价与状态时间线。 & 通过 & 图~\ref{fig:def-ui-cust-cart-orders} \\
+E2E-04 & 钱包资产与主题持久化 & 查看余额 \yen 100.00、1200 积分与 2 张红包。切换“薄荷青”主题后刷新，主题仍生效。 & 通过 & 图~\ref{fig:def-ui-placeholders} \\
+E2E-05 & 商家工作台、菜品与接单 & 登录 \code{demo_merchant} 查看店铺列表、菜品库存分类管理、订单面板及顾客评价回复。 & 通过 & 图~\ref{fig:def-ui-merchant-biz}--\ref{fig:def-ui-merchant-orders} \\
+E2E-06 & 骑手工作台与任务抢单 & 登录 \code{demo_rider} 查看在线开关、可接任务、收益里程及高德导航入口。 & 通过 & 图~\ref{fig:def-ui-rider} \\
+E2E-07 & 管理员看板与三方治理 & 登录 \code{demo_admin} 查看趋势看板、CSV 导出、用户启停、商家审核与骑手/异常仲裁。 & 通过 & 图~\ref{fig:def-ui-admin-home}--\ref{fig:def-ui-admin-users-riders} \\
+E2E-08 & 无密钥外部服务优雅降级 & 服务端未配置高德/DeepSeek/DashScope 密钥时，选址展示降级提示，AI 筛选走本地菜单，识菜禁用提示明确。 & 通过 & 图~\ref{fig:def-ui-amap}、图~\ref{fig:ai-runtime-placeholder} \\
+\end{longtable}
+
+\begin{longtable}{L{.10\linewidth}L{.26\linewidth}L{.22\linewidth}L{.33\linewidth}}
+\caption{核心缺陷发现、根因定位与回归验证闭环记录（BUG-01--BUG-12）}\label{tab:bug-closure}\\
+\toprule
+\textbf{缺陷编号} & \textbf{缺陷现象} & \textbf{根因定位} & \textbf{修复方案与验证提交} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{{\tablename\ \thetable{} 续表}}\\
+\toprule
+\textbf{缺陷编号} & \textbf{缺陷现象} & \textbf{根因定位} & \textbf{修复方案与验证提交} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+BUG-01 & 到店自取仍校验起送费与收货地址 & 未区分履约模式的统一计价校验 & 在 \code{OrderPricingService} 与 \code{Cart.vue} 分离自取路径（\code{076b45a}）。 \\
+BUG-02 & 未登录进入店铺或 AI 页返回陷入死循环 & 各视图分散调用 \code{router.back()} 缺少回退兜底 & TDD 红-绿-重构（\code{06780ac} $\rightarrow$ \code{12c3d6e} $\rightarrow$ \code{d319c5e}）集中返回规则。 \\
+BUG-03 & 连续切页偶发白屏与窄屏登录表单溢出 & 视图转场生命周期异常与登录框固定宽度 & 提交 \code{6a9f3af}、\code{061e7f3} 修复壳层样式与切页守卫。 \\
+BUG-04 & 新人优惠券可被重复领取 & 领取接口缺少已领取幂等与唯一判重 & 后端补充优惠券领取次数约束并新增 \code{AssetServiceTest} 断言。 \\
+BUG-05 & 语音抽屉关闭后麦克风权限未释放 & 延迟回调触发时未判断抽屉当前激活态 & 提交 \code{ddbeb3a} 在关闭与迟到回调中主动释放音轨。 \\
+BUG-06 & 商家修改商品名导致历史订单显示失真 & 旧查询联表读取实时 \code{food.food_name} & 迁移 \code{003} 增加快照列，提交 \code{a1af8b7} 移除联表依赖。 \\
+BUG-07 & 骑手并发点击同一任务发生覆盖撞单 & 抢单更新 SQL 缺少状态与版本前置条件 & 在 \code{delivery_task} 引入 \code{version} 乐观锁并新增并发单测。 \\
+BUG-08 & 游客访问分类店铺页触发加载异常 & 店铺分类接口未向匿名端放行或字段缺失 & 提交 \code{52be48e} 修复游客浏览与商家分类加载。 \\
+BUG-09 & 下单页未配置高德密钥时地址选择阻塞 & 地图选址组件强依赖在线 JS API 初始化 & 提交 \code{74e8dbc} 修复离线区域选择与无密钥文本地址降级。 \\
+BUG-10 & 登录页重构样式污染其他路由背景 & 全局样式未做组件作用域或类名隔离 & 提交 \code{7460b46} 移除跨组件全局背景覆盖并新增视觉回归。 \\
+BUG-11 & 管理员用户检索快速输入出现旧响应覆盖新结果 & 异步列表请求未做竞态序号丢弃处理 & 提交请求时序保护并由 \code{adminAccountApi.test.mjs} 锁定。 \\
+BUG-12 & AI 悬浮球在小视口下超出统一页面壳层边界 & 固定定位参考系脱离共享容器宽度 & 提交 \code{48fd4e3} 收敛至页面壳层内部并新增布局测试。 \\
+\end{longtable}
+
+\endgroup
+
+\section{部署入口与环境变量}
+按下面的地址访问本机服务，使用独立会话切换角色。故障诊断见表~\ref{tab:deploy-troubleshoot}。
+
+% 同页对照部署入口、参数与排查步骤，表格保持统一字号。
+\begingroup
+\renewcommand{\reporttablesize}{\renewcommand{\baselinestretch}{1}\fontsize{10.5bp}{12.3bp}\selectfont\renewcommand{\arraystretch}{1.04}}
+\setlength{\LTpre}{3pt}
+\setlength{\LTpost}{4pt}
+
+\begin{longtable}{L{.18\linewidth}L{.36\linewidth}L{.40\linewidth}}
+\caption{默认部署端口、访问入口与演示角色说明}\label{tab:deploy-endpoints}\\
+\toprule
+\textbf{服务/角色} & \textbf{访问地址 / 演示账号} & \textbf{用途与验证说明} \\
+\midrule
+前端应用（Nginx） & \url{http://localhost:18081/index} & 四端统一入口，已配置同源反向代理至后端容器。 \\
+后端服务（Spring Boot） & \url{http://localhost:18080} & 核心 RESTful API 根地址。Swagger 文档见 \code{/swagger-ui/index.html}。 \\
+MySQL 8 数据库 & \code{127.0.0.1:13306}（库 \code{elm_v2}） & 持久化存储 23 张业务表及演示数据，支持本地客户端调试。 \\
+演示账号矩阵 & \code{demo_user}、\code{demo_merchant}、\code{demo_rider}、\code{demo_rider_candidate}、\code{demo_admin} & 覆盖顾客下单、商家接单、骑手申请/抢单与管理员审核。多角色测试建议开启独立浏览器会话。 \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}{L{.26\linewidth}L{.22\linewidth}L{.46\linewidth}}
+\caption{关键变量与外部服务配置}\label{tab:deploy-env}\\
+\toprule
+\textbf{环境变量} & \textbf{默认值 / 示例} & \textbf{作用域与缺失降级说明} \\
+\midrule
+\code{JWT_SECRET} & 由 \code{ensure-demo-env.sh} 生成 & 必填。后端 JWT 令牌签名密钥，禁止提交至代码仓库。 \\
+\code{APP_DEMO_ENABLED} & \code{false}（演示环境为 \code{true}） & 控制模拟钱包充值、模拟支付与体验会员接口开关。 \\
+\code{DEEPSEEK_API_KEY} & 空（按需注入） & 启用 AI 文字客服外部模型。未配置时自动降级为本地规则与帮助问答。 \\
+\code{DASHSCOPE_API_KEY} / \code{DASHSCOPE_BASE_URL} & 空（按需注入） & 启用 \code{qwen-vl-plus} 图片识菜与 \code{qwen3-asr-flash} 语音草稿。未配置时返回 503 并禁用入口。 \\
+\code{AMAP_WEB_KEY} / \code{AMAP_JS_KEY} / \code{AMAP_SECURITY_CODE} & 空（后端环境变量注入） & 启用高德 POI 搜索代理、逆地理编码与前端选址弹窗。未配置时降级为离线地址填写。 \\
+\bottomrule
+\end{longtable}
+
+
+\endgroup

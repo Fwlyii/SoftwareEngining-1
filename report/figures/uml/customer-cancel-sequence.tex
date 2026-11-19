@@ -1,0 +1,75 @@
+% Customer branch of OrderServiceImpl.setOrderState in 6ddb219.
+\begin{tikzpicture}[
+  x=1cm,y=-1cm,font=\fontsize{10bp}{11.5bp}\selectfont,
+  participant/.style={draw,line width=.45pt,fill=white,align=center,
+    minimum height=1cm,inner xsep=2pt,inner ysep=2pt},
+  lifeline/.style={densely dashed,draw=black!55,line width=.35pt},
+  call/.style={-{Triangle[length=4pt,width=4.3pt]},line width=.45pt},
+  reply/.style={-{Stealth[open,length=4.4pt,width=4.2pt]},densely dashed,line width=.45pt},
+  frame/.style={line width=.45pt,draw=black!85},
+  tab/.style={anchor=north west,inner xsep=5pt,inner ysep=2pt,font=\bfseries},
+  guard/.style={anchor=north west,inner xsep=2pt,inner ysep=2pt},
+  message/.style={midway,above,inner sep=1.2pt,fill=white},
+  memo/.style={draw=black!65,line width=.35pt,fill=white,
+    align=left,inner xsep=4pt,inner ysep=3pt,anchor=west}
+]
+  \foreach \x in {.78,2.62,4.79,7.01,9.36,11.55,13.76}
+    \draw[lifeline] (\x,1.03) -- (\x,10.88);
+
+  \node[participant] at (.78,.53) {顾客端};
+  \node[participant] at (2.62,.53) {\texttt{Order}\\\texttt{Controller}};
+  \node[participant] at (4.79,.53) {\texttt{Order}\\\texttt{ServiceImpl}};
+  \node[participant,font=\fontsize{8.7bp}{10.1bp}\selectfont] at (7.01,.53)
+    {\texttt{OrderState}\\\texttt{TransitionService}};
+  \node[participant,font=\fontsize{8.7bp}{10.1bp}\selectfont] at (9.36,.53)
+    {\texttt{OrderSettlement}\\\texttt{Service}};
+  \node[participant] at (11.55,.53) {数据访问层\\\texttt{Mapper}};
+  \node[participant] at (13.76,.53) {\texttt{AssetService}};
+
+  \draw[call] (.78,1.47) -- node[message]{取消订单} (2.62,1.47);
+  \draw[call] (2.62,1.85) -- node[message]{\texttt{setOrderState}} (4.79,1.85);
+  \draw[call] (4.79,2.30) -- node[message]{按 \texttt{orderId} 查订单} (11.55,2.30);
+  \draw[call] (4.79,2.50) -- (5.55,2.50) -- (5.55,2.78)
+    -- (4.79,2.78);
+  \node[anchor=east,fill=white,inner sep=1.5pt] at (4.74,2.65) {取得当前用户 ID};
+  \draw[call] (4.79,3.17) -- node[message]{订单存在时查询关联商家} (11.55,3.17);
+
+  \draw[frame] (.05,3.34) rectangle (14.79,10.71);
+  \draw[frame] (.05,3.34) -- (1.02,3.34) -- (1.02,3.59) -- (.83,3.76) -- (.05,3.76);
+  \node[tab] at (.05,3.34) {alt};
+  \node[guard,fill=white] at (1.12,3.37) {[当前顾客的取消条件不满足]};
+  \draw[reply] (4.79,4.19) -- node[message]{抛出异常} (2.62,4.19);
+  \draw[reply] (2.62,4.48) -- node[message]{取消失败} (.78,4.48);
+  \draw[frame,densely dashed] (.05,4.67) -- (14.79,4.67);
+  \node[guard,fill=white] at (.22,4.72)
+    {[订单和商家存在，原状态为 0 或 1，当前用户为下单顾客]};
+
+  \draw[call] (4.79,5.51) -- node[message]{\texttt{transition}} (7.01,5.51);
+  \draw[call] (7.01,5.94) -- node[message]{原状态仍一致时更新为 8} (11.55,5.94);
+  \draw[frame] (.26,6.10) rectangle (14.61,6.88);
+  \draw[frame] (.26,6.10) -- (1.64,6.10) -- (1.64,6.35)
+    -- (1.45,6.52) -- (.26,6.52);
+  \node[tab] at (.26,6.10) {break};
+  \node[guard,fill=white] at (1.73,6.12) {[更新行数不为 1]};
+  \draw[reply] (7.01,6.70) -- node[message]{抛出状态变化异常} (4.79,6.70);
+  \draw[call] (7.01,7.34) -- node[message]{记录状态历史} (11.55,7.34);
+
+  \draw[call] (4.79,7.71) -- node[message]{\texttt{cancelOrder(order, paid)}} (9.36,7.71);
+  \draw[call] (9.36,8.13) -- node[message]{恢复库存} (11.55,8.13);
+  \draw[call] (9.36,8.54) -- node[message]{释放订单券} (11.55,8.54);
+  \draw[call] (9.36,8.95) -- node[message]{写支付状态} (11.55,8.95);
+  \node[memo] (payment-status) at (2.99,8.62)
+    {原状态 1，写入 \texttt{REFUNDED}\\原状态 0，写入 \texttt{CANCELLED}};
+  \draw[densely dotted,black!65] (payment-status.east) -- (9.29,8.95);
+
+  \draw[frame] (8.75,9.09) rectangle (14.61,9.96);
+  \draw[frame] (8.75,9.09) -- (9.62,9.09) -- (9.62,9.32)
+    -- (9.43,9.49) -- (8.75,9.49);
+  \node[tab] at (8.75,9.09) {opt};
+  \node[guard,fill=white,font=\fontsize{9.5bp}{11bp}\selectfont] at (9.70,9.10)
+    {[钱包支付或抵扣积分大于 0]};
+  \draw[call] (9.36,9.87) -- node[message]{\texttt{refundOrderAssets}} (13.76,9.87);
+
+  \draw[reply] (4.79,10.28) -- node[message]{\texttt{orderId}} (2.62,10.28);
+  \draw[reply] (2.62,10.58) -- node[message]{成功回执} (.78,10.58);
+\end{tikzpicture}
