@@ -1,0 +1,52 @@
+\begin{tikzpicture}[
+  x=1pt,y=-.89pt,
+  font=\fontsize{9bp}{11bp}\selectfont,
+  participant/.style={draw=black!72,fill=black!5,line width=.45pt,align=center,
+    minimum width=61pt,minimum height=19pt,inner xsep=5pt,font=\bfseries},
+  lifeline/.style={draw=black!43,dashed,line width=.35pt},
+  request/.style={draw=black!83,line width=.54pt,-{Stealth[length=4pt,width=3.6pt]}},
+  response/.style={draw=black!74,line width=.46pt,dashed,-{Stealth[length=3.7pt,width=3.3pt]}},
+  message/.style={midway,above,inner sep=1.25pt,fill=white},
+  stage/.style={anchor=west,inner xsep=4pt,inner ysep=1.5pt,fill=black!8,font=\bfseries},
+  frame/.style={draw=black!55,line width=.42pt}
+]
+  \foreach \x/\role in {30/顾客端,122/订单服务,223/资产服务,325/商品与库存,420/数据访问层}{
+    \draw[lifeline] (\x,12) -- (\x,375);
+    \node[participant] at (\x,0) {\role};
+  }
+
+  \newcommand{\settleline}[5]{%
+    \draw[#1] (#2,#4) -- node[message]{#5} (#3,#4);%
+  }
+  \node[stage] at (0,24) {结算页试算};
+  \settleline{request}{30}{325}{50}{读取商品价格与库存}
+  \settleline{request}{30}{223}{68}{查询会员权益、可用券、积分与钱包}
+  \node[anchor=west,inner sep=1.5pt,fill=white] at (38,82) {按当前商品与资产选择展示试算};
+
+  \draw[black!23,line width=.42pt] (0,95) -- (451,95);
+  \node[stage] at (0,108) {幂等提交};
+  \settleline{request}{30}{122}{132}{提交订单及幂等键}
+  \settleline{request}{122}{420}{150}{按用户与幂等键查询已有订单}
+
+  \draw[frame] (0,160) rectangle (451,260);
+  \draw[frame,dashed] (0,196) -- (451,196);
+  \node[stage] at (0,168) {alt};
+  \node[anchor=west,inner sep=1pt,fill=white] at (25,168) {[已存在订单]};
+  \settleline{response}{122}{30}{187}{返回原订单号}
+
+  \node[anchor=west,inner sep=1pt,fill=white] at (6,204) {[首次提交]};
+  \settleline{request}{122}{325}{216}{复核选品、地址、价格与库存，锁定库存}
+  \node[anchor=west,inner sep=1.2pt,fill=white] at (6,225) {校验失败时返回原因};
+  \settleline{request}{122}{420}{239}{新建订单和明细快照，记状态历史，清理已提交购物车}
+  \settleline{response}{122}{30}{254}{返回待支付订单号}
+
+  \draw[black!23,line width=.42pt] (0,270) -- (451,270);
+  \node[stage] at (0,283) {混合资产结算};
+  \settleline{request}{30}{122}{307}{支付请求含渠道、券和积分}
+  \draw[frame] (101,313) rectangle (451,360);
+  \node[anchor=west,inner sep=1.2pt,fill=white] at (104,315) {同一事务};
+  \settleline{request}{122}{420}{327}{检查顾客与订单归属，按原状态更新为待接单}
+  \settleline{request}{122}{223}{343}{核券、扣积分及钱包}
+  \settleline{request}{122}{420}{356}{记录资产流水与实付结果}
+  \settleline{response}{122}{30}{373}{返回支付结果}
+\end{tikzpicture}

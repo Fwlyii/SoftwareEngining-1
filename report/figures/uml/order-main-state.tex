@@ -1,0 +1,46 @@
+\begin{tikzpicture}[
+  x=1pt,y=-1pt,
+  state/.style={draw=black!70,fill=black!3,rounded corners=2pt,line width=.47pt,
+    minimum height=23pt,minimum width=66pt,inner xsep=3pt,align=center,
+    font=\fontsize{9.1bp}{11bp}\selectfont},
+  transition/.style={-{Stealth[length=3.5pt,width=3.1pt]},draw=black!82,line width=.55pt},
+  label text/.style={font=\fontsize{8.1bp}{9.7bp}\selectfont,inner sep=1.75pt,
+    align=center,text=black!90,fill=white}
+]
+  \node[state] (s0) at (45,12) {\textbf{0} 待支付};
+  \node[state] (s1) at (158,12) {\textbf{1} 待商家接单};
+  \node[state] (s2) at (277,12) {\textbf{2} 待派单\\（制作中）};
+  \node[state] (s3) at (398,12) {\textbf{3} 待骑手接单};
+  \node[state] (s4) at (398,101) {\textbf{4} 待取餐};
+  \node[state] (s5) at (277,101) {\textbf{5} 配送中};
+  \node[state] (s6) at (158,101) {\textbf{6} 已送达};
+  \node[state] (s7) at (45,101) {\textbf{7} 已完成};
+  \node[state,fill=black!10] (s8) at (101,61) {\textbf{8} 已取消};
+
+  \fill (2,12) circle[radius=2.35pt];
+  \draw[transition] (4.35,12) -- (s0.west);
+  \draw[transition] (s0.east) -- node[label text,above]{支付成功} (s1.west);
+  \draw[transition] (s1.east) -- node[label text,above]{商家接单} (s2.west);
+  \draw[transition] (s2.east) -- node[label text,above]{外送出餐} (s3.west);
+  \draw[transition] (s3.south) -- node[label text,right,pos=.52]{骑手接单} (s4.north);
+  \draw[transition] (s4.west) -- node[label text,above]{骑手取餐} (s5.east);
+  \draw[transition] (s5.west) -- node[label text,above]{骑手送达} (s6.east);
+  \draw[transition] (s6.west) -- node[label text,above]{确认收货\\或超时完成} (s7.east);
+
+  \draw[transition,rounded corners=2pt] (s2.south) -- (277,65)
+    -- node[label text,above]{自取出餐} (377,65) -- (377,89.5);
+  \draw[transition,rounded corners=2pt] (s4.south) -- (398,125)
+    -- node[label text,above]{顾客确认自取} (45,125) -- (s7.south);
+  \draw[transition,rounded corners=2pt] (s0.south)
+    -- node[label text,right,pos=.53]{顾客取消或支付超时} (45,61) -- (s8.west);
+  \draw[transition,rounded corners=2pt] (s1.south)
+    -- node[label text,right,pos=.53]{商家拒单或顾客取消} (158,61) -- (s8.east);
+
+  \draw[rounded corners=2pt,draw=black!62,fill=black!3,line width=.43pt]
+    (12,144) rectangle (431,171);
+  \node[state,draw=none,fill=none,anchor=west] at (20,157.5) {\textbf{9} 配送异常};
+  \draw[black!25,line width=.44pt] (105,149) -- (105,166);
+  \node[label text,fill=none,anchor=west] at (113,157.5) {4、5、6 上报异常};
+  \node[label text,fill=none,anchor=east] at (423,157.5)
+    {恢复至原状态（4 或 5）\quad 改派至 3\quad 取消至 8};
+\end{tikzpicture}

@@ -2,7 +2,7 @@
 
 新库使用 \code{elm_v2.sql}。已有库先备份，再按列和索引状态选择 \code{elm_bk/db/migrations/} 中的脚本。
 
-\begin{longtable}{@{}L{.27\linewidth}L{.18\linewidth}L{.52\linewidth}@{}}
+\begin{longtable}{@{}L{.362\linewidth}L{.20\linewidth}L{.404\linewidth}@{}}
 \caption{数据库增量迁移脚本与执行条件}\label{tab:db-migrations}\\
 \toprule
 \textbf{迁移脚本} & \textbf{影响表} & \textbf{用途与执行条件} \\
@@ -16,9 +16,9 @@
 \bottomrule
 \endfoot
 \code{001_account_uniqueness.sql} & \code{users}、\code{person} & 加用户名、手机号唯一索引。先查重，旧账号保留原标识。 \\
-\code{002_default_address.sql} & \code{delivery_address} & 加默认地址列，按每位顾客最早的有效地址初始化。 \\
-\code{003_order_name_snapshot.sql} & \code{orderdetailet} & 缺列时增加菜名快照字段，历史空值保留。 \\
-\code{004_demo_business_categories.sql} & \code{business} & 仅修正符合编号、店名和旧分类的演示店铺。 \\
+\code{002_default_address.sql} & \code{delivery_address} & 加默认地址列，按每位顾客最早的有效\mbox{地址初始化。} \\
+\code{003_order_name_snapshot.sql} & \code{orderdetailet} & 缺列时增加菜名快照字段，\mbox{历史空值保留。} \\
+\code{004_demo_business_categories.sql} & \code{business} & 仅修正符合编号、店名和旧分类的\mbox{演示店铺。} \\
 \code{005_cart_order_remarks.sql} & \code{cart}、\code{orders} & 缺列时增加 \code{remarks VARCHAR(255)}，下单时带入口味备注。 \\
-\code{006_map_coordinates.sql} & \code{business}、\code{delivery_address} & 增加经纬度 \code{DECIMAL(10,6)}、POI 编号和格式化地址等列，旧坐标保留空值。 \\
+\code{006_map_coordinates.sql} & \code{business}、\code{delivery_address} & 增加经纬度 \code{DECIMAL(10,6)}、POI 编号和格式化地址等列，\mbox{旧坐标保留空值。} \\
 \end{longtable}

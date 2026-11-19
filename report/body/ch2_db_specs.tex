@@ -2,7 +2,7 @@
 
 平台的 23 张数据表按业务归属列在表~\ref{tab:db-overview} 中。主键、索引与完整字段定义见项目的 \code{elm_bk/db/schema/elm_v2.sql}，历次结构调整见表~\ref{tab:db-migrations}。
 
-\begin{longtable}{@{}L{.11\linewidth}L{.22\linewidth}L{.64\linewidth}@{}}
+\begin{longtable}{@{}L{.128\linewidth}L{.245\linewidth}L{.60\linewidth}@{}}
 \caption{数据库表与关键字段索引}\label{tab:db-overview}\\
 \toprule
 \textbf{业务域} & \textbf{数据表} & \textbf{关键字段及关联} \\
@@ -15,14 +15,14 @@
 \endhead
 \bottomrule
 \endfoot
-账号权限 & \code{users} & \code{username} 唯一。\code{password} 保存密码散列，\code{activated} 表示账号状态。 \\
-账号权限 & \code{person} & \code{id} 同时关联账号，\code{phone} 唯一。姓名、邮箱、性别和头像单独存放。 \\
-账号权限 & \code{authority} & \code{name} 为主键，区分顾客、商家、骑手、管理员和两类申请身份。 \\
+账号权限 & \code{users} & \code{username} 唯一。\code{password} 保存密码散列，\code{activated} 表示\mbox{账号状态。} \\
+账号权限 & \code{person} & \code{id} 同时关联账号，\code{phone} 唯一。姓名、邮箱、性别和\mbox{头像单独存放。} \\
+账号权限 & \code{authority} & \code{name} 为主键，区分顾客、商家、骑手、管理员和两类\mbox{申请身份。} \\
 账号权限 & \code{user_authority} & \code{user_id} 与 \code{authority_name} 组成主键，关联账号和角色。 \\
 账号权限 & \code{permission_application} & \code{userId} 对应申请人，\code{status} 区分待审核、通过和拒绝。 \\
 \midrule
 商铺菜品 & \code{business} & \code{user_id} 关联商家账号，\code{status} 与 \code{operating_status} 分别记录开店审核和营业状态。\code{start_price}、\code{delivery_price}、\code{promotion_threshold} 和 \code{promotion_discount} 用于试算。经纬度、POI 编号与格式化地址支持选址。 \\
-商铺菜品 & \code{food} & \code{business_id} 关联商铺。\code{food_price}、\code{stock}、\code{purchase_limit}、\code{shelve_status} 和 \code{category} 支持菜单与库存管理。 \\
+商铺菜品 & \code{food} & \code{business_id} 关联商铺。\code{food_price}、\code{stock}、\code{purchase_limit}、\code{shelve_status} 和 \code{category} 支持菜单与\mbox{库存管理。} \\
 商铺菜品 & \code{merchant_interaction} & \code{user_id} 与 \code{merchant_id} 组合唯一，保存 \code{liked} 和 \code{collected}。 \\
 \midrule
 下单交易 & \code{delivery_address} & \code{user_id} 关联顾客，\code{is_default} 标识默认地址。表内同时保存联系人、联系方式、地址与地图选址结果。 \\
@@ -32,14 +32,14 @@
 下单交易 & \code{order_status_history} & \code{from_status}、\code{to_status}、\code{operator_user_id}、\code{reason} 与 \code{create_time} 组成订单状态时间线。 \\
 \midrule
 配送履约 & \code{rider_profile} & \code{user_id} 唯一。档案保存实名、车辆类型、审核和在线状态，以及已完成订单、里程、收入。 \\
-配送履约 & \code{delivery_task} & \code{order_id} 唯一。\code{rider_user_id}、\code{task_status} 与 \code{version} 对应任务归属、节点和并发更新保护。到店、取餐和送达各有时间字段。 \\
-配送履约 & \code{delivery_exception} & \code{task_id} 关联任务，\code{previous_task_status} 记录异常前状态。\code{resolution_action}、\code{resolution_note} 和 \code{resolver_user_id} 记录仲裁结果。 \\
+配送履约 & \code{delivery_task} & \code{order_id} 唯一。\code{rider_user_id}、\code{task_status} 与 \code{version} 对应任务归属、节点和并发更新保护。到店、取餐和送达各有\mbox{时间字段。} \\
+配送履约 & \code{delivery_exception} & \code{task_id} 关联任务，\code{previous_task_status} 记录异常前状态。\code{resolution_action}、\code{resolution_note} 和 \code{resolver_user_id} 记录\mbox{仲裁结果。} \\
 \midrule
 资产与互动 & \code{user_asset} & \code{user_id} 唯一，\code{balance}、\code{points} 和 \code{membership_expire} 分别保存余额、积分和会员到期时间。 \\
-资产与互动 & \code{user_coupon} & \code{discount_amount}、\code{min_order_amount}、\code{expires_at} 与 \code{used} 记录面额、门槛、有效期和核销状态。\code{order_id} 关联使用的订单。 \\
+资产与互动 & \code{user_coupon} & \code{discount_amount}、\code{min_order_amount}、\code{expires_at} 与 \code{used} 记录面额、门槛、有效期和核销状态。\code{order_id} 关联\mbox{使用的订单。} \\
 资产与互动 & \code{user_asset_ledger} & \code{type}、\code{amount}、\code{points_delta} 和 \code{reference_id} 记录变更类型、金额、积分差额与业务来源。 \\
 资产与互动 & \code{review} & \code{order_id} 唯一。\code{rating}、\code{content}、\code{images} 和 \code{merchant_reply} 记录评分、内容、图片和回复，\code{is_hidden} 控制公开展示。 \\
-资产与互动 & \code{notification} & \code{user_id} 对应接收者。\code{notification_type}、\code{notification_content}、\code{is_read} 和 \code{read_time} 支持站内消息列表。 \\
+资产与互动 & \code{notification} & \code{user_id} 对应接收者。\code{notification_type}、\code{notification_content}、\code{is_read} 和 \code{read_time} 支持\mbox{站内消息列表。} \\
 资产与互动 & \code{user_preference} & \code{user_id} 唯一。\code{theme}、\code{spicy_level} 及口味、忌口和品类标签支持主题与个性化推荐。 \\
-资产与互动 & \code{ai_chat_history} & \code{user_id} 与 \code{session_id} 定位会话，保存问答、类型、耗时及上下文。 \\
+资产与互动 & \code{ai_chat_history} & \code{user_id} 与 \code{session_id} 定位会话，保存问答、类型、\mbox{耗时及上下文。} \\
 \end{longtable}

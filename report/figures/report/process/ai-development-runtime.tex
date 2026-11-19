@@ -1,0 +1,25 @@
+\begin{tikzpicture}[x=1pt,y=1pt,
+    title/.style={anchor=west,inner sep=0pt,font=\small\bfseries},
+    workflow step/.style={inner sep=0pt,anchor=west,align=left,
+      font=\linespread{1}\fontsize{9.6bp}{12bp}\selectfont,text=black!88}]
+  \foreach \start/\stop/\tone/\name in {
+    0/178/researchBlue/{研发过程中的 AI 协作},
+    200/422/researchTeal/{点餐流程中的多模态 AI}} {
+    \node[title,text=\tone] at (\start,0) {\name};
+    \draw[\tone,line width=.84pt] (\start,-12) -- (\stop,-12);
+    \foreach \from/\to in {-33/-69,-69/-105,-105/-141} {
+      \draw[\tone,line width=.62pt,-{Stealth[length=3.3pt,width=3.1pt]}]
+        (\start+4,\from-4) -- (\start+4,\to+5.5);
+    }
+    \foreach \row in {-33,-69,-105,-141}
+      \fill[\tone] (\start+4,\row) circle[radius=2.9pt];
+  }
+  \node[workflow step] at (16,-33) {补全 SRS 用例并核查差异};
+  \node[workflow step] at (16,-69) {SQL 幂等迁移与接口契约核对};
+  \node[workflow step] at (16,-105) {生成代码样板与 TDD 边界用例};
+  \node[workflow step] at (16,-141) {人工走查与 575 项自动化测试};
+  \node[workflow step] at (216,-33) {文字对话与规则问答\\{\textcolor{black!63}{DeepSeek / 本地帮助}}};
+  \node[workflow step] at (216,-69) {条件智能筛选\\{\textcolor{black!63}{真实菜单库存 + 一键加购}}};
+  \node[workflow step] at (216,-105) {多模态识别\\{\textcolor{black!63}{DashScope 图片识菜 / 语音草稿}}};
+  \node[workflow step] at (216,-141) {身份注入、事务外调用、熔断与降级};
+\end{tikzpicture}

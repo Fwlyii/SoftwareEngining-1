@@ -1,0 +1,32 @@
+\begin{tikzpicture}[x=.64cm,y=.043cm,
+    tick/.style={font=\footnotesize,inner sep=1.4pt,text=black!75}]
+  \definecolor{burndownInk}{HTML}{126A66}
+  \definecolor{burndownGrid}{HTML}{E1E7E7}
+  \foreach \points in {0,30,60,90,118} {
+    \draw[burndownGrid,line width=.45pt] (.60,\points) -- (19.45,\points);
+    \node[tick,left=2pt] at (.60,\points) {\points};
+  }
+  \draw[black!60,line width=.44pt] (.60,124) -- (.60,0) -- (19.45,0);
+  \node[tick,anchor=south west,font=\footnotesize\bfseries] at (.58,125) {剩余故事点};
+  \foreach \day in {1,...,19} {
+    \draw[black!60,line width=.40pt] (\day,0) -- ++(0,-2.3pt);
+    \node[tick,below=3pt] at (\day,0) {\day};
+  }
+  \node[tick,below=15pt] at (10,0) {日期（9 月）};
+  \draw[black!52,dash pattern=on 3pt off 2.5pt,line width=.60pt] (1,118) -- (19,0);
+  \draw[burndownInk,line width=.95pt]
+    plot[mark=*,mark size=1.16pt,mark options={solid,fill=white,line width=.55pt}]
+    coordinates {(1,118) (2,115) (3,108) (4,104) (5,96) (6,88) (7,76)
+      (8,68) (9,60) (10,54) (11,45) (12,36) (13,30) (14,22)
+      (15,12) (16,6) (17,3) (18,1) (19,0)};
+  \foreach \day/\points/\side in {7/76/above,12/36/below,15/12/below,19/0/above} {
+    \fill[burndownInk] (\day,\points) circle[radius=1.8pt];
+    \node[tick,\side=2pt,text=burndownInk,font=\footnotesize\bfseries,fill=white]
+      at (\day,\points) {\points};
+  }
+  \draw[black!52,dash pattern=on 3pt off 2.5pt,line width=.60pt]
+    (14.05,112) -- (15.65,112) node[tick,right=2pt] {理想燃尽基准线};
+  \draw[burndownInk,line width=.95pt]
+    (14.05,97) -- (15.65,97) node[tick,right=2pt] {实际剩余故事点};
+  \draw[burndownInk,fill=white,line width=.60pt] (14.85,97) circle[radius=1.2pt];
+\end{tikzpicture}

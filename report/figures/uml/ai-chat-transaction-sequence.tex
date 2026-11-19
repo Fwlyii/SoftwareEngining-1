@@ -1,59 +1,64 @@
 \begin{tikzpicture}[
   x=1pt,y=-1pt,
-  line width=.46pt,
-  annotate/.style={fill=white,align=center,inner sep=1.7pt},
-  participant/.style={draw,fill=white,align=center,minimum height=27pt,inner sep=2pt,font=\bfseries},
-  activation/.style={draw,fill=white},
-  lifeline/.style={dash pattern=on 3pt off 2pt},
+  line width=.48pt,
+  annotate/.style={fill=white,align=center,inner sep=1.6pt},
+  participant/.style={draw=black!82,fill=black!4,align=center,minimum height=28pt,
+    text width=60pt,inner xsep=2pt,inner ysep=2pt,
+    font=\linespread{1}\fontsize{9.2bp}{10.5bp}\selectfont\bfseries},
+  activation/.style={draw=black!86,fill=black!4},
+  lifeline/.style={draw=black!52,dash pattern=on 2.8pt off 2.4pt},
   call/.style={-{Stealth[length=4.7pt,width=4.4pt]}},
-  reply/.style={dash pattern=on 3pt off 2pt,-{Straight Barb[length=4.4pt,width=4.4pt]}},
-  every node/.style={font=\linespread{1}\fontsize{10bp}{11.4bp}\selectfont}
+  reply/.style={draw=black!84,dash pattern=on 3pt off 2pt,-{Straight Barb[length=4.4pt,width=4.4pt]}},
+  fragment/.style={draw=black!72},
+  every node/.style={font=\linespread{1}\fontsize{9.6bp}{11.4bp}\selectfont}
 ]
-  \foreach \x in {27,91,157,236,307,378} {
-    \draw[lifeline] (\x,27) -- (\x,304);
+  \foreach \x in {33,104,175,246,317,388} {
+    \draw[lifeline] (\x,28) -- (\x,304);
   }
-  \node[participant,minimum width=49pt,anchor=north] at (27,0) {Web 客户端};
-  \node[participant,minimum width=60pt,anchor=north] at (91,0) {\texttt{AiChat}\\\texttt{Controller}};
-  \node[participant,minimum width=65pt,anchor=north] at (157,0) {\texttt{AiChatService}\\\texttt{Impl}};
-  \node[participant,minimum width=64pt,anchor=north] at (236,0) {\texttt{DeepSeek}\\\texttt{ApiClient}};
-  \node[participant,minimum width=63pt,anchor=north] at (307,0) {\texttt{LocalAi}\\\texttt{Responder}};
-  \node[participant,minimum width=71pt,anchor=north] at (378,0) {\texttt{AiChatHistory}\\\texttt{Service}};
+  \node[participant,anchor=north] at (33,0) {Web 客户端};
+  \node[participant,anchor=north] at (104,0) {\texttt{AiChat}\\\texttt{Controller}};
+  \node[participant,anchor=north] at (175,0) {\texttt{AiChatService}\\\texttt{Impl}};
+  \node[participant,anchor=north] at (246,0) {\texttt{DeepSeek}\\\texttt{ApiClient}};
+  \node[participant,anchor=north] at (317,0) {\texttt{LocalAi}\\\texttt{Responder}};
+  \node[participant,anchor=north] at (388,0) {\texttt{AiChatHistory}\\\texttt{Service}};
 
-  \draw (104,109) rectangle (417,161);
-  \draw (104,109) -- (135,109) -- (135,119) -- (130,124) -- (104,124);
-  \node[font=\bfseries] at (119,116.5) {opt};
-  \node[annotate,anchor=west] at (166,118) {[配置了非空白 API 密钥]};
-  \draw (104,170) rectangle (417,222);
-  \draw (104,170) -- (135,170) -- (135,180) -- (130,185) -- (104,185);
-  \node[font=\bfseries] at (119,177.5) {opt};
-  \node[annotate,anchor=west] at (166,179) {[\texttt{message == null}]};
+  \draw[fragment] (127,109) rectangle (419,161);
+  \draw[fragment,fill=black!6] (127,109) -- (158,109) -- (158,119) --
+    (153,124) -- (127,124) -- cycle;
+  \node[font=\bfseries] at (142,116.5) {opt};
+  \node[annotate,anchor=west] at (180,118) {[配置了非空白 API 密钥]};
+  \draw[fragment] (127,170) rectangle (419,222);
+  \draw[fragment,fill=black!6] (127,170) -- (158,170) -- (158,180) --
+    (153,185) -- (127,185) -- cycle;
+  \node[font=\bfseries] at (142,177.5) {opt};
+  \node[annotate,anchor=west] at (180,179) {[\texttt{message == null}]};
 
-  \draw[activation] (87.5,45) rectangle (94.5,294);
-  \draw[activation] (153.5,64) rectangle (160.5,276);
-  \draw[activation] (374.5,85) rectangle (381.5,100);
-  \draw[activation] (232.5,138) rectangle (239.5,154);
-  \draw[activation] (303.5,199) rectangle (310.5,214);
-  \draw[activation] (374.5,242) rectangle (381.5,259);
+  \draw[activation] (101.4,45) rectangle (106.6,294);
+  \draw[activation] (172.4,64) rectangle (177.6,276);
+  \draw[activation] (385.4,85) rectangle (390.6,100);
+  \draw[activation] (243.4,138) rectangle (248.6,154);
+  \draw[activation] (314.4,199) rectangle (319.6,214);
+  \draw[activation] (385.4,242) rectangle (390.6,259);
 
-  \draw[call] (27,45) -- node[annotate,above] {\texttt{POST /api/ai/chat}} (87.5,45);
-  \draw[call] (94.5,64) -- node[annotate,above] {\texttt{chat(request)}} (153.5,64);
-  \draw[call] (160.5,85) -- node[annotate,above] {\texttt{requireWritableSession(sessionId)}} (374.5,85);
-  \draw[reply] (374.5,100) -- node[annotate,above] {会话写权限校验通过} (160.5,100);
+  \draw[call] (33,45) -- node[annotate,above] {\texttt{POST /api/ai/chat}} (101.4,45);
+  \draw[call] (106.6,64) -- node[annotate,above] {\texttt{chat(request)}} (172.4,64);
+  \draw[call] (177.6,85) -- node[annotate,above] {\texttt{requireWritableSession(sessionId)}} (385.4,85);
+  \draw[reply] (385.4,100) -- node[annotate,above] {会话写权限校验通过} (177.6,100);
 
-  \draw[call] (160.5,138) -- node[annotate,above] {同步请求模型} (232.5,138);
-  \draw[reply] (232.5,154) -- node[annotate,above] {响应或异常} (160.5,154);
-  \node[annotate,anchor=west] at (248,140) {取第一候选的非空白正文};
-  \node[annotate,anchor=west] at (248,153) {运行时异常时回复仍为空};
+  \draw[call] (177.6,138) -- node[annotate,above] {同步请求模型} (243.4,138);
+  \draw[reply] (243.4,154) -- node[annotate,above] {响应或异常} (177.6,154);
+  \node[annotate,anchor=west] at (255,140) {取第一候选的非空白正文};
+  \node[annotate,anchor=west] at (255,153) {运行时异常时回复仍为空};
 
-  \draw[call] (160.5,199) -- node[annotate,above] {\texttt{reply(request)}} (303.5,199);
-  \draw[reply] (303.5,214) -- node[annotate,above] {本地规则回复} (160.5,214);
+  \draw[call] (177.6,199) -- node[annotate,above] {\texttt{reply(request)}} (314.4,199);
+  \draw[reply] (314.4,214) -- node[annotate,above] {本地规则回复} (177.6,214);
 
-  \draw[call] (160.5,242) -- node[annotate,above] {\texttt{save(request, response)}} (374.5,242);
-  \node[annotate,anchor=east] (saveNote) at (368,249.5)
+  \draw[call] (177.6,242) -- node[annotate,above] {\texttt{save(request, response)}} (385.4,242);
+  \node[annotate,anchor=east] (saveNote) at (378.5,249.5)
     {\texttt{@Transactional} 内重校会话并写入记录};
-  \draw[densely dotted] (saveNote.east) -- (374.5,249.5);
-  \draw[reply] (374.5,259) -- node[annotate,below] {保存正常完成} (160.5,259);
+  \draw[densely dotted] (saveNote.east) -- (385.4,249.5);
+  \draw[reply] (385.4,259) -- node[annotate,below] {保存正常完成} (177.6,259);
 
-  \draw[reply] (153.5,276) -- node[annotate,above] {回复对象} (94.5,276);
-  \draw[reply] (87.5,294) -- node[annotate,above] {成功响应} (27,294);
+  \draw[reply] (172.4,276) -- node[annotate,above] {回复对象} (106.6,276);
+  \draw[reply] (101.4,294) -- node[annotate,above] {成功响应} (33,294);
 \end{tikzpicture}

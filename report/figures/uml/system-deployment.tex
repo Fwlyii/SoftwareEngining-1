@@ -1,0 +1,45 @@
+\begin{tikzpicture}[
+  x=1pt,y=-1pt,
+  component/.style={draw=black!65,fill=white,rounded corners=1.8pt,
+    line width=.45pt,minimum height=31pt,inner xsep=3pt,align=center},
+  heading/.style={font=\bfseries\fontsize{9.5bp}{11bp}\selectfont,text=black},
+  arrow/.style={-{Stealth[length=4pt,width=3.4pt]},draw=black!85,line width=.55pt},
+  auxiliary/.style={arrow,dashed,draw=black!65},
+  annotation/.style={font=\fontsize{8bp}{9.5bp}\selectfont,text=black!90,inner sep=1.5pt,align=center},
+  every node/.style={font=\fontsize{9bp}{11bp}\selectfont,text=black!92}
+]
+  \draw[rounded corners=3pt,draw=black!45,fill=black!3,line width=.45pt]
+    (98,54) rectangle (440,168);
+  \node[heading,anchor=west] at (103,64) {Docker Compose 网络};
+
+  \node[component,minimum width=75pt] (browser) at (38,97)
+    {\textbf{浏览器}\\顾客、商家\\骑手、管理员};
+  \node[component,minimum width=88pt] (nginx) at (151,97)
+    {\textbf{frontend · Nginx}\\Vue 3 静态资源};
+  \node[component,minimum width=79pt] (backend) at (273,97)
+    {\textbf{backend:8080}\\Spring Boot};
+  \node[component,minimum width=76pt] (mysql) at (391,97)
+    {\textbf{mysql}\\MySQL 8 · elm\_v2};
+
+  \draw[arrow] (browser.east) -- node[annotation,above,inner sep=.5pt,fill=white]{本机访问} (nginx.west);
+  \draw[arrow] (nginx.east) -- node[annotation,above]{/api/\\/uploads/} (backend.west);
+  \draw[arrow] (backend.east) -- node[annotation,above]{JDBC} (mysql.west);
+
+  \node[component,minimum width=88pt] (tunnel) at (151,141)
+    {\textbf{cloudflared}\\可选演示隧道};
+  \node[component,minimum width=76pt] (migrate) at (391,141)
+    {\textbf{migrate}\\初始化迁移};
+  \node[component,minimum width=93pt] (media) at (273,197)
+    {\textbf{runtime-uploads/}\\宿主机媒体目录};
+  \draw[auxiliary] (browser.south) |- (tunnel.west);
+  \draw[auxiliary] (tunnel.north) -- (nginx.south);
+  \draw[arrow] (migrate.north) -- node[annotation,left]{健康后执行} (mysql.south);
+  \draw[arrow] (backend.south) -- node[annotation,left,pos=.66]{挂载至 /app/uploads} (media.north);
+
+  \node[component,minimum width=100pt] (pages) at (151,20)
+    {\textbf{Cloudflare Pages}\\可选前端托管};
+  \node[component,minimum width=116pt] (hosted) at (340,20)
+    {\textbf{独立部署的后端}\\通过环境变量配置地址};
+  \draw[auxiliary] (browser.north) |- (pages.west);
+  \draw[auxiliary] (pages.east) -- node[annotation,above]{HTTPS / API} (hosted.west);
+\end{tikzpicture}

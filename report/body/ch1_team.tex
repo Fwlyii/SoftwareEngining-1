@@ -8,7 +8,7 @@
 李承文担任项目经理和 Scrum Master，安排迭代、组织 PR 评审及部署。他负责 \code{elm_bk} 的认证、交易、资产、配送和管理端服务，后端采用 Java 17 和 Spring Boot 3.4.6。角色权限由 Spring Security 和 JWT 检查，库存扣减与乐观锁更新落在 MyBatis 层。他也维护演示脚本和 \code{docker-compose.demo.yml}。
 
 \paragraph{组员范文丽（学号 3024244438）}
-范文丽把顾客、商家和管理员的界面放在 \code{elmclient/src/views/} 下，也负责 \code{AiChat.vue}、主题和数据看板。她用 Vue 3 Composition API 管理页面状态，用 Vue Router 判断当前角色能进哪些页面，请求和异常交给 Axios 统一处理。页面侧还做了四套 CSS 变量主题、转场、窄屏适配、ECharts/SVG 看板与 Excel/PDF 导出。
+范文丽负责顾客、商家和管理员的界面，代码位于 \mbox{\code{elmclient/src/views/}}。她还负责 \mbox{\code{AiChat.vue}}、主题和数据看板。页面状态用 Vue 3 Composition API 管理，Vue Router 检查角色能进入哪些页面，Axios 统一处理请求和异常。页面实现了四套 CSS 变量主题、转场、窄屏适配、ECharts/SVG 看板与 Excel/PDF 导出。
 
 \paragraph{组员赵紫怡（学号 3024244137）}
 赵紫怡兼任产品负责人、需求分析和数据库设计，主编 \code{docs/SRS.pdf} 及飞书需求文档，用 UML 和 draw.io 画出各端用例。改表时，她维护 MySQL 8 基线 \code{elm_bk/db/schema/elm_v2.sql} 与 \code{001}--\code{006} 迁移脚本。AI 点餐由她负责后端，经 \code{AiChatController}、\code{AssistantController} 和多模态客户端接入 DeepSeek 与 DashScope。
@@ -20,28 +20,7 @@
 
 \begin{figure}[!htbp]
   \centering
-  \resizebox{.90\linewidth}{!}{%
-  \begin{tikzpicture}[
-    node distance=0.85cm and 1.1cm,
-    role/.style={rectangle,rounded corners=5pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=3.5cm,minimum height=1.55cm,font=\small},
-    infra/.style={rectangle,rounded corners=4pt,draw=accentorange,thick,fill=orange!6,align=center,minimum width=3.1cm,minimum height=1.0cm,font=\footnotesize},
-    arr/.style={-{Stealth[length=2.2mm]},thick,tjublue}
-  ]
-    \node[role] (sm) {\textbf{李承文（SM / PM）}\\后端核心 · 交易与资产\\Docker 运维 · PR 门禁};
-    \node[role,right=1.6cm of sm] (po) {\textbf{赵紫怡（PO / DB）}\\SRS 与 UML 建模\\23 张表 · AI 服务端};
-    \node[role,below=1.3cm of sm] (fe) {\textbf{范文丽（前端 / UI）}\\Vue 3 四端壳层 · 主题\\AI 界面 · 数据看板};
-    \node[role,below=1.3cm of po] (qa) {\textbf{仲禹潼（QA / 地图）}\\575 项自动化与交叉验收\\WPS 缺陷 · 高德适配};
-
-    \draw[arr] (po) -- node[above,font=\scriptsize]{需求基线与表结构} (sm);
-    \draw[arr] (sm) -- node[left,font=\scriptsize]{REST API 与鉴权} (fe);
-    \draw[arr] (po) -- node[right,font=\scriptsize]{测试用例与 SRS 验收} (qa);
-    \draw[arr] (fe) -- node[below,font=\scriptsize]{页面走查与定位弹窗} (qa);
-    \draw[arr] (sm) -- node[above,sloped,font=\scriptsize]{测试门禁} (qa);
-
-    \node[infra,below=1.2cm of fe,xshift=-0.2cm] (git) {\textbf{GitHub 主仓}\\265 次提交 · 34 个 PR};
-    \node[infra,right=0.6cm of git] (feishu) {\textbf{飞书共享空间}\\SRS 纪要 · 差异清单};
-    \node[infra,right=0.6cm of feishu] (wps) {\textbf{WPS / 腾讯会议}\\缺陷台账 · 9 次线上例会};
-  \end{tikzpicture}}
+  \includegraphics[width=.98\linewidth]{figures/report/process/team-handoff.png}
   \caption{小组成员角色分工与工程协作基础设施拓扑图}\label{fig:team-topology}
 \end{figure}
 
@@ -59,7 +38,7 @@
 
 顾客、商家、骑手和管理员各有页面入口，共用路由、主题及请求处理。范文丽负责组织页面和公共壳层，主做 \code{Index.vue}、\code{BusinessInfo.vue}、\code{Cart.vue}、\code{OrderList.vue}、\code{AiChat.vue}、\code{Preferences.vue} 与商家/管理员看板。仲禹潼协作完成 \code{MapLocationPicker}、个人地址地图联动，以及骑手工作台 \code{RiderDashboard.vue} 的导航入口。联调时，两人共同核对地址字段、选址异常提示和窄屏布局。
 
-后端按 Controller、Service、Mapper 分层。李承文负责登录与角色切换、\code{OrderSubmissionService}、\code{OrderPricingService}、\code{OrderSettlementService}、\code{AssetService} 和履约状态更新。订单提交、取消回滚、资产扣减和骑手接单由这些服务分别约束权限、幂等和事务边界。赵紫怡主要维护 \code{AiChatServiceImpl}、\code{StructuredAssistantServiceImpl}、\code{AiRecommendationServiceImpl}，对接模型适配器和商家菜单查询，并在外部服务异常时保留本地处理路径。
+后端按 Controller、Service、Mapper 分层。李承文负责登录与角色切换，以及履约状态更新，也维护订单提交、计价、结算与资产服务，分别对应 \mbox{\code{OrderSubmissionService}}、\mbox{\code{OrderPricingService}}、\mbox{\code{OrderSettlementService}} 和 \mbox{\code{AssetService}}。这些服务在订单提交、取消回滚、资产扣减和骑手接单时处理权限、幂等和事务边界。赵紫怡负责对接模型适配器和商家菜单查询，主要维护 \mbox{\code{AiChatServiceImpl}}、\mbox{\code{StructuredAssistantServiceImpl}} 和 \mbox{\code{AiRecommendationServiceImpl}}。外部服务出现异常时，系统继续使用本地处理路径。
 
 数据库方面，由赵紫怡设计 23 张核心业务表、主外键与查询索引，李承文协作处理迁移与并发更新。两人将成交时的商品和地址快照与商家可变配置分开，维护订单、配送、资产流水、评价、通知和 AI 对话等表，以及账号唯一性、默认地址、菜品快照、备注和地图坐标的版本化迁移。
 
@@ -69,7 +48,7 @@
 
 本报告汇总的回归结果中，后端 53 个 JUnit/MockMvc 测试类有 340 项通过，前端 28 个 Node 测试文件有 235 项通过。仲禹潼还组织人工筛查和跨组交叉验收。第~\ref{tab:team-matrix}~表按成员列出联调重点，另可通过附录表~\ref{tab:code-ownership} 查到主要代码和文档归属。
 
-\begin{longtable}{L{.13\linewidth}L{.15\linewidth}L{.18\linewidth}L{.45\linewidth}}
+\begin{longtable}{L{.09\linewidth}L{.155\linewidth}L{.24\linewidth}L{.455\linewidth}}
 \caption{小组成员角色、扩展模块与协作接口矩阵}\label{tab:team-matrix}\\
 \toprule
 \textbf{成员} & \textbf{基础主责方向} & \textbf{Scrum/专项模块} & \textbf{协作接口与联调关注点} \\
@@ -108,18 +87,18 @@
 
 启动阶段由李承文和赵紫怡在腾讯会议中讲解课程交付要求，带大家从用户故事追到图、接口和测试，再统一站会日志与缺陷登记字段。第一轮开发前，范文丽示范 Vue 3 的目录、Axios 拦截器和组件拆分，李承文讲后端分层，赵紫怡带组员阅读 \code{elm_v2.sql} 和迁移约定。工具演练由李承文和仲禹潼协作，前者负责分支、PR 和 Docker Compose，后者检查 \code{./mvnw test} 与 \code{npm test} 能否在各自环境运行。
 
-业务训练用购物车多选结算、防超卖库存扣减和积分抵扣说明服务端交易规则。外部接口部分由赵紫怡和仲禹潼分别讲解 DeepSeek/DashScope 降级与高德坐标转换；测试部分练习将库存溢出和跨用户数据隔离写成可重复执行的用例。开发进入联调后，遇到异步竞态、页面返回循环和窄屏溢出，组员再用短会和代码共读复盘具体问题。表~\ref{tab:training-labs} 记录了早期演练的操作与检查结果。
+业务训练用购物车多选结算、防超卖库存扣减和积分抵扣说明服务端交易规则。外部接口部分由赵紫怡和仲禹潼分别讲解 DeepSeek/DashScope 降级与高德坐标转换。测试训练则把库存溢出和跨用户数据隔离写成可重复执行的用例。开发进入联调后，遇到异步竞态、页面返回循环和窄屏溢出，组员再用短会和代码共读复盘具体问题。表~\ref{tab:training-labs} 记录了早期演练的操作与检查结果。
 
-\begin{longtable}{L{.18\linewidth}L{.43\linewidth}L{.30\linewidth}}
+\begin{longtable}{L{.20\linewidth}L{.42\linewidth}L{.34\linewidth}}
 \caption{团队工程实操演练与检查点}\label{tab:training-labs}\\
 \toprule
 \textbf{演练} & \textbf{操作} & \textbf{通过条件} \\
 \midrule
 Lab-01 环境联启 & 使用 \code{docker-compose.demo.yml}，或分别启动本地 MySQL、后端 Jar 与 Vue。再以 \code{demo_user}、\code{demo_merchant}、\code{demo_rider} 和 \code{demo_admin} 逐一登录。 & 四端首屏无控制台报错，接口返回 200，角色入口隔离。 \\
-Lab-02 分支协作 & 从 \code{main} 创建特性分支，提交一项包含测试的变更，发起关联飞书任务的 PR。 & 提交信息规范，SM 复核通过，合入后无遗留冲突或构建警告。 \\
-Lab-03 角色权限 & 分别使用 Postman 或 MockMvc 验证无 Token 和跨账号的受保护请求。 & 请求返回相应的 401 或 403，服务端按 JWT 上下文确认身份。 \\
-Lab-04 事务与快照 & 验证 \code{food} 表的条件库存更新。商家修改当前菜名后，查询 \code{orderdetailet} 中的历史明细。 & 库存保持非负，历史订单的商品名称仍为成交时快照。 \\
-Lab-05 缺陷回归 & 先写失败用例，再以最小改动使其通过，并把一次含截图的复现经过记入 WPS 台账。 & 用例可以重复回归，台账可以追到修复记录与复测结果。 \\
+Lab-02 分支协作 & 从 \code{main} 创建特性分支，提交一项包含测试的变更，发起关联飞书任务的 PR。 & 提交信息规范，SM 复核通过，合入后无遗留冲突或\mbox{构建警告。} \\
+Lab-03 角色权限 & 分别使用 Postman 或 MockMvc 验证无 Token 和跨账号的受保护请求。 & 请求返回相应的 401 或 403，服务端按 JWT 上下文\mbox{确认身份。} \\
+Lab-04 \mbox{事务与快照} & 验证 \code{food} 表的条件库存更新。商家修改当前菜名后，查询 \code{orderdetailet} 中的\mbox{历史明细。} & 库存保持非负，历史订单的商品名称仍为成交时快照。 \\
+Lab-05 缺陷回归 & 先写失败用例，再以最小改动使其通过，并把一次含截图的复现经过记入 \mbox{WPS 台账。} & 用例可以重复回归，台账可以追到修复记录与\mbox{复测结果。} \\
 \bottomrule
 \end{longtable}
 

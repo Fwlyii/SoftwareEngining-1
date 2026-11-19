@@ -1,0 +1,48 @@
+\begin{tikzpicture}[x=.585cm,y=.49cm,
+    task/.style={anchor=east,inner xsep=3pt,font=\footnotesize},
+    date/.style={font=\scriptsize,inner sep=1pt},
+    stage/.style={font=\linespread{1}\footnotesize\bfseries,align=center,inner sep=0pt},
+    milestone/.style={font=\scriptsize\bfseries,inner sep=1.5pt}]
+  \definecolor{calendarBlue}{HTML}{325775}
+  \definecolor{calendarTeal}{HTML}{287675}
+  \definecolor{calendarOchre}{HTML}{9B692F}
+  \definecolor{calendarGrid}{HTML}{E1E6E9}
+  \foreach \left/\right/\tone/\name in {
+    .5/7.5/calendarBlue/{Sprint 1\\核心闭环},
+    7.5/12.5/calendarTeal/{Sprint 2\\履约与资产},
+    12.5/19.5/calendarOchre/{Sprint 3\\智能治理与验收}} {
+    \fill[\tone!9] (\left+.05,14.37) rectangle (\right-.05,16.00);
+    \draw[\tone,line width=.70pt] (\left,14.37) -- (\right,14.37);
+    \node[stage,text=\tone] at ({(\left+\right)/2},15.18) {\name};
+  }
+  \foreach \day in {1,...,19} {
+    \draw[calendarGrid,line width=.35pt] (\day,.33) -- (\day,12.52);
+    \node[date,above=1.2pt] at (\day,12.54) {\day};
+  }
+  \node[task,font=\footnotesize\bfseries] at (.5,13.02) {任务 / 9 月};
+  \foreach \row in {.33,4.40,8.40,12.52}
+    \draw[black!31,line width=.43pt] (.50,\row) -- (19.5,\row);
+  \foreach \row/\from/\to/\tone/\name in {
+    11.9/1/3.5/calendarBlue/{SRS 建模与表结构},
+    10.9/2.5/6/calendarBlue/{认证与店铺商品后端},
+    9.9/4/7.5/calendarBlue/{订单快照与取消事务},
+    8.9/3.5/7.5/calendarBlue/{顾客端核心页面联调},
+    7.9/7.5/11.5/calendarTeal/{商家端履约与菜品管理},
+    6.9/8/11.5/calendarTeal/{骑手抢单与配送状态机},
+    5.9/8.5/12/calendarTeal/{钱包积分优惠券体系},
+    4.9/10.5/12.5/calendarTeal/{集中联调与 WPS 缺陷单},
+    3.9/12.5/16.5/calendarOchre/{管理端审核与统计看板},
+    2.9/13/16.5/calendarOchre/{多模态 AI 与高德地图},
+    1.9/14.5/17.5/calendarOchre/{TDD 修复与四套主题动效},
+    .9/16/19.5/calendarOchre/{575 项回归与交叉验收}} {
+    \node[task] at (.50,\row) {\name};
+    \fill[\tone!88] (\from,\row-.26) rectangle (\to,\row+.26);
+  }
+  \foreach \day/\tone/\side/\name in {
+    6/calendarBlue/left/{M1 SRS 2.0},7/calendarBlue/right/{M2 MVP},
+    15/calendarOchre/left/{M3 联调封板},19/calendarOchre/left/{M4 交付}} {
+    \draw[\tone!65,line width=.4pt] (\day,13.15) -- (\day,13.53);
+    \fill[\tone] (\day,13.94) -- (\day+.19,13.72) -- (\day,13.50) -- (\day-.19,13.72) -- cycle;
+    \node[milestone,\side=4pt,text=\tone] at (\day,13.72) {\name};
+  }
+\end{tikzpicture}

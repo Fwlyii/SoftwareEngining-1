@@ -1,0 +1,29 @@
+\begin{tikzpicture}[
+  x=1pt,y=-1pt,
+  stage/.style={draw=#1!70,fill=#1!7,rounded corners=2pt,line width=.48pt,
+    minimum height=28pt,minimum width=93pt,inner sep=3pt,align=center,
+    font=\fontsize{10bp}{12bp}\selectfont},
+  direction/.style={-{Stealth[length=3.6pt,width=3.1pt]},draw=procink,line width=.6pt},
+  annotation/.style={font=\fontsize{8.4bp}{10bp}\selectfont,fill=white,inner sep=1.6pt}
+]
+  \definecolor{procink}{HTML}{394D59}
+  \definecolor{procslate}{HTML}{476C82}
+  \definecolor{procsage}{HTML}{397A70}
+  \definecolor{procsand}{HTML}{957048}
+  \node[stage=procslate] (backlog) at (51,16) {\textbf{Product Backlog}\\REQM 需求基线};
+  \node[stage=procslate] (plan) at (161,16) {\textbf{Sprint 规划}\\PP 任务估算};
+  \node[stage=procslate] (develop) at (271,16) {\textbf{特性分支开发}\\CM / PMC 日同步};
+  \node[stage=procsand] (gate) at (381,16) {\textbf{TDD 与 PR 门禁}};
+  \node[stage=procsage] (review) at (51,83) {\textbf{Sprint 评审}\\VAL 增量验收};
+  \node[stage=procsage] (retro) at (161,83) {\textbf{Sprint 回顾}\\OPF 过程改进};
+  \node[stage=procsage] (release) at (271,83) {\textbf{基线交付}\\VER 归档与部署};
+  \draw[direction] (backlog.east) -- (plan.west);
+  \draw[direction] (plan.east) -- (develop.west);
+  \draw[direction] (develop.east) -- (gate.west);
+  \draw[direction] (review.east) -- (retro.west);
+  \draw[direction] (retro.east) -- (release.west);
+  \draw[direction,rounded corners=3pt] (gate.south) -- (381,115)
+    -- node[annotation,pos=.48,above]{575 项测试通过} (51,115) -- (review.south);
+  \draw[direction,dashed,draw=procsage] (retro.north)
+    -- node[annotation,right,text=procsage]{改进项反哺下轮} (plan.south);
+\end{tikzpicture}

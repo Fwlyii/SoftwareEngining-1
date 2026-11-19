@@ -1,0 +1,92 @@
+\begin{tikzpicture}[
+  x=1pt,y=-1pt,
+  domain class/.style={draw=black!85,fill=white,line width=.48pt,anchor=north,
+    inner sep=0pt,outer sep=0pt,font=\fontsize{9.2bp}{11.2bp}\selectfont},
+  link/.style={draw=black!85,line width=.50pt,rounded corners=.7pt},
+  composition/.style={link,{Diamond[length=4.2pt,width=4.2pt]}-},
+  count/.style={font=\fontsize{8bp}{9.6bp}\selectfont,inner sep=1.3pt,fill=white},
+  annotation/.style={font=\fontsize{8.7bp}{11bp}\selectfont,inner sep=0pt,align=left},
+]
+  \newcommand{\coreClassBox}[2]{%
+    \begin{tabular}{@{}l@{}}%
+      {\setlength{\fboxsep}{0pt}\colorbox{black!6}{%
+        \parbox[c][17pt][c]{129pt}{\centering\bfseries #1\par}}}\\
+      \hline
+      \parbox[t]{129pt}{\renewcommand{\baselinestretch}{1}\fontsize{9.2bp}{11.2bp}\selectfont
+        \raggedright\leftskip=5pt
+        \vspace*{2pt}#2\par\vspace*{2pt}}%
+    \end{tabular}%
+  }
+  \node[domain class] (role) at (65,23) {\coreClassBox{角色}{%
+    + 角色 ID: string\\+ 角色名称: string}};
+  \node[domain class] (user) at (213,0) {\coreClassBox{用户}{%
+    + 用户 ID: string\\+ 用户名: string\\+ 密码: string\\+ 姓名: string\\
+    + 手机号: string\\+ 邮箱: string\\+ 头像: string\\+ 状态: UserStatus}};
+  \node[domain class] (merchant) at (361,17) {\coreClassBox{商家资料}{%
+    + 商家 ID: string\\+ 资质状态: QualificationStatus\\+ 创建时间: datetime}};
+  \node[domain class] (rider) at (65,144) {\coreClassBox{骑手资料}{%
+    + 骑手 ID: string\\+ 审核状态: AuditStatus\\+ 在线状态: OnlineStatus}};
+  \node[domain class] (cart) at (213,144) {\coreClassBox{购物车条目}{%
+    + 条目 ID: bigint\\+ 数量: int\\+ 商家备注: string}};
+  \node[domain class] (shop) at (361,144) {\coreClassBox{店铺}{%
+    + 店铺 ID: string\\+ 店铺名称: string\\+ 地址: string\\+ 营业状态: BusinessStatus}};
+  \node[domain class] (task) at (65,244) {\coreClassBox{配送任务}{%
+    + 任务 ID: bigint\\+ 配送状态: string\\+ 乐观锁版本: int\\+ 距离: decimal}};
+  \node[domain class] (order) at (213,244) {\coreClassBox{订单}{%
+    + 订单 ID: bigint\\+ 订单状态: int\\+ 订单金额: decimal\\
+    + 履约方式: string\\+ 收货地址快照: string}};
+  \node[domain class] (category) at (361,244) {\coreClassBox{商品分类}{%
+    + 分类 ID: string\\+ 分类名称: string\\+ 排序序号: int}};
+  \node[domain class] (item) at (213,348) {\coreClassBox{订单明细}{%
+    + 明细 ID: bigint\\+ 数量: int\\+ 成交单价: decimal\\+ 商品名快照: string}};
+  \node[domain class] (product) at (361,325) {\coreClassBox{商品}{%
+    + 商品 ID: string\\+ 商品名称: string\\+ 价格: decimal\\+ 库存: int\\
+    + 上架状态: ProductStatus\\+ 月销量: int\\+ 限购数量: int\\+ 折扣: decimal}};
+
+  \draw[link] (129.5,44) -- node[count,above,pos=.13]{1} node[count,below,pos=.47]{拥有}
+    node[count,above,pos=.87]{1} (148.5,44);
+  \draw[link] (277.5,44) -- node[count,above,pos=.23]{1}
+    node[count,below,pos=.80]{0..1} (296.5,44);
+  \draw[link] ([xshift=-33pt]user.south) -- ++(0,-9pt) -|
+    node[count,above,pos=.15]{骑手资料} (rider.north);
+  \node[count,anchor=south east] at ([xshift=-34pt,yshift=-7pt]user.south) {1};
+  \node[count,anchor=south east] at (rider.north) {0..1};
+  \draw[link] (user.south) -- node[count,right,near start]{1}
+    node[count,right,near end]{0..*} (cart.north);
+  \draw[link] ([xshift=-14pt]user.south) -- ++(0,-21pt) -| (138,134)
+    -- (138,230) -| ([xshift=-32pt]order.north);
+  \node[count,anchor=north west] at ([xshift=-13pt,yshift=-2pt]user.south) {1};
+  \node[count,anchor=south west] at ([xshift=-32pt]order.north) {0..*};
+  \draw[link] (merchant.south) -- node[count,right,near start]{1}
+    node[count,right]{经营} node[count,right,near end]{1..*} (shop.north);
+  \draw[link] (277.5,168) -- node[count,below,pos=.10]{0..*}
+    node[count,above,pos=.83]{1} (296.5,168);
+  \draw[link] ([xshift=-47pt]shop.south) -- (314,226) -| ([xshift=40pt]order.north);
+  \node[count,anchor=north west] at ([xshift=-46pt,yshift=-3pt]shop.south) {1};
+  \node[count,anchor=south west] at ([xshift=41pt]order.north) {0..*};
+  % Leave a gap where the cart–product path crosses the shop–order path.
+  \draw[link] ([xshift=55pt]cart.south) -- ++(0,-5pt) -| (287,223);
+  \draw[link] (287,229) -- (287,344) -- (296.5,344);
+  \node[count,anchor=north east] at ([xshift=53pt,yshift=-2pt]cart.south) {0..*};
+  \node[count,anchor=north east] at (296.5,345) {1};
+  \draw[link] (rider.south) -- node[count,left,near start]{0..1}
+    node[count,right]{接单} node[count,left,near end]{0..*} (task.north);
+  \draw[link] (129.5,270) -- node[count,above,near start]{0..1}
+    node[count,below,near end]{1} (148.5,270);
+  \draw[composition] (shop.south) -- node[count,right,near start]{1}
+    node[count,left]{包含} node[count,right,near end]{1..*} (category.north);
+  \draw[composition] (category.south) -- node[count,right,near start]{1}
+    node[count,left]{包含} node[count,right,near end]{1..*} (product.north);
+  \draw[composition] (order.south) -- node[count,right,near start]{1}
+    node[count,right,near end]{1..*} (item.north);
+  \draw[link] (277.5,370) -- node[count,below,near start]{0..*}
+    node[count,above,near end]{1} (296.5,370);
+
+  \draw[black!45,line width=.4pt] (1,332) -- (127,332);
+  \node[annotation,anchor=north west] at (1,341) {%
+    \textbf{店铺营业状态}\\[1pt]
+    营业 / 休息 / 临时闭店\\[8pt]
+    \textbf{商品业务属性}\\[1pt]
+    保存价格、库存、上架状态、\\
+    月销量、限购数量和折扣。};
+\end{tikzpicture}

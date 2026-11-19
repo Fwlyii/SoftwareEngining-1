@@ -1,4 +1,8 @@
 \chapter{AI 赋能专题}
+\definecolor{researchBlue}{HTML}{25465D}
+\definecolor{researchTeal}{HTML}{287B78}
+\definecolor{researchBronze}{HTML}{B67E33}
+\definecolor{researchInk}{HTML}{243348}
 
 开发时，我们请 AI 帮忙整理需求、起草代码和补全测试输入，草稿交回组员逐项复核。系统交付之后，顾客也能从点餐页进入问答、商品推荐、图片识菜和语音点菜。前一项查草稿里的业务规则，后一项查顾客实际看到的商品和订单。
 
@@ -8,29 +12,7 @@
 
 \begin{figure}[!htbp]
   \centering
-  \resizebox{0.98\linewidth}{!}{%
-\begin{tikzpicture}[
-    node distance=0.55cm and 0.9cm,
-    box/.style={rectangle,rounded corners=4pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=4.6cm,minimum height=0.88cm,font=\small},
-    hdr/.style={rectangle,rounded corners=3pt,draw=tjublue,fill=tjublue,text=white,align=center,minimum width=4.6cm,minimum height=0.72cm,font=\small\bfseries},
-    arr/.style={-{Stealth[length=2mm]},thick,tjublue}
-  ]
-    \node[hdr] (lh) {研发过程中的 AI 协作};
-    \node[box,below=0.45cm of lh] (l1) {补全 SRS 用例并核查差异};
-    \node[box,below=0.35cm of l1] (l2) {SQL 幂等迁移与接口契约核对};
-    \node[box,below=0.35cm of l2] (l3) {生成代码样板与 TDD 边界用例};
-    \node[box,below=0.35cm of l3] (l4) {人工走查与 575 项自动化测试};
-
-    \node[hdr,right=1.6cm of lh,draw=accentorange,fill=accentorange] (rh) {点餐流程中的多模态 AI};
-    \node[box,below=0.45cm of rh,draw=accentorange,fill=orange!6] (r1) {文字对话与规则问答（DeepSeek / 本地帮助）};
-    \node[box,below=0.35cm of r1,draw=accentorange,fill=orange!6] (r2) {条件智能筛选（真实菜单库存 + 一键加购）};
-    \node[box,below=0.35cm of r2,draw=accentorange,fill=orange!6] (r3) {多模态识别（DashScope 图片识菜 / 语音草稿）};
-    \node[box,below=0.35cm of r3,draw=accentorange,fill=orange!6] (r4) {身份注入、事务外调用、熔断与降级};
-
-    \draw[arr] (l1) -- (l2); \draw[arr] (l2) -- (l3); \draw[arr] (l3) -- (l4);
-    \draw[arr,accentorange] (r1) -- (r2); \draw[arr,accentorange] (r2) -- (r3); \draw[arr,accentorange] (r3) -- (r4);
-  \end{tikzpicture}
-}
+  \resizebox{.96\linewidth}{!}{\input{figures/report/process/ai-development-runtime}}
   \caption{项目研发过程与系统运行时双维 AI 赋能全景架构图}\label{fig:ai-dual-arch}
 \end{figure}
 
@@ -48,7 +30,7 @@
 
 \subsection{人工核查怎样落到代码}
 
-有一次，AI 对话 DTO 的草稿把 \code{userId} 留成了能从请求里写入的字段。检查控制器时，我们顺着这个字段看到认证逻辑，决定由后端传入当前用户，将 \code{AiChatRequestDTO.userId} 设为 \code{READ_ONLY}。我们也重新看了模型请求的位置。网络响应可能很慢，先在事务外完成模型调用，拿到回复后再写对话，数据库就不用在等待模型时一直占着连接。
+评审 AI 对话控制器时，我们发现 DTO 草稿允许请求写入 \mbox{\code{userId}}。于是将 \mbox{\code{AiChatRequestDTO.userId}} 设为 \mbox{\code{READ_ONLY}}，改由后端从认证上下文取得当前用户。我们也把模型请求移到事务之外，收到回复再写入对话。等待网络响应时，数据库连接仍可供其他请求使用。
 
 我们评审测试草稿时也会追问它最后比较了哪个值。结算接口响应成功以后，还要查清用的是哪一份价格。\code{OrderPricingTrustBoundaryTest} 对照服务端算出的应收金额，检查请求多传的价格字段是否改变结果。图片或语音服务缺少密钥时，后端统一返回 \code{503 FEATURE_UNAVAILABLE}，前端再给出具体提示。这些结果写成断言以后，每次回归都能再查一遍。
 
@@ -56,18 +38,24 @@
   \centering
   \resizebox{0.98\linewidth}{!}{%
 \begin{tikzpicture}[
-    node distance=0.6cm and 0.55cm,
-    pstep/.style={rectangle,rounded corners=4pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=2.8cm,minimum height=1.25cm,font=\small},
-    arr/.style={-{Stealth[length=2mm]},thick,tjublue}
+    x=1pt,y=1pt,
+    review box/.style={rectangle,rounded corners=2.5pt,align=center,
+      minimum height=40pt,minimum width=96pt,inner xsep=2pt,inner ysep=3pt,
+      draw=researchBlue!66,fill=researchBlue!7,text=researchInk,
+      line width=.55pt,font=\fontsize{9.3bp}{13bp}\selectfont},
+    arr/.style={-{Stealth[length=4pt,width=3.4pt]},line width=.66pt,draw=researchInk!80}
   ]
-    \node[pstep] (s1) {\textbf{1. 约束输入}\\锁定 DTO/表/红线};
-    \node[pstep,right=of s1] (s2) {\textbf{2. 辅助产出}\\样板/SQL/用例草稿};
-    \node[pstep,right=of s2,draw=accentred,fill=red!5] (s3) {\textbf{3. 人工审计}\\查鉴权/事务/断言};
-    \node[pstep,right=of s3,draw=accentgreen,fill=green!6] (s4) {\textbf{4. 门禁验证}\\575 项回归与 PR 合入};
-    \draw[arr] (s1) -- (s2);
-    \draw[arr] (s2) -- (s3);
-    \draw[arr] (s3) -- (s4);
-    \draw[arr,dashed,accentorange] (s3.south) -- ++(0,-0.45) -| node[pos=0.25,below,font=\scriptsize]{发现隐式漂移则打回重写} (s1.south);
+    \node[review box] (s1) at (48,0) {\textbf{1. 约束输入}\\锁定 DTO/表/红线};
+    \node[review box] (s2) at (155.5,0) {\textbf{2. 辅助产出}\\样板/SQL/用例草稿};
+    \node[review box,draw=researchBronze!80,fill=researchBronze!9] (s3) at (263,0)
+      {\textbf{3. 人工审计}\\查鉴权/事务/断言};
+    \node[review box,draw=researchTeal!75,fill=researchTeal!8] (s4) at (370.5,0)
+      {\textbf{4. 门禁验证}\\575 项回归与 PR 合入};
+    \foreach \srcnode/\dstnode in {s1/s2,s2/s3,s3/s4}
+      \draw[arr] (\srcnode.east) -- (\dstnode.west);
+    \draw[arr,densely dashed,draw=researchBronze] (s3.south) -- (263,-37) --
+      node[midway,below=2pt,text=researchBronze!80!black,font=\fontsize{8.7bp}{10bp}\selectfont]
+        {发现隐式漂移则打回重写} (48,-37) -- (s1.south);
   \end{tikzpicture}
 }
   \caption{研发过程四步人机协同审计闭环流程图}\label{fig:ai-collab-loop}
@@ -96,25 +84,37 @@
   \centering
   \resizebox{0.98\linewidth}{!}{%
 \begin{tikzpicture}[
-    node distance=0.55cm and 0.6cm,
-    blk/.style={rectangle,rounded corners=4pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=2.7cm,minimum height=1.15cm,font=\scriptsize},
-    dec/.style={diamond,aspect=1.8,draw=accentorange,thick,fill=orange!8,align=center,font=\scriptsize,inner sep=1.5pt},
-    safe/.style={rectangle,rounded corners=4pt,draw=accentgreen,thick,fill=green!6,align=center,minimum width=2.8cm,minimum height=1.15cm,font=\scriptsize},
-    arr/.style={-{Stealth[length=2mm]},thick,tjublue}
+    x=1pt,y=1pt,
+    blk/.style={rectangle,rounded corners=2pt,align=center,minimum width=76pt,
+      minimum height=39pt,inner xsep=2pt,inner ysep=3pt,line width=.55pt,
+      draw=researchBlue!66,fill=researchBlue!7,text=researchInk,
+      font=\fontsize{8.6bp}{11.2bp}\selectfont},
+    dec/.style={diamond,aspect=1.27,align=center,inner sep=1pt,line width=.55pt,
+      draw=researchBronze!86,fill=researchBronze!9,text=researchInk,
+      font=\fontsize{8.4bp}{11bp}\selectfont},
+    branch/.style={blk,minimum width=112pt,minimum height=38pt},
+    arr/.style={-{Stealth[length=3.6pt,width=3.2pt]},line width=.62pt,draw=researchInk!84},
+    signal/.style={text=researchInk,fill=white,inner sep=1.5pt,
+      font=\fontsize{8.3bp}{10bp}\selectfont}
   ]
-    \node[blk] (in) {\textbf{用户多模态输入}\\文本 / 图片 / 语音};
-    \node[blk,right=of in] (ctx) {\textbf{JWT 身份注入}\\剥离伪造 userId};
-    \node[dec,right=of ctx] (intent) {意图分流\\与密钥检查};
-    \node[safe,above right=0.7cm and 1.75cm of intent] (local) {\textbf{本地规则 / 订单查询}\\查库真实菜单与本人订单};
-    \node[blk,below right=0.7cm and 1.75cm of intent,draw=accentorange,fill=orange!6] (ext) {\textbf{脱事务外部调用}\\超时控制 + \code{AiCircuitBreaker}};
-    \node[safe,right=0.9cm of ext] (out) {\textbf{结构化候选输出}\\卡片一键加购 / 503 降级};
+    \node[blk] (in) at (38,0) {\textbf{用户多模态输入}\\文本 / 图片 / 语音};
+    \node[blk] (ctx) at (127,0) {\textbf{JWT 身份注入}\\剥离伪造 userId};
+    \node[dec] (intent) at (215,0) {意图分流\\与密钥检查};
+    \node[branch,draw=researchTeal!75,fill=researchTeal!8] (local) at (309,38)
+      {\textbf{本地规则 / 订单查询}\\查库真实菜单与本人订单};
+    \node[branch,draw=researchBronze!78,fill=researchBronze!8] (ext) at (309,-38)
+      {\textbf{脱事务外部调用}\\超时控制 + \texttt{AiCircuitBreaker}};
+    \node[blk,draw=researchTeal!75,fill=researchTeal!8] (out) at (416,0)
+      {\textbf{结构化候选输出}\\卡片一键加购\\/ 503 降级};
 
-    \draw[arr] (in) -- (ctx);
-    \draw[arr] (ctx) -- (intent);
-    \draw[arr] (intent) |- node[above=2pt,pos=0.75,font=\scriptsize]{本地意图/无Key} (local);
-    \draw[arr] (intent) |- node[below=2pt,pos=0.75,font=\scriptsize]{外部增强意图} (ext);
-    \draw[arr] (ext) -- (out);
-    \draw[arr] (local) -| (out);
+    \draw[arr] (in.east) -- (ctx.west);
+    \draw[arr] (ctx.east) -- (intent.west);
+    \draw[arr,draw=researchTeal] (intent.north) |- (local.west);
+    \node[signal,above right] at (186,38) {本地意图/无Key};
+    \draw[arr,draw=researchBronze] (intent.south) |- (ext.west);
+    \node[signal,below right] at (186,-38) {外部增强意图};
+    \draw[arr,draw=researchTeal] (local.east) -| (out.north);
+    \draw[arr,draw=researchBronze] (ext.east) -| (out.south);
   \end{tikzpicture}
 }
   \caption{运行时 AI 意图分流、脱事务外部调用与四重安全护栏流程图}\label{fig:ai-guardrails}

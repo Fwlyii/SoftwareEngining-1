@@ -1,0 +1,73 @@
+\begin{tikzpicture}[
+  x=1pt,y=-1pt,
+  asset class/.style={draw=black!85,fill=white,line width=.48pt,anchor=north,
+    inner sep=0pt,outer sep=0pt,font=\fontsize{9.2bp}{11.2bp}\selectfont},
+  link/.style={draw=black!85,line width=.50pt,rounded corners=.7pt},
+  count/.style={font=\fontsize{8bp}{9.6bp}\selectfont,inner sep=1.3pt,fill=white},
+  annotation/.style={draw=black!50,font=\fontsize{8.7bp}{11bp}\selectfont,
+    inner sep=5pt,align=left,line width=.45pt},
+]
+  \newcommand{\assetClassBox}[3][93pt]{%
+    \begin{tabular}{@{}l@{}}%
+      {\setlength{\fboxsep}{0pt}\colorbox{black!6}{%
+        \parbox[c][17pt][c]{#1}{\centering\bfseries #2\par}}}\\
+      \hline
+      \parbox[t]{#1}{\renewcommand{\baselinestretch}{1}\fontsize{9.2bp}{11.2bp}\selectfont
+        \raggedright\leftskip=4pt
+        \vspace*{2pt}#3\par\vspace*{2pt}}%
+    \end{tabular}%
+  }
+  \node[asset class] (membership) at (47,0) {\assetClassBox{会员}{%
+    + 会员 ID: string\\+ 等级: string\\+ 生效时间: datetime\\
+    + 到期时间: datetime\\+ 权益说明: string}};
+  \node[asset class] (user) at (159,0) {\assetClassBox{用户}{%
+    + 用户 ID: string\\+ 用户名: string}};
+  \node[asset class] (preference) at (271,0) {\assetClassBox{用户偏好}{%
+    + 偏好 ID: string\\+ 主题: string\\+ 口味: string\\+ 忌口: string}};
+  \node[asset class] (chat) at (383,0) {\assetClassBox{AI 对话记录}{%
+    + 记录 ID: bigint\\+ 会话 ID: string\\+ 用户消息: text\\
+    + AI 回复: text\\+ 对话类型: string\\+ 创建时间: datetime}};
+  \node[asset class] (wallet) at (47,133) {\assetClassBox{钱包账户}{%
+    + 钱包账户 ID: string\\+ 余额: decimal}};
+  \node[asset class] (points) at (159,133) {\assetClassBox{积分账户}{%
+    + 积分账户 ID: string\\+ 积分余额: int}};
+  \node[asset class] (coupon) at (271,133) {\assetClassBox[100pt]{用户优惠券}{%
+    + 用户优惠券 ID: string\\+ 状态: CouponStatus\\+ 使用时间: datetime\\+ 领取时间: datetime}};
+  \node[asset class] (walletLedger) at (47,243) {\assetClassBox{钱包流水}{%
+    + 流水 ID: string\\+ 金额: decimal\\+ 类型: string\\+ 来源: string\\+ 创建时间: datetime}};
+  \node[asset class] (pointsLedger) at (159,243) {\assetClassBox{积分流水}{%
+    + 流水 ID: string\\+ 积分变动: int\\+ 类型: string\\+ 来源: string\\+ 创建时间: datetime}};
+  \node[asset class] (template) at (271,243) {\assetClassBox{优惠券模板}{%
+    + 模板 ID: string\\+ 名称: string\\+ 使用门槛: decimal\\+ 折扣率: decimal\\
+    + 生效时间: datetime\\+ 到期时间: datetime\\+ 使用范围: string}};
+
+  \draw[link] (93.5,28) -- node[count,above,pos=.20]{1}
+    node[count,above,pos=.79]{1} (112.5,28);
+  \draw[link] (205.5,28) -- node[count,above,pos=.10]{1}
+    node[count,below,pos=.82]{0..1} (224.5,28);
+  \draw[link] (user.north) -- ++(0,17pt) -| (chat.north);
+  \node[count,anchor=north east] at ([yshift=16pt]user.north) {1};
+  \node[count,anchor=south east] at (chat.north) {0..*};
+  \draw[link] ([xshift=-30pt]user.south) -- ++(0,-47pt) -| (wallet.north);
+  \draw[link] (user.south) -- node[count,right,near start]{1}
+    node[count,right,near end]{0..1} (points.north);
+  \draw[link] ([xshift=30pt]user.south) -- ++(0,-48pt) -| (coupon.north);
+  \node[count,anchor=north east] at ([xshift=-30pt]user.south) {1};
+  \node[count,anchor=north east] at ([xshift=30pt]user.south) {1};
+  \node[count,anchor=south west] at (wallet.north) {0..1};
+  \node[count,anchor=south west] at (coupon.north) {*};
+  \draw[link] (wallet.south) -- node[count,right,near start]{1}
+    node[count,right,near end]{*} (walletLedger.north);
+  \draw[link] (points.south) -- node[count,right,near start]{1}
+    node[count,right,near end]{*} (pointsLedger.north);
+  \draw[link] (coupon.south) -- node[count,right,near start]{*}
+    node[count,right,near end]{1} (template.north);
+
+  \node[annotation,anchor=north west] (preferencesNote) at (334,118) {%
+    保存主题、口味、\\忌口等偏好};
+  \draw[link,densely dashed] (317.5,64) -| ([xshift=-5pt]preferencesNote.west)
+    -- (preferencesNote.west);
+  \node[annotation,anchor=north west] (ledgerNote) at (7,341) {%
+    资产变化必须保留来源，修改余额时同步记录流水。};
+  \draw[link,densely dashed] (walletLedger.south) -- (walletLedger.south |- ledgerNote.north);
+\end{tikzpicture}

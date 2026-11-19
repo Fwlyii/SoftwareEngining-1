@@ -1,16 +1,16 @@
 % Customer branch of OrderServiceImpl.setOrderState in 6ddb219.
 \begin{tikzpicture}[
   x=1cm,y=-1cm,font=\fontsize{10bp}{11.5bp}\selectfont,
-  participant/.style={draw,line width=.45pt,fill=white,align=center,
+  participant/.style={draw=black!85,line width=.48pt,fill=black!5,align=center,
     minimum height=1cm,inner xsep=2pt,inner ysep=2pt},
-  lifeline/.style={densely dashed,draw=black!55,line width=.35pt},
-  call/.style={-{Triangle[length=4pt,width=4.3pt]},line width=.45pt},
-  reply/.style={-{Stealth[open,length=4.4pt,width=4.2pt]},densely dashed,line width=.45pt},
-  frame/.style={line width=.45pt,draw=black!85},
+  lifeline/.style={dash pattern=on 2.4pt off 2pt,draw=black!46,line width=.34pt},
+  call/.style={-{Triangle[length=4pt,width=4.3pt]},line width=.51pt},
+  reply/.style={-{Stealth[open,length=4.4pt,width=4.2pt]},densely dashed,line width=.46pt},
+  frame/.style={line width=.45pt,draw=black!73},
   tab/.style={anchor=north west,inner xsep=5pt,inner ysep=2pt,font=\bfseries},
   guard/.style={anchor=north west,inner xsep=2pt,inner ysep=2pt},
   message/.style={midway,above,inner sep=1.2pt,fill=white},
-  memo/.style={draw=black!65,line width=.35pt,fill=white,
+  memo/.style={draw=black!62,line width=.35pt,fill=black!4,
     align=left,inner xsep=4pt,inner ysep=3pt,anchor=west}
 ]
   \foreach \x in {.78,2.62,4.79,7.01,9.36,11.55,13.76}
@@ -35,7 +35,7 @@
   \draw[call] (4.79,3.17) -- node[message]{订单存在时查询关联商家} (11.55,3.17);
 
   \draw[frame] (.05,3.34) rectangle (14.79,10.71);
-  \draw[frame] (.05,3.34) -- (1.02,3.34) -- (1.02,3.59) -- (.83,3.76) -- (.05,3.76);
+  \filldraw[frame,fill=black!5] (.05,3.34) -- (1.02,3.34) -- (1.02,3.59) -- (.83,3.76) -- (.05,3.76) -- cycle;
   \node[tab] at (.05,3.34) {alt};
   \node[guard,fill=white] at (1.12,3.37) {[当前顾客的取消条件不满足]};
   \draw[reply] (4.79,4.19) -- node[message]{抛出异常} (2.62,4.19);
@@ -47,8 +47,8 @@
   \draw[call] (4.79,5.51) -- node[message]{\texttt{transition}} (7.01,5.51);
   \draw[call] (7.01,5.94) -- node[message]{原状态仍一致时更新为 8} (11.55,5.94);
   \draw[frame] (.26,6.10) rectangle (14.61,6.88);
-  \draw[frame] (.26,6.10) -- (1.64,6.10) -- (1.64,6.35)
-    -- (1.45,6.52) -- (.26,6.52);
+  \filldraw[frame,fill=black!5] (.26,6.10) -- (1.64,6.10) -- (1.64,6.35)
+    -- (1.45,6.52) -- (.26,6.52) -- cycle;
   \node[tab] at (.26,6.10) {break};
   \node[guard,fill=white] at (1.73,6.12) {[更新行数不为 1]};
   \draw[reply] (7.01,6.70) -- node[message]{抛出状态变化异常} (4.79,6.70);
@@ -63,8 +63,8 @@
   \draw[densely dotted,black!65] (payment-status.east) -- (9.29,8.95);
 
   \draw[frame] (8.75,9.09) rectangle (14.61,9.96);
-  \draw[frame] (8.75,9.09) -- (9.62,9.09) -- (9.62,9.32)
-    -- (9.43,9.49) -- (8.75,9.49);
+  \filldraw[frame,fill=black!5] (8.75,9.09) -- (9.62,9.09) -- (9.62,9.32)
+    -- (9.43,9.49) -- (8.75,9.49) -- cycle;
   \node[tab] at (8.75,9.09) {opt};
   \node[guard,fill=white,font=\fontsize{9.5bp}{11bp}\selectfont] at (9.70,9.10)
     {[钱包支付或抵扣积分大于 0]};

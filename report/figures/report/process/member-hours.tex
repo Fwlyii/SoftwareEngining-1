@@ -1,0 +1,17 @@
+\begin{tikzpicture}[x=.071cm,y=.78cm,
+    every node/.style={font=\footnotesize,inner sep=1.6pt}]
+  \definecolor{hoursInk}{HTML}{1B5760}
+  \definecolor{hoursGrid}{HTML}{DEE5E5}
+  \foreach \tick in {0,20,40,60,80} {
+    \draw[hoursGrid,line width=.42pt] (\tick,0) -- (\tick,4.40);
+    \node[below] at (\tick,0) {\tick};
+  }
+  \draw[black!52,line width=.45pt] (0,4.40) -- (0,0) -- (80,0);
+  \foreach \row/\person/\value in {
+    4/李承文/68.0,3/范文丽/63.0,2/赵紫怡/56.0,1/仲禹潼/51.0} {
+    \node[left=2pt] at (0,\row) {\person};
+    \fill[hoursInk] (0,\row-.24) rectangle (\value,\row+.24);
+    \node[right=2pt,text=hoursInk,font=\footnotesize\bfseries] at (\value,\row) {\value};
+  }
+  \node[below=13pt] at (40,0) {工时 (h)};
+\end{tikzpicture}

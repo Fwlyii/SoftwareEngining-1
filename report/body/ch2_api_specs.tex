@@ -5,11 +5,22 @@
 
 \begingroup
 \setlength{\tabcolsep}{3pt}
+\makeatletter
+\def\Url@space{\penalty\Url@sppen\ }%
+\makeatother
+% 在路径分隔符、泛型括号等边界换行，保留路径分段和类型名称。
+\renewcommand{\code}[1]{{%
+  \fontsize{9.5bp}{13.8bp}\selectfont
+  \def\UrlBreaks{\do\/\do\.\do\_\do\,}%
+  \def\UrlBigBreaks{\do\<\do\-}%
+  \def\UrlNoBreaks{\do\(\do\[\do\{}%
+  \nolinkurl{#1}%
+}}
 
 \Needspace{.19\textheight}
 \section{认证与个人资料}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{认证与个人资料映射索引}\label{tab:api-index-1}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -31,7 +42,7 @@
 3 & \code{PUT /api/user}\newline 登录 & 正文 \code{ProfileUpdateDTO} & \code{PersonVO}（直接返回） \\
 4 & \code{GET /api/user}\newline 登录 & — & \code{PersonVO}（直接返回） \\
 5 & \code{POST /api/register}\newline 公开 & 正文 \code{PersonCreateDTO}（JSON） & \code{PersonVO} \\
-6 & \code{POST /api/register}\newline 公开 & 表单 \code{user}（\code{PersonCreateDTO}），表单 \code{avatar}（选） & \code{PersonVO} \\
+6 & \code{POST /api/register}\newline 公开 & 表单 \code{user}（\code{PersonCreateDTO}），表单 \mbox{\code{avatar}（选）} & \code{PersonVO} \\
 \addlinespace[2pt]
 \multicolumn{4}{@{}l@{}}{\textbf{\code{PermissionApplicationController.java}}}\\*
 7 & \code{POST /api/permission/apply-merchant}\newline \code{BUSINESS_APPLICANT} & — & \code{PermissionApplication} \\
@@ -45,7 +56,7 @@
 \Needspace{.19\textheight}
 \section{店铺与互动}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{店铺与互动映射索引}\label{tab:api-index-2}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -67,13 +78,13 @@
 17 & \code{PATCH /api/businesses/{id}}\newline \code{BUSINESS}/\code{ADMIN} & 正文 \code{BusinessUpdateDTO} & \code{BusinessVO} \\
 18 & \code{GET /api/businesses}\newline \code{ADMIN} & — & \code{List<BusinessVO>} \\
 19 & \code{POST /api/businesses}\newline \code{BUSINESS}/\code{ADMIN} & 正文 \code{BusinessDTO} & \code{BusinessVO} \\
-20 & \code{GET /api/businesses/search}\newline 公开 & \code{keyword}（选），\code{isScore}（选），\code{isSales}（选） & \code{List<BusinessSearchVO>} \\
+20 & \code{GET /api/businesses/search}\newline 公开 & \mbox{\code{keyword}（选）}，\mbox{\code{isScore}（选）}，\mbox{\code{isSales}（选）} & \code{List<BusinessSearchVO>} \\
 21 & \code{POST /api/businesses/apply}\newline \code{BUSINESS}/\code{ADMIN} & 正文 \code{Business} & \code{Integer} \\
-22 & \code{GET /api/businesses/merchant}\newline \code{BUSINESS}/\code{ADMIN} & \code{userId}（选），\code{status}（选） & \code{List<Business>} \\
+22 & \code{GET /api/businesses/merchant}\newline \code{BUSINESS}/\code{ADMIN} & \mbox{\code{userId}（选）}，\mbox{\code{status}（选）} & \code{List<Business>} \\
 23 & \code{GET /api/businesses/active}\newline \code{ADMIN} & — & \code{List<BusinessInfoDTO>} \\
-24 & \code{GET /api/businesses/type}\newline 登录 & \code{type}（选） & \code{List<Business>} \\
+24 & \code{GET /api/businesses/type}\newline 登录 & \mbox{\code{type}（选）} & \code{List<Business>} \\
 25 & \code{GET /api/businesses/public/{id}}\newline 公开 & — & \code{elm\_bk.vo.PublicBusinessVO} \\
-26 & \code{GET /api/businesses/type/presentations}\newline 公开 & \code{type}（选） & \code{List<BusinessSearchVO>} \\
+26 & \code{GET /api/businesses/type/presentations}\newline 公开 & \mbox{\code{type}（选）} & \code{List<BusinessSearchVO>} \\
 27 & \code{GET /api/businesses/id_list}\newline \code{BUSINESS}/\code{ADMIN} & — & \code{List<MerchantStatsVO>} \\
 28 & \code{GET /api/businesses/carousel}\newline 公开 & — & \code{List<BusinessSearchVO>} \\
 29 & \code{PATCH /api/businesses/own/{id}}\newline \code{BUSINESS}/\code{ADMIN} & 正文 \code{BusinessUpdateDTO} & \code{BusinessVO} \\
@@ -81,7 +92,7 @@
 \multicolumn{4}{@{}l@{}}{\textbf{\code{MerchantInteractionController.java}}}\\*
 30 & \code{POST /api/merchant/interaction/update}\newline \code{USER} & 正文 \code{MerchantInteractionDTO} & \code{String} \\
 31 & \code{GET /api/merchant/interaction/collections/{userId}}\newline \code{USER} & — & \code{List<BusinessSearchVO>} \\
-32 & \code{GET /api/merchant/interaction/collections/me}\newline \code{USER} & — & \code{List<BusinessSearchVO>} \\
+32 & \code{GET /api/merchant/interaction/}\allowbreak\mbox{\code{collections/me}}\newline \code{USER} & — & \code{List<BusinessSearchVO>} \\
 33 & \code{GET /api/merchant/interaction/stats/{merchantId}}\newline \code{USER}/\code{BUSINESS}/\code{ADMIN} & — & \code{MerchantStatsVO} \\
 34 & \code{GET /api/merchant/interaction/statsByUserId/{userId}}\newline \code{USER} & — & \code{List<MerchantStatsVO>} \\
 35 & \code{GET /api/merchant/interaction/status}\newline \code{USER} & \code{userId}，\code{merchantId} & \code{MerchantInteractionVO} \\
@@ -91,7 +102,7 @@
 \Needspace{.19\textheight}
 \section{菜品及库存}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{菜品及库存映射索引}\label{tab:api-index-3}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -106,11 +117,11 @@
 \endfoot
 \addlinespace[2pt]
 \multicolumn{4}{@{}l@{}}{\textbf{\code{FoodController.java}}}\\*
-37 & \code{GET /api/foods}\newline 登录 & \code{business}（选），\code{order}（选） & \code{List<FoodVO>} \\
+37 & \code{GET /api/foods}\newline 登录 & \mbox{\code{business}（选）}，\mbox{\code{order}（选）} & \code{List<FoodVO>} \\
 38 & \code{GET /api/foods/{id}}\newline 登录 & — & \code{FoodVO} \\
 39 & \code{POST /api/foods}\newline \code{BUSINESS}/\code{ADMIN} & 正文 \code{FoodDTO} & \code{FoodVO} \\
 40 & \code{PATCH /api/foods/{id}}\newline \code{BUSINESS}/\code{ADMIN} & 正文 \code{FoodDTO} & \code{FoodVO} \\
-41 & \code{GET /api/foods/list}\newline 公开 & \code{businessId}，\code{shelveStatus}（选） & \code{List<FoodItemVO>} \\
+41 & \code{GET /api/foods/list}\newline 公开 & \code{businessId}，\mbox{\code{shelveStatus}（选）} & \code{List<FoodItemVO>} \\
 42 & \code{POST /api/foods/addItem}\newline \code{BUSINESS}/\code{ADMIN} & 正文 \code{FoodCreateDTO} & \code{Long} \\
 43 & \code{PATCH /api/foods/{foodId}/status}\newline \code{BUSINESS}/\code{ADMIN} & \code{shelveStatus} & \code{Long} \\
 44 & \code{POST /api/foods/modifyItem}\newline \code{BUSINESS}/\code{ADMIN} & 正文 \code{FoodUpdateDTO} & \code{Long} \\
@@ -124,7 +135,7 @@
 \Needspace{.19\textheight}
 \section{购物车与收货地址}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{购物车与收货地址映射索引}\label{tab:api-index-4}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -141,9 +152,9 @@
 \multicolumn{4}{@{}l@{}}{\textbf{\code{CartController.java}}}\\*
 48 & \code{POST /api/carts}\newline \code{USER} & 正文 \code{CartItemCreateDTO} & \code{CartVO} \\
 49 & \code{POST /api/carts/items}\newline \code{USER} & 正文 \code{CartItemAddDTO} & \code{Long} \\
-50 & \code{GET /api/carts/list}\newline \code{USER} & \code{businessId}（选） & \code{List<CartItemVO>} \\
+50 & \code{GET /api/carts/list}\newline \code{USER} & \mbox{\code{businessId}（选）} & \code{List<CartItemVO>} \\
 51 & \code{PUT /api/carts/{cartId}}\newline \code{USER} & \code{quantity} & \code{Long} \\
-52 & \code{PUT /api/carts/remarks}\newline \code{USER} & \code{businessId}，\code{remarks}（选） & \code{Integer} \\
+52 & \code{PUT /api/carts/remarks}\newline \code{USER} & \code{businessId}，\mbox{\code{remarks}（选）} & \code{Integer} \\
 53 & \code{DELETE /api/carts}\newline \code{USER} & \code{businessId} & \code{Long} \\
 54 & \code{DELETE /api/carts/{cartId}}\newline \code{USER} & — & \code{Long} \\
 \addlinespace[2pt]
@@ -159,7 +170,7 @@
 \Needspace{.19\textheight}
 \section{订单与履约}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{订单与履约映射索引}\label{tab:api-index-5}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -177,11 +188,11 @@
 61 & \code{GET /api/orders}\newline 登录 & 查询 \code{userId} & \code{List<OrderVO>} \\
 62 & \code{GET /api/orders/{id}}\newline 登录 & — & \code{OrderVO} \\
 63 & \code{POST /api/orders}\newline 登录 & 正文 \code{OrderDTO} & \code{OrderVO} \\
-64 & \code{GET /api/orders/list/business}\newline 登录 & \code{businessId}（选），\code{orderState}（选） & \code{List<OrderItemDetailVO>} \\
-65 & \code{GET /api/orders/list/user}\newline 登录 & \code{orderState}（选） & \code{List<OrderItemVO>} \\
+64 & \code{GET /api/orders/list/business}\newline 登录 & \mbox{\code{businessId}（选）}，\mbox{\code{orderState}（选）} & \code{List<OrderItemDetailVO>} \\
+65 & \code{GET /api/orders/list/user}\newline 登录 & \mbox{\code{orderState}（选）} & \code{List<OrderItemVO>} \\
 66 & \code{GET /api/orders/detail}\newline 登录 & \code{orderId} & \code{OrderItemDetailVO} \\
-67 & \code{PUT /api/orders/status}\newline 登录 & \code{orderState}，\code{orderId}，\code{paymentMethod}（选），\code{pointsToUse}（默认 \code{0}），\code{couponId}（选） & \code{Long} \\
-68 & \code{POST /api/orders/submit}\newline 登录 & \code{businessId}，\code{serviceMode}，\code{addressId}、\code{foodIds}（选），头 \code{Idempotency-Key} 或 \code{requestId} & \code{Long} \\
+67 & \code{PUT /api/orders/status}\newline 登录 & \code{orderState}，\code{orderId}，\mbox{\code{paymentMethod}（选）}，\code{pointsToUse}（默认 \code{0}），\mbox{\code{couponId}（选）} & \code{Long} \\
+68 & \code{POST /api/orders/submit}\newline 登录 & \code{businessId}，\code{serviceMode}，\code{addressId}、\mbox{\code{foodIds}（选）}，头 \code{Idempotency-Key} 或 \code{requestId} & \code{Long} \\
 \addlinespace[2pt]
 \multicolumn{4}{@{}l@{}}{\textbf{\code{DeliveryOrderController.java}}}\\*
 69 & \code{POST /api/v1/orders/{id}/merchant-accept}\newline \code{BUSINESS} & — & \code{DeliveryTaskVO} \\
@@ -195,7 +206,7 @@
 \Needspace{.19\textheight}
 \section{骑手与配送任务}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{骑手与配送任务映射索引}\label{tab:api-index-6}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -213,7 +224,7 @@
 75 & \code{POST /api/v1/riders/applications}\newline \code{RIDER_APPLICANT} & 正文 \code{RiderApplicationDTO} & \code{RiderProfile} \\
 76 & \code{GET /api/v1/riders/me}\newline \code{RIDER_APPLICANT}/\code{RIDER} & — & \code{RiderProfile} \\
 77 & \code{PATCH /api/v1/riders/me/online}\newline \code{RIDER} & 正文 \code{RiderOnlineDTO} & \code{RiderProfile} \\
-78 & \code{GET /api/v1/riders/me/tasks}\newline \code{RIDER} & \code{active}（选） & \code{List<DeliveryTaskVO>} \\
+78 & \code{GET /api/v1/riders/me/tasks}\newline \code{RIDER} & \mbox{\code{active}（选）} & \code{List<DeliveryTaskVO>} \\
 79 & \code{GET /api/v1/riders/available-tasks}\newline \code{RIDER} & — & \code{List<DeliveryTaskVO>} \\
 \addlinespace[2pt]
 \multicolumn{4}{@{}l@{}}{\textbf{\code{DeliveryTaskController.java}}}\\*
@@ -223,13 +234,13 @@
 83 & \code{POST /api/v1/delivery-tasks/{id}/arrive-store}\newline \code{RIDER} & — & \code{DeliveryTaskVO} \\
 84 & \code{POST /api/v1/delivery-tasks/{id}/pickup}\newline \code{RIDER} & — & \code{DeliveryTaskVO} \\
 85 & \code{POST /api/v1/delivery-tasks/{id}/deliver}\newline \code{RIDER} & — & \code{DeliveryTaskVO} \\
-86 & \code{POST /api/v1/delivery-tasks/{id}/exceptions}\newline \code{RIDER} & 正文 \code{DeliveryExceptionCreateDTO} & \code{DeliveryException} \\
+86 & \code{POST /api/v1/delivery-tasks/{id}/exceptions}\newline \code{RIDER} & 正文 \code{DeliveryException}\allowbreak\code{CreateDTO} & \code{DeliveryException} \\
 \end{longtable}
 
 \Needspace{.19\textheight}
 \section{资产与偏好}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{资产与偏好映射索引}\label{tab:api-index-7}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -261,7 +272,7 @@
 \Needspace{.19\textheight}
 \section{评价与通知}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{评价与通知映射索引}\label{tab:api-index-8}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -290,7 +301,7 @@
 \Needspace{.19\textheight}
 \section{平台治理}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{平台治理映射索引}\label{tab:api-index-9}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -308,8 +319,8 @@
 104 & \code{GET /api/admin/countUser}\newline \code{ADMIN} & — & \code{Integer} \\
 105 & \code{GET /api/admin/countBusiness}\newline \code{ADMIN} & — & \code{Integer} \\
 106 & \code{GET /api/admin/countPrice}\newline \code{ADMIN} & — & \code{Double} \\
-107 & \code{GET /api/admin/statistics}\newline \code{ADMIN} & \code{from}（选），\code{to}（选） & \code{Map<String, Object>} \\
-108 & \code{GET /api/admin/statistics/export}\newline \code{ADMIN} & \code{from}（选），\code{to}（选） & CSV 文件 \\
+107 & \code{GET /api/admin/statistics}\newline \code{ADMIN} & \mbox{\code{from}（选）}，\mbox{\code{to}（选）} & \code{Map<String, Object>} \\
+108 & \code{GET /api/admin/statistics/export}\newline \code{ADMIN} & \mbox{\code{from}（选）}，\mbox{\code{to}（选）} & CSV 文件 \\
 \addlinespace[2pt]
 \multicolumn{4}{@{}l@{}}{\textbf{\code{AdminAccountController.java}}}\\*
 109 & \code{GET /api/admin/users}\newline \code{ADMIN} & \code{status}（默认 \code{0}），\code{keyword}（默认 空） & \code{List<AdminUserVO>} \\
@@ -320,17 +331,17 @@
 112 & \code{PATCH /api/admin/reviews/{id}/hide}\newline \code{ADMIN} & — & \code{Void} \\
 \addlinespace[2pt]
 \multicolumn{4}{@{}l@{}}{\textbf{\code{AdminRiderController.java}}}\\*
-113 & \code{GET /api/v1/admin/rider-applications}\newline \code{ADMIN} & \code{status}（选） & \code{List<RiderProfile>} \\
+113 & \code{GET /api/v1/admin/rider-applications}\newline \code{ADMIN} & \mbox{\code{status}（选）} & \code{List<RiderProfile>} \\
 114 & \code{POST /api/v1/admin/rider-applications/{id}/audit}\newline \code{ADMIN} & 正文 \code{RiderAuditDTO} & \code{RiderProfile} \\
-115 & \code{GET /api/v1/admin/delivery-exceptions}\newline \code{ADMIN} & \code{status}（选） & \code{List<DeliveryExceptionVO>} \\
+115 & \code{GET /api/v1/admin/delivery-exceptions}\newline \code{ADMIN} & \mbox{\code{status}（选）} & \code{List<DeliveryExceptionVO>} \\
 116 & \code{GET /api/v1/admin/delivery-tasks/summary}\newline \code{ADMIN} & — & \code{Integer} \\
-117 & \code{POST /api/v1/admin/delivery-exceptions/{id}/resolve}\newline \code{ADMIN} & 正文 \code{DeliveryExceptionResolveDTO} & \code{DeliveryTaskVO} \\
+117 & \code{POST /api/v1/admin/delivery-exceptions/{id}/resolve}\newline \code{ADMIN} & 正文 \code{DeliveryException}\allowbreak\code{ResolveDTO} & \code{DeliveryTaskVO} \\
 \end{longtable}
 
 \Needspace{.19\textheight}
 \section{地图}
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{地图映射索引}\label{tab:api-index-10}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -360,7 +371,7 @@
 
 问答入口与结构化点餐同列在表~\ref{tab:api-index-11}。查看会话时可以按分页读取列表，也可以拿会话编号读取详情。点餐页先用能力接口判断可开启的入口，再按输入类型选择消息、推荐、图片或音频接口。图片和音频都通过表单上传，结果分别用于识菜和生成点餐草稿。
 
-\begin{longtable}{@{}C{.055\linewidth}L{.417\linewidth}L{.318\linewidth}L{.165\linewidth}@{}}
+\begin{longtable}{@{}C{.055\linewidth}L{.381\linewidth}L{.269\linewidth}L{.250\linewidth}@{}}
 \caption{AI 点餐映射索引}\label{tab:api-index-11}\\
 \toprule
 \textbf{编号} & \textbf{方法与路径} & \textbf{主要入参} & \textbf{响应数据} \\
@@ -376,17 +387,17 @@
 \addlinespace[2pt]
 \multicolumn{4}{@{}l@{}}{\textbf{\code{AiChatController.java}}}\\*
 124 & \code{POST /api/ai/chat}\newline 登录 & 正文 \code{AiChatRequestDTO} & \code{AiChatResponseVO} \\
-125 & \code{GET /api/ai/chat/history}\newline 登录 & \code{userId}（选），\code{page}（默认 \code{1}），\code{size}（默认 \code{20}） & \code{List<AiChatHistoryVO>} \\
+125 & \code{GET /api/ai/chat/history}\newline 登录 & \mbox{\code{userId}（选）}，\code{page}（默认 \code{1}），\code{size}（默认 \code{20}） & \code{List<AiChatHistoryVO>} \\
 126 & \code{GET /api/ai/chat/history/session/{sessionId}}\newline 登录 & — & \code{List<AiChatHistoryVO>} \\
 127 & \code{DELETE /api/ai/chat/history/{historyId}}\newline 登录 & — & \code{Boolean} \\
 128 & \code{POST /api/ai/chat/history/clean}\newline 登录 & \code{keepCount}（默认 \code{50}） & \code{Boolean} \\
 129 & \code{GET /api/ai/chat/health}\newline 登录 & — & \code{String} \\
-130 & \code{GET /api/ai/chat/recommendations}\newline 登录 & \code{query}（默认 空），\code{budget}（选） & \code{List<AiRecommendationVO>} \\
+130 & \code{GET /api/ai/chat/recommendations}\newline 登录 & \code{query}（默认 空），\mbox{\code{budget}（选）} & \code{List<AiRecommendationVO>} \\
 \addlinespace[2pt]
 \multicolumn{4}{@{}l@{}}{\textbf{\code{AssistantController.java}}}\\*
 131 & \code{GET /api/v1/assistant/capabilities}\newline 登录 & — & \code{AssistantCapabilityVO} \\
-132 & \code{POST /api/v1/assistant/messages}\newline 登录 & 正文 \code{AssistantMessageRequestDTO} & \code{AssistantMessageVO} \\
-133 & \code{POST /api/v1/recommendations}\newline 登录 & 正文 \code{RecommendationRequestDTO}（选） & \code{List<AiRecommendationVO>} \\
+132 & \code{POST /api/v1/assistant/messages}\newline 登录 & 正文 \code{AssistantMessage}\allowbreak\code{RequestDTO} & \code{AssistantMessageVO} \\
+133 & \code{POST /api/v1/recommendations}\newline 登录 & 正文 \code{Recommendation}\allowbreak\mbox{\code{RequestDTO}（选）} & \code{List<AiRecommendationVO>} \\
 134 & \code{POST /api/v1/dish-recognitions}\newline 登录 & 表单 \code{image} & \code{DishRecognitionVO} \\
 135 & \code{POST /api/v1/voice-order-drafts}\newline 登录 & 表单 \code{audio} & \code{VoiceOrderDraftVO} \\
 \end{longtable}

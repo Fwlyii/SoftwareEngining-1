@@ -10,30 +10,7 @@
 
 \begin{figure}[!htbp]
   \centering
-  \resizebox{.86\linewidth}{!}{%
-\begin{tikzpicture}[
-    node distance=0.75cm and 0.65cm,
-    box/.style={rectangle,rounded corners=4pt,draw=tjublue,thick,fill=lightblue,align=center,minimum width=2.45cm,minimum height=1.2cm,font=\small},
-    gate/.style={diamond,aspect=1.6,draw=accentorange,thick,fill=orange!8,align=center,font=\scriptsize,inner sep=1.5pt},
-    arr/.style={-{Stealth[length=2mm]},thick,tjublue}
-  ]
-    \node[box] (pb) {\textbf{Product Backlog}\\REQM 需求基线};
-    \node[box,right=of pb] (sp) {\textbf{Sprint 规划}\\PP 任务估算};
-    \node[box,right=of sp] (dev) {\textbf{特性分支开发}\\CM / PMC 日同步};
-    \node[gate,right=of dev] (qa) {\textbf{TDD 与}\\PR 门禁};
-    \node[box,below=1.0cm of qa] (rev) {\textbf{Sprint 评审}\\VAL 增量验收};
-    \node[box,left=of rev] (retro) {\textbf{Sprint 回顾}\\OPF 过程改进};
-    \node[box,left=of retro] (rel) {\textbf{基线交付}\\VER 归档与部署};
-
-    \draw[arr] (pb) -- (sp);
-    \draw[arr] (sp) -- (dev);
-    \draw[arr] (dev) -- (qa);
-    \draw[arr] (qa) -- node[right,font=\scriptsize]{575项测试通过} (rev);
-    \draw[arr] (rev) -- (retro);
-    \draw[arr] (retro) -- (rel);
-    \draw[arr,dashed,accentgreen] (retro.north) |- node[pos=0.25,left,font=\scriptsize]{改进项反哺下轮} (sp.south);
-  \end{tikzpicture}
-}
+  \resizebox{.92\linewidth}{!}{\input{figures/uml/scrum-process}}
   \caption{CMM3 过程域与 Scrum 敏捷迭代融合工作流图}\label{fig:proc-workflow}
 \end{figure}
 
@@ -47,14 +24,14 @@
 
 \subsection{需求、迭代与代码怎样交接}
 
-赵紫怡作为 Product Owner 决定需求范围和先后，李承文作为 Scrum Master 组织迭代并协调阻塞、风险与合并检查。四个人一起交付每轮增量。需求和进度在飞书里可以看到，代码与评审意见留在 GitHub。仓库与协作空间见图~\ref{fig:proc-repo} 和图~\ref{fig:proc-feishu}。
+赵紫怡作为 Product Owner 决定需求范围和先后，李承文作为 Scrum Master 组织迭代并协调阻塞、风险与合并检查。四个人一起交付每轮增量。需求和进度在飞书里可以看到，代码与评审意见留在 GitHub。图~\ref{fig:proc-repo} 是课程提供的 Gitee 基础仓库，图~\ref{fig:proc-feishu} 是本组的飞书共享空间。
 
 \begin{figure}[!htbp]
   \centering
   \begin{minipage}[t]{.485\linewidth}
     \centering\vspace{0pt}
     \includegraphics[width=\linewidth,height=.23\textheight,keepaspectratio]{figures/report/process/course-repository.png}
-    \captionof{figure}{GitHub 课程仓库分支、模块目录与提交基线概览}\label{fig:proc-repo}
+    \captionof{figure}{Gitee 课程仓库分支、目录与提交记录}\label{fig:proc-repo}
   \end{minipage}\hfill
   \begin{minipage}[t]{.485\linewidth}
     \centering\vspace{0pt}
@@ -65,7 +42,7 @@
 
 \subsection{需求记录与合并检查}
 
-同一次变更在不同地方各留下了一份记录。自取的需求单写了谁负责、结算要怎样通过；分支上有计价与页面的改动；测试人员按同一规则核对自取与外送，保留下单记录和接口结果。后来再碰到这一块时，我们可以从飞书任务追到具体版本，找到当时为什么这样改。
+一次自取规则变更留下了几份可以对照的记录。需求单写明负责人和自取结算应满足的条件，分支保留计价与页面的改动。测试人员依照需求分别核对自取与外送，保存下单记录和接口结果。后来再改这项功能时，可以从飞书任务追到具体版本，查到上次调整的原因。
 
 提交通过评审时，仓库还要经得起独立检出和部署。\code{scripts/check-repository.mjs} 检查 README、需求规格、部署说明及文件内的相对链接，也核对 Compose 引用的挂载文件是否存在。部署目标从配置中读取，脚本内的个人绝对路径和硬编码部署地址会被检查出来。它能发现“在某位成员电脑上可以运行，换一台机器就找不到文件”的问题。接口、事务和页面行为继续由各自的测试覆盖，仓库检查主要关注交付材料与运行环境能否一起迁移。
 
@@ -80,7 +57,7 @@
 \begin{reportpoints}
 \item 顾客下单和商家履约作为基础，加入骑手配送工作台。地图负责选址与导航，资产模块覆盖模拟钱包、会员、优惠券及积分，多模态 AI 辅助顾客点餐。
 \item 后端使用 \code{elm_bk}（Spring Boot 3.4.6、Java 17），前端使用 \code{elmclient}（Vue 3）。成员在特性分支上开发，发起 PR 后由 Scrum Master 复核并合入 \code{main}。
-\item 金额、库存和访问权限由服务端核定。下单时将菜品名称和成交单价写入 \code{orderdetailet}，历史明细直接读取成交记录。
+\item 服务端负责核对金额、库存和访问权限。菜品名称和成交单价在下单时写入 \mbox{\code{orderdetailet}}，历史明细读取这份成交记录。
 \item 主开发从 9 月 1 日到 9 月 19 日，分为 9 月 1--7 日、8--12 日和 13--19 日三轮。9 月下旬继续整理跨组交叉验收与交付文档。
 \end{reportpoints}
 
@@ -92,7 +69,7 @@
   \centering
   \caption{项目核心工程活动 RACI 责任矩阵}\label{tab:raci}
   \reporttablesize
-  \begin{tabular}{@{}L{.38\linewidth}C{.13\linewidth}C{.13\linewidth}C{.13\linewidth}C{.13\linewidth}@{}}
+  \begin{tabular}{@{}L{.405\linewidth}C{.135\linewidth}C{.135\linewidth}C{.135\linewidth}C{.135\linewidth}@{}}
 \toprule
 \textbf{工程活动 / 交付物} & \textbf{范文丽} & \textbf{李承文} & \textbf{赵紫怡} & \textbf{仲禹潼} \\
 \midrule
@@ -102,7 +79,7 @@ SRS 编写与 UML 建模 & C & C & R/A & C \\
 MySQL 表结构与增量迁移设计 & I & C & R/A & I \\
 AI 智能点餐与多模态适配 & R & C & R/A & C \\
 高德地图选址、距离与导航 & C & C & I & R/A \\
-自动化测试、WPS 缺陷台账与交叉验收 & C & C & C & R/A \\
+自动化测试、WPS 缺陷台账与\mbox{交叉验收} & C & C & C & R/A \\
 Docker 容器编排与 PR 主干合并 & I & R/A & I & C \\
 \bottomrule
   \end{tabular}
@@ -163,17 +140,31 @@ AI 点餐由赵紫怡和范文丽接起来。赵紫怡维护需求和模型接�
 \begin{figure}[!htbp]
   \centering
   \resizebox{.86\linewidth}{!}{%
-\begin{tikzpicture}[x=1.45cm,y=0.055cm]
-    \draw[->] (0,0) -- (7.6,0) node[right,font=\scriptsize] {日期 (9月)};
-    \draw[->] (0,0) -- (0,92) node[above,font=\scriptsize] {剩余工时 (h)};
-    \foreach \d/\lbl in {0/9.1,1/9.2,2/9.3,3/9.4,4/9.5,5/9.6,6/9.7}
-      {\draw[gray!25] (\d,0) -- (\d,85); \node[below,font=\scriptsize] at (\d,0) {\lbl};}
-    \foreach \y in {0,20,40,60,80}
-      {\draw[gray!25] (0,\y) -- (7,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
-    \draw[dashed,mutedgray,thick] (0,80) -- (6,0);
-    \draw[thick,tjublue,mark=*] plot coordinates {(0,80) (1,70) (2,54) (3,45) (4,42) (5,22) (6,0)};
-    \node[font=\scriptsize,tjublue] at (4.5,65) {— 实际剩余工时};
-    \node[font=\scriptsize,mutedgray] at (4.5,76) {- - 理想基准线};
+\begin{tikzpicture}[x=1.52cm,y=0.059cm]
+    \definecolor{proctrend}{HTML}{25465D}
+    \definecolor{procaxes}{HTML}{3F505E}
+    \definecolor{procgrid}{HTML}{DFE5E9}
+    \foreach \y in {0,20,40,60,80} {
+      \draw[procgrid,line width=.4pt] (0,\y) -- (6.72,\y);
+      \node[left,font=\scriptsize,text=procaxes] at (0,\y) {\y};
+    }
+    \draw[procaxes,line width=.52pt] (0,90) -- (0,0) -- (6.72,0);
+    \foreach \d/\lbl in {0/9.1,1/9.2,2/9.3,3/9.4,4/9.5,5/9.6,6/9.7} {
+      \draw[procaxes,line width=.45pt] (\d,0) -- ++(0,-2.5pt);
+      \node[below=3pt,font=\scriptsize,text=procaxes] at (\d,0) {\lbl};
+    }
+    \node[anchor=south west,inner sep=1pt,font=\scriptsize,text=procaxes] at (0,90) {剩余工时 (h)};
+    \node[anchor=north east,inner sep=0pt,font=\scriptsize,text=procaxes] at (6.72,-15pt) {日期 (9月)};
+
+    \draw[procaxes,dash pattern=on 3pt off 2.6pt,line width=.62pt] (0,80) -- (6,0);
+    \draw[proctrend,line width=.92pt] plot[mark=*,mark size=1.6pt,mark options={solid,fill=white,line width=.72pt}]
+      coordinates { (0,80) (1,70) (2,54) (3,45) (4,42) (5,22) (6,0) };
+
+    \draw[procaxes,dash pattern=on 3pt off 2.6pt,line width=.62pt]
+      (4.05,78) -- ++(16pt,0) node[right=3pt,font=\scriptsize,text=procaxes] {理想基准线};
+    \draw[proctrend,line width=.92pt] (4.05,69)
+      -- ++(16pt,0) node[right=3pt,font=\scriptsize,text=procaxes] {实际剩余工时};
+    \draw[proctrend,fill=white,line width=.72pt] (4.235,69) circle[radius=1.6pt];
   \end{tikzpicture}
 }
   \caption{Sprint 1 迭代工时燃尽图（9 月 1 日--9 月 7 日，总工时 80 h）}\label{fig:burndown-s1}
@@ -184,11 +175,12 @@ AI 点餐由赵紫怡和范文丽接起来。赵紫怡维护需求和模型接�
 \toprule
 \textbf{评估维度} & \textbf{核心结论与验收事实} & \textbf{沉淀行动项（Try）} \\
 \midrule
-增量评审（Review） & \code{US001--US007} 中顾客核心点餐链路全部跑通。完成认证与商品目录 2 轮 TDD 提交。Docker 基础服务可正常启动。 & 在 Sprint 2 全面推行“RED-GREEN-REFACTOR”三步提交模式。 \\
-过程回顾（Keep/Prob） & 保留飞书任务与 PR 审查节奏。初版接口未对齐自取规则，结算联调中补做了调整。 & 新增“业务枚举与状态编码变更必须在组会同步后再编码”规范。 \\
+增量评审（Review） & \code{US001--US007} 中顾客核心点餐链路全部跑通。完成认证与商品目录 2 轮 TDD 提交。Docker 基础服务可正常启动。 & 在 Sprint 2 全面推行“RED-GREEN-REFACTOR”三步\mbox{提交模式。} \\
+过程回顾（Keep/Prob） & 保留飞书任务与 PR 审查节奏。初版接口未对齐自取规则，结算联调中\mbox{补做了调整。} & 新增“业务枚举与状态编码变更必须在组会同步后再编码”规范。 \\
+\bottomrule
 \end{longtable}
 
-\subsection{Sprint 2 商家工作台、骑手配送闭环与资产积分系统（9 月 8 日--9 月 12 日）}
+\subsection[Sprint 2 商家工作台、骑手配送闭环\texorpdfstring{\protect\newline}{}与资产积分系统（9 月 8 日--9 月 12 日）]{Sprint 2 商家工作台、骑手配送闭环与资产积分系统（9 月 8 日--9 月 12 日）}
 
 \subsubsection{迭代目标与任务拆解}
 第二轮计划 40 个故事点、68 小时。商家接单并备餐，骑手领取配送任务，最后由顾客确认收货。沿这条路径，我们把模拟钱包、优惠券、积分、评价和站内通知接进来，也开始整合新的登录页和第一版 AI。任务见表~\ref{tab:sprint2-tasks}。
@@ -196,11 +188,11 @@ AI 点餐由赵紫怡和范文丽接起来。赵紫怡维护需求和模型接�
 \subsubsection{每日站会与工作日志（问题与解决过程）}
 第二轮的检验对象从顾客自己的订单扩大到整条履约链路。商家先接单备餐，骑手在可接任务池中接单，之后依次到店、取餐、送达，顾客在订单页查看状态。各端虽然各自刷新列表，显示内容都取决于服务端认可的订单和配送任务状态。附录表~\ref{tab:sprint2-daily} 记录了 9 月 8--12 日的联调与改动线索。
 
-抢单阶段发现两个骑手同时点击时，任务归属可能被后一次请求覆盖。团队在 \code{delivery_task} 上用 \code{version} 记录版本，更新时同时判断当前状态与版本是否符合，只有成功更新的一方取得任务；页面根据服务端响应刷新任务池。这样，商家和顾客侧看到的履约状态也能沿同一笔订单继续推进。订单名称快照也在 9 月 9 日补齐了从历史查询入口读取快照的验证。当商家再维护商品资料时，这个查询用例仍然适用。
+两位骑手同时抢单时，后到的请求可能覆盖任务归属。团队在 \mbox{\code{delivery_task}} 上用 \mbox{\code{version}} 记录版本，更新时同时检查任务状态和版本，只有更新成功的一方才能取得任务。页面根据服务端响应刷新任务池，商家和顾客也能继续跟踪同一笔订单的进度。9 月 9 日还补测了历史查询是否读取订单名称快照，商家更新商品资料后，可以沿用这个用例复测。
 
 把资产与订单连起来后，团队还发现新人券可能在重复请求下多次领取。领取操作增加了判重与唯一领取校验。钱包余额、积分和优惠券用于本项目的模拟支付，联调时通过顾客结算和资产流水进行核对，订单取消也要检查相应的恢复结果。对业务规则的修改同回归用例一起合入，便于在下一轮整合管理端时重跑。
 
-登录页视觉和 AI 入口调整都改到了前端的公共区域。范文丽将登录页背景移到独立作用域，给视觉改动补上回归检查；未登录时，请求会经过登录状态判断，游客浏览因此可以继续使用公共页面。9 月 12 日的四端集中联调发现返回循环、窄屏溢出等体验问题，团队在 WPS 台账中写明入口、操作顺序和截图，并将跨页面修复列为 Sprint~3 的跟进项。
+登录页视觉和 AI 入口调整都涉及前端的公共区域。范文丽把登录页背景移到独立作用域，并补上视觉回归检查。请求经过登录状态判断后，游客仍可浏览公共页面。9 月 12 日的四端联调发现了返回循环、窄屏溢出等问题。团队在 WPS 台账中记下入口和操作顺序，附上截图，并把跨页面修复列入 Sprint~3。
 
 和第一轮相比，第二轮验收需要切换多类账号。商家能看到待处理订单，骑手端要等订单达到可配送状态才出现任务，顾客在前两个角色推动状态之后再检查进度。任何一端没及时刷新，都可能让下一步看起来无法继续。联调记录因此同时写下操作方和期望状态，在页面与后端响应不一致时，先核对订单当前状态，再定位客户端显示或服务端动作。
 
@@ -212,17 +204,31 @@ AI 点餐由赵紫怡和范文丽接起来。赵紫怡维护需求和模型接�
 \begin{figure}[!htbp]
   \centering
   \resizebox{.86\linewidth}{!}{%
-\begin{tikzpicture}[x=1.8cm,y=0.06cm]
-    \draw[->] (0,0) -- (5.5,0) node[right,font=\scriptsize] {日期 (9月)};
-    \draw[->] (0,0) -- (0,80) node[above,font=\scriptsize] {剩余工时 (h)};
-    \foreach \d/\lbl in {0/9.8,1/9.9,2/9.10,3/9.11,4/9.12}
-      {\draw[gray!25] (\d,0) -- (\d,72); \node[below,font=\scriptsize] at (\d,0) {\lbl};}
-    \foreach \y in {0,20,40,60}
-      {\draw[gray!25] (0,\y) -- (4.5,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
-    \draw[dashed,mutedgray,thick] (0,68) -- (4,0);
-    \draw[thick,accentorange,mark=*] plot coordinates {(0,68) (1,54) (2,42) (3,20) (4,0)};
-    \node[font=\scriptsize,accentorange] at (3.2,58) {— 实际剩余工时};
-    \node[font=\scriptsize,mutedgray] at (3.2,68) {- - 理想基准线};
+\begin{tikzpicture}[x=2.13cm,y=0.067cm]
+    \definecolor{proctrend}{HTML}{287B78}
+    \definecolor{procaxes}{HTML}{3F505E}
+    \definecolor{procgrid}{HTML}{DFE5E9}
+    \foreach \y in {0,20,40,60} {
+      \draw[procgrid,line width=.4pt] (0,\y) -- (4.72,\y);
+      \node[left,font=\scriptsize,text=procaxes] at (0,\y) {\y};
+    }
+    \draw[procaxes,line width=.52pt] (0,79) -- (0,0) -- (4.72,0);
+    \foreach \d/\lbl in {0/9.8,1/9.9,2/9.10,3/9.11,4/9.12} {
+      \draw[procaxes,line width=.45pt] (\d,0) -- ++(0,-2.5pt);
+      \node[below=3pt,font=\scriptsize,text=procaxes] at (\d,0) {\lbl};
+    }
+    \node[anchor=south west,inner sep=1pt,font=\scriptsize,text=procaxes] at (0,79) {剩余工时 (h)};
+    \node[anchor=north east,inner sep=0pt,font=\scriptsize,text=procaxes] at (4.72,-15pt) {日期 (9月)};
+
+    \draw[procaxes,dash pattern=on 3pt off 2.6pt,line width=.62pt] (0,68) -- (4,0);
+    \draw[proctrend,line width=.92pt] plot[mark=*,mark size=1.6pt,mark options={solid,fill=white,line width=.72pt}]
+      coordinates { (0,68) (1,54) (2,42) (3,20) (4,0) };
+
+    \draw[procaxes,dash pattern=on 3pt off 2.6pt,line width=.62pt]
+      (2.75,68) -- ++(16pt,0) node[right=3pt,font=\scriptsize,text=procaxes] {理想基准线};
+    \draw[proctrend,line width=.92pt] (2.75,59)
+      -- ++(16pt,0) node[right=3pt,font=\scriptsize,text=procaxes] {实际剩余工时};
+    \draw[proctrend,fill=white,line width=.72pt] (2.882,59) circle[radius=1.6pt];
   \end{tikzpicture}
 }
   \caption{Sprint 2 迭代工时燃尽图（9 月 8 日--9 月 12 日，总工时 68 h）}\label{fig:burndown-s2}
@@ -234,7 +240,8 @@ AI 点餐由赵紫怡和范文丽接起来。赵紫怡维护需求和模型接�
 \textbf{评估维度} & \textbf{核心结论与验收事实} & \textbf{沉淀行动项（Try）} \\
 \midrule
 增量评审（Review） & \code{US008--US016} 商家接单出餐、骑手乐观锁抢单送达、钱包积分抵扣与评价回复均已联调成功，WPS 缺陷表正式运转。 & 将集中联调暴露的“返回死循环、窄屏溢出”纳入 Sprint 3 优先修复。 \\
-过程回顾（Keep/Prob） & 保留订单名称快照的 TDD 回归。登录等跨分支样式合并暴露了全局 CSS 覆盖冲突。 & Sprint 3 推行页面级主题变量与壳层对齐规范。 \\
+过程回顾（Keep/Prob） & 保留订单名称快照的 TDD 回归。登录等跨分支\mbox{样式合并}暴露了全局 CSS \mbox{覆盖冲突。} & Sprint 3 推行页面级主题变量与\mbox{壳层对齐规范。} \\
+\bottomrule
 \end{longtable}
 
 \subsection{Sprint 3 平台治理、多模态 AI、地图与回归（9 月 13--19 日）}
@@ -275,17 +282,31 @@ REFACTOR & \code{d319c5e} & 整理共用导航规则，继续执行路由回归�
 \begin{figure}[H]
   \centering
   \resizebox{.86\linewidth}{!}{%
-\begin{tikzpicture}[x=1.45cm,y=0.055cm]
-    \draw[->] (0,0) -- (7.6,0) node[right,font=\scriptsize] {日期 (9月)};
-    \draw[->] (0,0) -- (0,92) node[above,font=\scriptsize] {剩余工时 (h)};
-    \foreach \d/\lbl in {0/9.13,1/9.14,2/9.15,3/9.16,4/9.17,5/9.18,6/9.19}
-      {\draw[gray!25] (\d,0) -- (\d,85); \node[below,font=\scriptsize] at (\d,0) {\lbl};}
-    \foreach \y in {0,20,40,60,80}
-      {\draw[gray!25] (0,\y) -- (7,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
-    \draw[dashed,mutedgray,thick] (0,82) -- (6,0);
-    \draw[thick,accentgreen,mark=*] plot coordinates {(0,82) (1,68) (2,48) (3,26) (4,14) (5,6) (6,0)};
-    \node[font=\scriptsize,accentgreen] at (4.5,65) {— 实际剩余工时};
-    \node[font=\scriptsize,mutedgray] at (4.5,76) {- - 理想基准线};
+\begin{tikzpicture}[x=1.52cm,y=0.059cm]
+    \definecolor{proctrend}{HTML}{A87435}
+    \definecolor{procaxes}{HTML}{3F505E}
+    \definecolor{procgrid}{HTML}{DFE5E9}
+    \foreach \y in {0,20,40,60,80} {
+      \draw[procgrid,line width=.4pt] (0,\y) -- (6.72,\y);
+      \node[left,font=\scriptsize,text=procaxes] at (0,\y) {\y};
+    }
+    \draw[procaxes,line width=.52pt] (0,92) -- (0,0) -- (6.72,0);
+    \foreach \d/\lbl in {0/9.13,1/9.14,2/9.15,3/9.16,4/9.17,5/9.18,6/9.19} {
+      \draw[procaxes,line width=.45pt] (\d,0) -- ++(0,-2.5pt);
+      \node[below=3pt,font=\scriptsize,text=procaxes] at (\d,0) {\lbl};
+    }
+    \node[anchor=south west,inner sep=1pt,font=\scriptsize,text=procaxes] at (0,92) {剩余工时 (h)};
+    \node[anchor=north east,inner sep=0pt,font=\scriptsize,text=procaxes] at (6.72,-15pt) {日期 (9月)};
+
+    \draw[procaxes,dash pattern=on 3pt off 2.6pt,line width=.62pt] (0,82) -- (6,0);
+    \draw[proctrend,line width=.92pt] plot[mark=*,mark size=1.6pt,mark options={solid,fill=white,line width=.72pt}]
+      coordinates { (0,82) (1,68) (2,48) (3,26) (4,14) (5,6) (6,0) };
+
+    \draw[procaxes,dash pattern=on 3pt off 2.6pt,line width=.62pt]
+      (4.05,79) -- ++(16pt,0) node[right=3pt,font=\scriptsize,text=procaxes] {理想基准线};
+    \draw[proctrend,line width=.92pt] (4.05,70)
+      -- ++(16pt,0) node[right=3pt,font=\scriptsize,text=procaxes] {实际剩余工时};
+    \draw[proctrend,fill=white,line width=.72pt] (4.235,70) circle[radius=1.6pt];
   \end{tikzpicture}
 }
   \caption{Sprint 3 迭代工时燃尽图（9 月 13 日--9 月 19 日，总工时 82 h）}\label{fig:burndown-s3}
@@ -298,6 +319,7 @@ REFACTOR & \code{d319c5e} & 整理共用导航规则，继续执行路由回归�
 \midrule
 增量评审（Review） & \code{US017--US022} 管理治理、多模态 AI、高德适配与四端看板全部交付，575 项自动化测试 100\% 通过。 & 形成可一键启动的 Docker 演示镜像与差异演进清单。 \\
 过程回顾（Keep/Prob） & 集成前后继续执行 TDD 与契约测试。未配置外部 API 密钥的界面降级测试集中在后期完成。 & 后续外部依赖在设计初期即同步定义“降级提示与测试替身”。 \\
+\bottomrule
 \end{longtable}
 
 \FloatBarrier

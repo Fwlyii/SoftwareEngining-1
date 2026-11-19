@@ -1,0 +1,27 @@
+\begin{tikzpicture}[x=3.83cm,y=1.15cm,
+    axis/.style={font=\small,inner sep=1.5pt,text=black!80},
+    heading/.style={font=\small\bfseries,inner sep=0pt},
+    cell/.style={font=\linespread{1}\fontsize{9bp}{10.5bp}\selectfont,
+      align=center,inner sep=2pt}]
+  \definecolor{riskEmpty}{HTML}{F4F5F5}
+  \definecolor{riskMedium}{HTML}{F6EDDB}
+  \definecolor{riskHigh}{HTML}{F1D9BD}
+  \definecolor{riskCritical}{HTML}{E7B7AB}
+  \definecolor{riskInk}{HTML}{724332}
+  \foreach \x/\y/\tone in {
+    0/0/riskEmpty,1/0/riskEmpty,2/0/riskEmpty,
+    0/1/riskEmpty,1/1/riskMedium,2/1/riskHigh,
+    0/2/riskEmpty,1/2/riskHigh,2/2/riskCritical} {
+    \fill[\tone] (\x+.012,\y+.031) rectangle (\x+.988,\y+.969);
+  }
+  \node[heading,anchor=south east] at (-.08,3) {发生概率};
+  \foreach \y/\level in {2.5/高,1.5/中,.5/低}
+    \node[axis,left=3pt] at (0,\y) {\level};
+  \foreach \x/\level in {.5/低,1.5/中,2.5/高}
+    \node[axis,below=3pt] at (\x,0) {\level};
+  \node[heading,anchor=north] at (1.5,-.50) {影响程度};
+  \node[cell] at (1.5,2.5) {\textbf{高风险}\\R005, R009};
+  \node[cell,text=riskInk] at (2.5,2.5) {\textbf{极高风险}\\R001};
+  \node[cell] at (1.5,1.5) {\textbf{中风险}\\R006, R008, R012};
+  \node[cell] at (2.5,1.5) {\textbf{高风险}\\R002, R003, R004\\R007, R010, R011};
+\end{tikzpicture}

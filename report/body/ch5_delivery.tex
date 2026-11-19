@@ -19,7 +19,7 @@
 
 游客反复跳回登录弹窗时，台账记下了“未登录、进入店铺、再返回”的顺序。后来复测的人起点一样，看到的结果也可以直接和原截图对比。我们把现象、模块、复现步骤、截图和修复状态放在一行，界面建议另记，先修会卡住操作的问题。
 
-重复领券要从一位已经领过新人券的用户开始测。我们把这条现象记为 BUG-04，从领取前后的券列表和资产流水判断服务有没有多发一张券。后端的 \code{AssetServiceTest} 还把三种情况拆开检查。成功发券时写入应按顺序执行，用户已经领过就拒绝写入，发券失败则不记成功流水。有了这组断言，页面刷新后即使显示正常，重复写入也能被测出来。
+复测 BUG-04 时，先用已经领过新人券的账号再次领取，再比对前后的券列表和资产流水。后端由 \mbox{\code{AssetServiceTest}} 检查三种情况。成功发券时按顺序写入，用户已经领过就拒绝写入，发券失败则不记成功流水。这组断言直接检查写入结果，能发现页面刷新后看不出来的重复记录。
 
 换到另一个角色时，我们记下它从哪里进入、看到订单处于哪一步、当时有哪些动作可做。顾客的进度和工作台对不上时，记录可以帮我们找出最后一个一致的状态，再去查下一次操作。
 
@@ -57,26 +57,34 @@
   \begin{minipage}[c]{.74\linewidth}
     \centering
     \resizebox{\linewidth}{!}{%
-  \begin{tikzpicture}[x=0.072cm,y=0.58cm]
-    \draw[->] (0,0) -- (125,0) node[right,font=\scriptsize] {用例数};
-    \draw[->] (0,0) -- (0,8.2);
-    \foreach \x in {0,20,40,60,80,100,120}
-      {\draw[gray!25] (\x,0) -- (\x,7.8); \node[below,font=\scriptsize] at (\x,0) {\x};}
-    \node[left,font=\scriptsize] at (-1,7.0) {前端导航与安全契约};
-    \fill[tjublue] (0,6.7) rectangle (102,7.3); \node[right,font=\scriptsize] at (102,7.0) {102};
-    \node[left,font=\scriptsize] at (-1,6.0) {前端下单、定位与主题};
-    \fill[tjublue!70] (0,5.7) rectangle (84,6.3); \node[right,font=\scriptsize] at (84,6.0) {84};
-    \node[left,font=\scriptsize] at (-1,5.0) {前端 AI 与商家看板逻辑};
-    \fill[tjublue!45] (0,4.7) rectangle (49,5.3); \node[right,font=\scriptsize] at (49,5.0) {49};
-
-    \node[left,font=\scriptsize] at (-1,4.0) {后端交易、定价与快照};
-    \fill[accentorange] (0,3.7) rectangle (106,4.3); \node[right,font=\scriptsize] at (106,4.0) {106};
-    \node[left,font=\scriptsize] at (-1,3.0) {后端认证、权限与边界};
-    \fill[accentgreen] (0,2.7) rectangle (82,3.3); \node[right,font=\scriptsize] at (82,3.0) {82};
-    \node[left,font=\scriptsize] at (-1,2.0) {后端骑手、管理与审核};
-    \fill[accentorange!70] (0,1.7) rectangle (78,2.3); \node[right,font=\scriptsize] at (78,2.0) {78};
-    \node[left,font=\scriptsize] at (-1,1.0) {后端 AI 熔断与高德地图};
-    \fill[accentgreen!65] (0,0.7) rectangle (74,1.3); \node[right,font=\scriptsize] at (74,1.0) {74};
+  \definecolor{barFrontend}{HTML}{25465D}
+  \definecolor{barBackend}{HTML}{287B78}
+  \definecolor{barInk}{HTML}{243348}
+  \begin{tikzpicture}[
+    x=1.55pt,y=16pt,
+    every node/.style={font=\fontsize{8.2bp}{10bp}\selectfont,text=barInk,inner sep=0pt},
+    value/.style={font=\fontsize{8.2bp}{10bp}\selectfont\bfseries}
+  ]
+    \foreach \tick in {0,20,40,60,80,100,120} {
+      \draw[draw=barInk!16,line width=.38pt] (\tick,0) -- (\tick,7.8);
+      \node[below=3pt] at (\tick,0) {\tick};
+    }
+    \draw[draw=barInk!80,line width=.55pt] (0,7.8) -- (0,0) -- (120,0);
+    \draw[draw=barInk!25,line width=.42pt,densely dashed] (0,4.51) -- (120,4.51);
+    \node[anchor=north east] at (120,-.75) {用例数};
+    \foreach \row/\labeltext/\countvalue/\barcolor in {
+      7.2/{前端导航与安全契约}/102/barFrontend,
+      6.2/{前端下单、定位与主题}/84/barFrontend,
+      5.2/{前端 AI 与商家看板逻辑}/49/barFrontend,
+      3.85/{后端交易、定价与快照}/106/barBackend,
+      2.85/{后端认证、权限与边界}/82/barBackend,
+      1.85/{后端骑手、管理与审核}/78/barBackend,
+      .85/{后端 AI 熔断与高德地图}/74/barBackend%
+    } {
+      \node[left=5pt] at (0,\row) {\labeltext};
+      \fill[\barcolor] (0,{\row-.27}) rectangle (\countvalue,{\row+.27});
+      \node[value,right=3pt] at (\countvalue,\row) {\countvalue};
+    }
   \end{tikzpicture}}
   \end{minipage}\hfill
   \begin{minipage}[c]{.23\linewidth}
@@ -93,7 +101,7 @@
 
 \subsubsection{从失败用例到回归保护}
 
-我们先下一笔单，再用商家账号修改菜名。回到原订单时，页面上的菜名也一起变了。单看接口是否成功，这次读取是正常的，所以我们把断言加到 \code{OrderNameSnapshotJourneyTest} 的订单明细上。数据库迁移 \code{003} 添加商品名快照，读取旧订单也改用当时留存的名称。改完以后，菜单仍显示新名字，顾客查旧账单时看到的还是付款时那一道菜。
+我们先下一笔单，再用商家账号修改菜名。回到原订单时，接口返回成功，页面上的菜名却跟着变了。我们在 \mbox{\code{OrderNameSnapshotJourneyTest}} 增加断言，直接核对订单明细里的名称。数据库迁移 \mbox{\code{003}} 添加商品名快照，读取旧订单时改用成交时留存的名称。改完以后，菜单显示新名字，旧账单仍保留付款时的菜名。
 
 另一个问题出现在游客从店铺或 AI 页面返回时。各视图直接调用 \code{router.back()}，没有合适的上一页时，某些入口就会反复回到原来的页面。我们先把两条实际入口写进失败用例，再把返回规则收在同一个地方。\code{navigation.test.mjs} 的 42 项用例既会查正常返回，也会查缺少上一页时的去向。表~\ref{tab:tdd-trace} 记下了失败用例、修复和重构的三个提交。
 
@@ -154,14 +162,14 @@
 \centering
 \caption{跨组交叉验收与需求编号对照}\label{tab:cross-cases}
 \reporttablesize
-\begin{tabular}{L{.14\linewidth}L{.19\linewidth}L{.36\linewidth}L{.23\linewidth}}
+\begin{tabular}{L{.196\linewidth}L{.183\linewidth}L{.316\linewidth}L{.248\linewidth}}
 \toprule
 \textbf{需求编号} & \textbf{模块与账号} & \textbf{验收操作} & \textbf{结果与证据} \\
 \midrule
-FR-USER-01/03/04 & 用户注册、登录与资料（用户 A） & 验证注册防重、错误密码统一拒绝提示、密码长度边界校验与个人资料持久化保存。 & 主流程通过，见图~\ref{fig:cross-auth-shop}、图~\ref{fig:cross-profile-pwd} \\
-FR-BIZ/FOOD & 店铺浏览、营业状态与商家端（用户 C） & 验证首页店铺展示与休息状态标签、商家工作台与店铺资料更新。 & 通过，见图~\ref{fig:cross-merchant}、图~\ref{fig:cross-rest-stock} \\
-FR-CART-01 至 04 & 购物车增删、分组与隔离 & 验证正常加购、按店分组、指定店铺清空、超库存数量回退及用户 B 的购物车数据隔离。 & 页面主流程通过，见图~\ref{fig:cross-cart}、\ref{fig:cross-isolation}、\ref{fig:cross-rest-stock} \\
-FR-ORDER-01/04/05 & 订单创建、取消与查询 & 验证生成新订单、待处理订单自助取消及用户 B 的订单数据隔离。 & 通过，见图~\ref{fig:cross-order}、图~\ref{fig:cross-isolation} \\
+FR-USER-01/03/04 & 用户注册、登录与资料（用户 A） & 验证注册防重、错误密码统一拒绝提示、密码长度边界校验与个人资料持久化保存。 & 主流程通过，见\mbox{图~\ref{fig:cross-auth-shop}、图~\ref{fig:cross-profile-pwd}} \\
+FR-BIZ/FOOD & 店铺浏览、营业状态与商家端（用户 C） & 验证首页店铺展示与休息状态标签、商家工作台与\mbox{店铺资料更新。} & 通过，见图~\ref{fig:cross-merchant}、图~\ref{fig:cross-rest-stock} \\
+\mbox{FR-CART-01 至 04} & 购物车增删、分组与隔离 & 验证正常加购、按店分组、指定店铺清空、超库存数量回退及用户 B 的购物车数据隔离。 & 页面主流程通过，见图~\ref{fig:cross-cart}、\ref{fig:cross-isolation}、\ref{fig:cross-rest-stock} \\
+FR-ORDER-01/04/05 & 订单创建、\mbox{取消与查询} & 验证生成新订单、待处理订单自助取消及用户 B 的\mbox{订单数据隔离。} & 通过，见图~\ref{fig:cross-order}、图~\ref{fig:cross-isolation} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -191,7 +199,11 @@ FR-ORDER-01/04/05 & 订单创建、取消与查询 & 验证生成新订单、待
 
 排查时我们先打开一个前端业务路由，确认页面资源和路由回退可用，再用登录或商品列表试 \code{/api}。如果能读到业务数据，图片却打不开，下一步就查 \code{/uploads/} 转发和后端挂载目录。图里的每条连接都有一个实际请求可对照，也让接手的人知道应该从哪里开始查。
 
-\srsfig[0.95\linewidth]{figures/srs/17-system-deployment.png}{系统容器化部署架构、反向代理与本地/云端交付拓扑图}{fig:deploy-arch}
+\begin{figure}[!htbp]
+  \centering
+  \resizebox{.95\linewidth}{!}{\input{figures/uml/system-deployment}}
+  \caption{系统容器化部署架构、反向代理与本地/云端交付拓扑图}\label{fig:deploy-arch}
+\end{figure}
 
 \clearpage
 \subsection{部署步骤与运行配置}
@@ -211,7 +223,7 @@ docker compose -f docker-compose.demo.yml up -d --build
 docker compose -f docker-compose.demo.yml ps -a
 \end{lstlisting}
 
-第一次启动时，\code{mysql} 创建 \code{elm_v2}，导入 \code{elm_v2.sql} 和 3 份演示种子脚本。数据库健康检查通过后，\code{migrate} 才执行 \code{003_order_name_snapshot.sql} 和 \code{005_cart_order_remarks.sql}。迁移成功会显示 \code{Exited (0)}，前端和后端则继续运行。查看 \code{ps -a} 时，我们按这个顺序确认启动走到了哪一步。
+第一次启动时，\mbox{\code{mysql}} 创建 \mbox{\code{elm_v2}}，导入 \mbox{\code{elm_v2.sql}} 和 3 份演示种子脚本。数据库健康检查通过后，\mbox{\code{migrate}} 才执行两份脚本 \mbox{\code{003_order_name_snapshot.sql}} 和 \mbox{\code{005_cart_order_remarks.sql}}。迁移成功会显示 \mbox{\code{Exited (0)}}，前端和后端继续运行。查看 \mbox{\code{ps -a}} 时，我们按这个顺序确认启动进度。
 
 容器就绪后，我们再用演示账号登录，打开菜单或订单详情，确认页面真正读到了这套库里的数据。用已有数据库启动时，还会回看旧订单的菜名与购物车、订单的备注。前者取自快照列，后两处要有备注列。如果只是这些字段异常，就先查迁移记录，然后再查对应的查询代码。
 
@@ -230,7 +242,7 @@ docker compose -f docker-compose.demo.yml ps -a
 
 这次截图访问的是本机 18381 端口的前端和 18380 端口的后端，浏览器走查连接独立的 MySQL 8.0.46，后端自动化测试仍用 H2。回看截图时，我们从前端入口操作，核对真实服务的返回。复跑自动化则直接执行测试命令，看日志里的失败、错误和跳过。认证、反代和初始化中可能碰到的问题列在表~\ref{tab:deploy-troubleshoot}。
 
-前端会在开发服务启动时读取接口地址。换了后端端口，就要同步改 \code{VUE_APP_API_BASE_URL} 并重启前端。我们先从浏览器请求确认地址，再用本轮演示账号登录，检查读到的是预期的店铺和订单。
+前端开发服务启动时读取 \mbox{\code{VUE_APP_API_BASE_URL}}。后端端口调整后，同步更新这个变量并重启前端。我们先从浏览器请求确认实际地址，再用本轮演示账号登录，核对店铺和订单是否来自预期的演示库。
 
 出错时，我们先看问题在哪一段出现。启动阶段读不到签名密钥，可以从配置脚本与环境变量传递查起。页面打开后请求仍报错，先看代理路径和访问地址，再检查浏览器里是否还留有旧令牌。若普通浏览和登录都正常，个别订单字段为空，则优先核对旧库迁移与查询依赖。按这个顺序排查，可以保留原有演示数据，集中检查受影响的环节。
 
@@ -239,12 +251,12 @@ docker compose -f docker-compose.demo.yml ps -a
 
 \caption{部署运行中的故障诊断}\label{tab:deploy-troubleshoot}
 \reporttablesize
-\begin{tabular}{L{.21\linewidth}L{.31\linewidth}L{.42\linewidth}}
+\begin{tabular}{L{.235\linewidth}L{.307\linewidth}L{.423\linewidth}}
 \toprule
 \textbf{异常现象} & \textbf{常见根因分析} & \textbf{标准排查与处置步骤} \\
 \midrule
-后端启动报错 \code{JWT_SECRET} 缺失 & 未执行 \code{ensure-demo-env.sh} 或环境变量未透传至容器 & 重新运行环境脚本生成 \code{.env}，检查 \code{docker compose config} 注入结果。 \\
-前端接口报 401 或 CORS 拦截 & \code{VUE_APP_API_BASE_URL} 跨端口未走同源反代或密钥变化 & 确认 Nginx \code{/api} 代理指向或统一前端环境变量，清理浏览器旧 \code{localStorage}。 \\
+后端启动报错 \mbox{\code{JWT_SECRET} 缺失} & 未执行 \code{ensure-demo-env.sh} 或环境变量未透传至容器 & 重新运行环境脚本生成 \code{.env}，检查 \code{docker compose config} 注入结果。 \\
+前端接口报 401 或 CORS 拦截 & \code{VUE_APP_API_BASE_URL} 跨端口未走同源反代或\mbox{密钥变化} & 确认 Nginx \code{/api} 代理指向或统一前端环境变量，清理浏览器旧 \code{localStorage}。 \\
 订单页面显示菜名或备注为空 & 既有旧库未执行增量迁移 \code{003} 或 \code{005} & 按序执行 \code{elm_bk/db/migrations/001--006} 幂等 SQL 脚本。 \\
 点击高德选址或识菜报不可用 & 未配置 \code{AMAP_*} 或 \code{DASHSCOPE_*} 密钥 & 临时使用文本地址或“智能筛选”。启用外部服务时，先配置密钥再重启。 \\
 \bottomrule

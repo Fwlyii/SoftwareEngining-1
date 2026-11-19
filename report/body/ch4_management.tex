@@ -16,32 +16,7 @@
 
 \begin{figure}[!htbp]
   \centering
-  \resizebox{.94\linewidth}{!}{%
-\begin{tikzpicture}[
-    node distance=0.7cm and 0.45cm,
-    root/.style={rectangle,rounded corners=4pt,draw=tjublue,very thick,fill=tjublue,text=white,font=\small\bfseries,minimum width=5.6cm,minimum height=0.9cm,align=center},
-    l1/.style={rectangle,rounded corners=3pt,draw=tjublue,thick,fill=lightblue,font=\scriptsize\bfseries,minimum width=2.8cm,minimum height=0.9cm,align=center},
-    l2/.style={rectangle,rounded corners=2pt,draw=mutedgray,fill=white,font=\scriptsize,minimum width=2.7cm,minimum height=1.55cm,align=left,inner sep=4pt},
-    edge/.style={-{Stealth[length=1.8mm]},thick,tjublue!80}
-  ]
-    \node[root] (top) {轻量级外卖服务平台项目（230 h 基准 / 118 故事点）};
-    \node[l1,below left=1.0cm and 2.5cm of top] (s1) {WBS-1.0 基础设施与\\Sprint 1 核心下单（80 h）};
-    \node[l1,below=1.0cm of top] (s2) {WBS-2.0 履约、配送\\与资产闭环（68 h）};
-    \node[l1,below right=1.0cm and 2.5cm of top] (s3) {WBS-3.0 管理、AI、地图\\与质量交付（82 h）};
-
-    \draw[edge] (top.south) -- ++(0,-0.45) -| (s1.north);
-    \draw[edge] (top.south) -- (s2.north);
-    \draw[edge] (top.south) -- ++(0,-0.45) -| (s3.north);
-
-    \node[l2,below=0.55cm of s1] (s1d) {1.1 SRS 与 17 张建模图\\1.2 \code{elm_v2.sql} 与迁移\\1.3 认证、店铺与菜品\\1.4 购物车与幂等下单\\1.5 顾客主链路与单测};
-    \node[l2,below=0.55cm of s2] (s2d) {2.1 商家接单出餐管理\\2.2 骑手乐观锁抢单\\2.3 钱包积分券流水账\\2.4 评价、收藏与通知\\2.5 登录视觉与首次联调};
-    \node[l2,below=0.55cm of s3] (s3d) {3.1 管理员审核与仲裁\\3.2 多模态 AI 与熔断\\3.3 高德地图与坐标距离\\3.4 四套主题与数据看板\\3.5 575 项回归与容器交付};
-
-    \draw[edge] (s1) -- (s1d);
-    \draw[edge] (s2) -- (s2d);
-    \draw[edge] (s3) -- (s3d);
-  \end{tikzpicture}
-}
+  \includegraphics[width=.97\linewidth]{figures/report/process/work-breakdown.png}
   \caption{项目三级工作分解结构（WBS）顶层树状图}\label{fig:mgmt-wbs-tree}
 \end{figure}
 
@@ -70,20 +45,20 @@
   \centering
   \caption{核心任务三点估算（PERT）与实际工时偏差对照表}\label{tab:pert-estimation}
   \reporttablesize
-  \begin{tabular}{@{}L{.10\linewidth}L{.255\linewidth}C{.07\linewidth}C{.07\linewidth}C{.07\linewidth}C{.09\linewidth}C{.08\linewidth}C{.08\linewidth}C{.09\linewidth}@{}}
+  \begin{tabular}{@{}L{.10\linewidth}L{.261\linewidth}C{.065\linewidth}C{.065\linewidth}C{.065\linewidth}C{.085\linewidth}C{.100\linewidth}C{.08\linewidth}C{.084\linewidth}@{}}
 \toprule
-\textbf{任务} & \textbf{模块摘要} & \textbf{乐观$O$} & \textbf{可能$M$} & \textbf{悲观$P$} & \textbf{期望$E$(h)} & \textbf{标准差$\sigma$} & \textbf{实际(h)} & \textbf{偏差} \\
+\textbf{任务} & \textbf{模块摘要} & \textbf{乐观$O$} & \textbf{可能$M$} & \textbf{悲观$P$} & \textbf{期望$E$(h)} & \textbf{\mbox{标准差$\sigma$}} & \textbf{实际(h)} & \textbf{偏差} \\
 \midrule
 T101--102 & SRS 建模与数据库基线 & 14 & 18 & 22 & 18.0 & 1.33 & 19.0 & +5.6\% \\
 T103--105 & 认证、检索、购物车与下单事务 & 24 & 30 & 36 & 30.0 & 2.00 & 31.5 & +5.0\% \\
 T106--107 & 顾客首页、详情、地址与结算页 & 18 & 24 & 30 & 24.0 & 2.00 & 24.5 & +2.1\% \\
-T108 & Sprint 1 认证与下单测试用例 & 6 & 8 & 10 & 8.0 & 0.67 & 7.5 & -6.3\% \\
+T108 & Sprint 1 认证与\mbox{下单测试用例} & 6 & 8 & 10 & 8.0 & 0.67 & 7.5 & -6.3\% \\
 T201--203 & 商家履约、骑手抢单与资产服务 & 24 & 30 & 36 & 30.0 & 2.00 & 31.0 & +3.3\% \\
-T204--205 & 商家端页面与骑手工作台 & 17 & 22 & 27 & 22.0 & 1.67 & 22.5 & +2.3\% \\
+T204--205 & 商家端页面与\mbox{骑手工作台} & 17 & 22 & 27 & 22.0 & 1.67 & 22.5 & +2.3\% \\
 T206--207 & 备注/评价接口与集中联调缺陷单 & 12 & 16 & 20 & 16.0 & 1.33 & 16.5 & +3.1\% \\
-T301--303 & 管理治理与多模态 AI 服务 & 22 & 28 & 34 & 28.0 & 2.00 & 29.0 & +3.6\% \\
-T304 & 高德地图代理与坐标距离适配 & 8 & 10 & 12 & 10.0 & 0.67 & 10.5 & +5.0\% \\
-T305--306 & AI 前端、主题动效与管理看板 & 19 & 24 & 29 & 24.0 & 1.67 & 25.0 & +4.2\% \\
+T301--303 & 管理治理与\mbox{多模态 AI 服务} & 22 & 28 & 34 & 28.0 & 2.00 & 29.0 & +3.6\% \\
+T304 & 高德地图代理与\mbox{坐标距离适配} & 8 & 10 & 12 & 10.0 & 0.67 & 10.5 & +5.0\% \\
+T305--306 & AI 前端、主题动效与\mbox{管理看板} & 19 & 24 & 29 & 24.0 & 1.67 & 25.0 & +4.2\% \\
 T307--308 & TDD 导航修复与全链路交叉验收 & 15 & 20 & 25 & 20.0 & 1.67 & 21.0 & +5.0\% \\
 \midrule
 \textbf{合计} & \textbf{三大 Sprint 全周期汇总} & \textbf{179} & \textbf{230} & \textbf{281} & \textbf{230.0} & \textbf{---} & \textbf{238.0} & \textbf{+3.48\%} \\
@@ -95,25 +70,7 @@ T307--308 & TDD 导航修复与全链路交叉验收 & 15 & 20 & 25 & 20.0 & 1.6
   \centering
   \begin{minipage}[t]{.46\linewidth}
     \centering\vspace{0pt}
-    \resizebox{.98\linewidth}{!}{%
-\begin{tikzpicture}[x=1.6cm,y=0.075cm]
-    \draw[->] (0,0) -- (5.2,0);
-    \draw[->] (0,0) -- (0,78) node[above,font=\scriptsize] {工时 (h)};
-    \foreach \y in {0,20,40,60}
-      {\draw[gray!25] (0,\y) -- (4.8,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
-    % 李承文
-    \fill[tjublue] (0.6,0) rectangle (1.1,68); \node[above,font=\scriptsize] at (0.85,68) {68.0 h};
-    \node[below,font=\scriptsize] at (0.85,0) {李承文};
-    % 范文丽
-    \fill[accentgreen!80!black] (1.6,0) rectangle (2.1,63); \node[above,font=\scriptsize] at (1.85,63) {63.0 h};
-    \node[below,font=\scriptsize] at (1.85,0) {范文丽};
-    % 赵紫怡
-    \fill[accentorange] (2.6,0) rectangle (3.1,56); \node[above,font=\scriptsize] at (2.85,56) {56.0 h};
-    \node[below,font=\scriptsize] at (2.85,0) {赵紫怡};
-    % 仲禹潼
-    \fill[tjublue!55] (3.6,0) rectangle (4.1,51); \node[above,font=\scriptsize] at (3.85,51) {51.0 h};
-    \node[below,font=\scriptsize] at (3.85,0) {仲禹潼};
-  \end{tikzpicture}}
+    \resizebox{.98\linewidth}{!}{\input{figures/report/process/member-hours}}
     \captionof{figure}{四位成员全周期实际投入工时}\label{fig:mgmt-workload}
   \end{minipage}\hfill
   \begin{minipage}[t]{.51\linewidth}
@@ -149,61 +106,11 @@ Sprint 1、2、3 分别比计划多投入 2.5、2.0 和 3.5~h。首轮增加了�
 
 \begin{figure}[!htbp]
   \centering
-  \resizebox{.94\linewidth}{!}{%
-\begin{tikzpicture}[x=0.60cm,y=0.62cm]
-    % 背景网格与日期刻度 (Day 1 = 9/1 ... Day 19 = 9/19)
-    \foreach \d/\lbl in {1/9.1,3/9.3,5/9.5,7/9.7,9/9.9,11/9.11,13/9.13,15/9.15,17/9.17,19/9.19}
-      {\draw[gray!25] (\d,0.5) -- (\d,12.5); \node[above,font=\scriptsize] at (\d,12.5) {\lbl};}
-    % Sprint 背景分区
-    \fill[blue!4] (0.5,0.5) rectangle (7.5,12.5);
-    \fill[orange!4] (7.5,0.5) rectangle (12.5,12.5);
-    \fill[green!4] (12.5,0.5) rectangle (19.5,12.5);
-    \node[font=\scriptsize\bfseries,tjublue] at (4.0,14.8) {Sprint 1（核心闭环）};
-    \node[font=\scriptsize\bfseries,accentorange] at (10.0,14.8) {Sprint 2（履约与资产）};
-    \node[font=\scriptsize\bfseries,accentgreen] at (16.0,14.8) {Sprint 3（智能治理与验收）};
-
-    % 任务条
-    \node[left,font=\scriptsize] at (0.3,11.8) {SRS 建模与表结构};
-    \fill[tjublue] (1,11.55) rectangle (3.5,12.05);
-    \node[left,font=\scriptsize] at (0.3,10.8) {认证与店铺商品后端};
-    \fill[tjublue] (2.5,10.55) rectangle (6,11.05);
-    \node[left,font=\scriptsize] at (0.3,9.8) {订单快照与取消事务};
-    \fill[tjublue] (4,9.55) rectangle (7.5,10.05);
-    \node[left,font=\scriptsize] at (0.3,8.8) {顾客端核心页面联调};
-    \fill[tjublue!70] (3.5,8.55) rectangle (7.5,9.05);
-
-    \node[left,font=\scriptsize] at (0.3,7.8) {商家端履约与菜品管理};
-    \fill[accentorange] (7.5,7.55) rectangle (11.5,8.05);
-    \node[left,font=\scriptsize] at (0.3,6.8) {骑手抢单与配送状态机};
-    \fill[accentorange] (8,6.55) rectangle (11.5,7.05);
-    \node[left,font=\scriptsize] at (0.3,5.8) {钱包积分优惠券体系};
-    \fill[accentorange!75] (8.5,5.55) rectangle (12,6.05);
-    \node[left,font=\scriptsize] at (0.3,4.8) {集中联调与 WPS 缺陷单};
-    \fill[accentorange!55] (10.5,4.55) rectangle (12.5,5.05);
-
-    \node[left,font=\scriptsize] at (0.3,3.8) {管理端审核与统计看板};
-    \fill[accentgreen] (12.5,3.55) rectangle (16.5,4.05);
-    \node[left,font=\scriptsize] at (0.3,2.8) {多模态 AI 与高德地图};
-    \fill[accentgreen!80] (13,2.55) rectangle (16.5,3.05);
-    \node[left,font=\scriptsize] at (0.3,1.8) {TDD 修复与四套主题动效};
-    \fill[accentgreen!65] (14.5,1.55) rectangle (17.5,2.05);
-    \node[left,font=\scriptsize] at (0.3,0.8) {575 项回归与交叉验收};
-    \fill[accentred!75] (16,0.55) rectangle (19.5,1.05);
-
-    % 里程碑菱形
-    \draw[fill=tjublue] (3.5,13.55) -- (3.72,13.80) -- (3.5,14.05) -- (3.28,13.80) -- cycle;
-    \node[right,font=\scriptsize] at (3.75,13.80) {M1: SRS 2.0};
-    \draw[fill=accentorange] (7.5,13.55) -- (7.72,13.80) -- (7.5,14.05) -- (7.28,13.80) -- cycle;
-    \node[right,font=\scriptsize] at (7.75,13.80) {M2: MVP};
-    \draw[fill=accentgreen] (12.5,13.55) -- (12.72,13.80) -- (12.5,14.05) -- (12.28,13.80) -- cycle;
-    \node[right,font=\scriptsize] at (12.75,13.80) {M3: 联调封板};
-    \draw[fill=accentred] (19.0,13.55) -- (19.22,13.80) -- (19.0,14.05) -- (18.78,13.80) -- cycle;
-    \node[left,font=\scriptsize] at (18.75,13.80) {M4: 交付};
-  \end{tikzpicture}
-}
+  \resizebox{.97\linewidth}{!}{\input{figures/report/process/delivery-calendar}}
   \caption{轻量级外卖服务平台项目实施甘特图与里程碑节点}\label{fig:mgmt-gantt}
 \end{figure}
 
+\Needspace{.24\textheight}
 \begin{longtable}{C{.10\linewidth}L{.22\linewidth}C{.13\linewidth}L{.46\linewidth}}
 \caption{项目核心里程碑（M1--M4）检查与达成结果表}\label{tab:milestones}\\
 \toprule
@@ -213,6 +120,7 @@ M1 & SRS 2.0 需求冻结 & 9.6 / 9.6 & 17 张 UML/draw.io 建模图、23 张表
 M2 & MVP 核心链路贯通 & 9.7 / 9.7 & 游客/顾客浏览、购物车、防重提交、取消回滚与登录鉴权跑通。 \\
 M3 & 四端全链路联调封板 & 9.15 / 9.15 & 商家/骑手/管理端协同、资产积分体系、AI 多模态与统一壳层合入 \code{main}。 \\
 M4 & 验收交付与文档归档 & 9.19 / 9.19 & 575 项全量回归通过、25 项交叉验收证据归档、Docker 一键演示就绪。 \\
+\bottomrule
 \end{longtable}
 
 M1 核定需求和结构，M2 核定可运行的顾客链路。两者间隔一天，因为文档、数据库与认证代码在第一轮并行推进。M2 之后，商家与骑手以已经建立的订单为起点联调。到 M3 时，团队把 AI、主题与四端页面集成在同一版本上，集中修复阻碍操作的问题。M4 再核对回归、交叉证据与演示环境。每个里程碑只检查该阶段应交付的结果，相关依据列在表~\ref{tab:milestones} 中。
@@ -223,26 +131,7 @@ M1 核定需求和结构，M2 核定可运行的顾客链路。两者间隔一�
 
 \begin{figure}[!htbp]
   \centering
-  \resizebox{.86\linewidth}{!}{%
-\begin{tikzpicture}[x=0.62cm,y=0.055cm]
-    \draw[->] (0,0) -- (20.2,0) node[right,font=\scriptsize] {研发日 (9.1--9.19)};
-    \draw[->] (0,0) -- (0,130) node[above,font=\scriptsize] {剩余故事点};
-    \foreach \d/\lbl in {1/9.1,3/9.3,5/9.5,7/9.7,9/9.9,11/9.11,13/9.13,15/9.15,17/9.17,19/9.19}
-      {\draw[gray!25] (\d,0) -- (\d,120); \node[below,font=\scriptsize] at (\d,0) {\lbl};}
-    \foreach \y in {0,30,60,90,118}
-      {\draw[gray!25] (0,\y) -- (19.5,\y); \node[left,font=\scriptsize] at (0,\y) {\y};}
-    % 理想燃尽线
-    \draw[dashed,mutedgray,thick] (1,118) -- (19,0);
-    % 实际剩余故事点折线
-    \draw[thick,tjublue,mark=*] plot coordinates {
-      (1,118) (2,115) (3,108) (4,104) (5,96) (6,88) (7,76)
-      (8,68) (9,60) (10,54) (11,45) (12,36) (13,30) (14,22)
-      (15,12) (16,6) (17,3) (18,1) (19,0)
-    };
-    \node[font=\scriptsize,tjublue] at (13.5,95) {— 实际剩余故事点};
-    \node[font=\scriptsize,mutedgray] at (13.5,108) {- - 理想燃尽基准线};
-  \end{tikzpicture}
-}
+  \resizebox{.93\linewidth}{!}{\input{figures/report/process/story-point-burndown}}
   \caption{项目全周期整体故事点燃尽图（总计 118 故事点，9 月 1 日--9 月 19 日）}\label{fig:mgmt-overall-burndown}
 \end{figure}
 
@@ -252,7 +141,7 @@ M1 核定需求和结构，M2 核定可运行的顾客链路。两者间隔一�
   \centering
   \caption{三大 Sprint 敏捷速率（Velocity）与完成率统计表}\label{tab:sprint-velocity}
   \reporttablesize
-  \begin{tabular}{@{}L{.18\linewidth}C{.16\linewidth}C{.16\linewidth}C{.16\linewidth}L{.25\linewidth}@{}}
+  \begin{tabular}{@{}L{.18\linewidth}C{.145\linewidth}C{.155\linewidth}C{.145\linewidth}L{.31\linewidth}@{}}
 \toprule
 \textbf{迭代周期} & \textbf{计划故事点} & \textbf{实际交付点数} & \textbf{迭代完成率} & \textbf{主要交付增量} \\
 \midrule
@@ -260,7 +149,7 @@ Sprint 1（7 天） & 42 点 & 42 点 & 100\% & SRS 2.0、23 张表基线、认�
 Sprint 2（5 天） & 40 点 & 40 点 & 100\% & 商家履约、骑手抢单、资产流水与评价 \\
 Sprint 3（7 天） & 36 点 & 36 点 & 100\% & 管理治理、多模态 AI、高德适配与回归 \\
 \midrule
-\textbf{合计（19 天）} & \textbf{118 点} & \textbf{118 点} & \textbf{100\%} & \textbf{全部 P0/P1/P2 目标交付完毕} \\
+\textbf{合计（19 天）} & \textbf{118 点} & \textbf{118 点} & \textbf{100\%} & \textbf{全部 P0/P1/P2 \mbox{目标交付完毕}} \\
 \bottomrule
   \end{tabular}
 \end{table}
@@ -277,36 +166,7 @@ Sprint 3（7 天） & 36 点 & 36 点 & 100\% & 管理治理、多模态 AI、�
 
 \begin{figure}[H]
   \centering
-  \resizebox{.72\linewidth}{!}{%
-\begin{tikzpicture}[scale=1.0]
-    % 3x3 风险热力网格
-    \fill[yellow!20] (0,0) rectangle (2.6,1.2);
-    \fill[orange!20] (2.6,0) rectangle (5.2,1.2);
-    \fill[red!18]   (5.2,0) rectangle (7.8,1.2);
-    \fill[green!12] (0,1.2) rectangle (2.6,2.4);
-    \fill[yellow!22] (2.6,1.2) rectangle (5.2,2.4);
-    \fill[orange!25] (5.2,1.2) rectangle (7.8,2.4);
-    \fill[red!18]   (2.6,2.4) rectangle (5.2,3.6);
-    \fill[red!30]   (5.2,2.4) rectangle (7.8,3.6);
-    \fill[yellow!20] (0,2.4) rectangle (2.6,3.6);
-
-    \draw[gray!60] (0,0) grid[xstep=2.6,ystep=1.2] (7.8,3.6);
-
-    % 轴标签
-    \node[left,font=\scriptsize\bfseries] at (-0.1,3.0) {概率：高};
-    \node[left,font=\scriptsize\bfseries] at (-0.1,1.8) {概率：中};
-    \node[left,font=\scriptsize\bfseries] at (-0.1,0.6) {概率：低};
-    \node[below,font=\scriptsize\bfseries] at (1.3,-0.1) {影响：低};
-    \node[below,font=\scriptsize\bfseries] at (3.9,-0.1) {影响：中};
-    \node[below,font=\scriptsize\bfseries] at (6.5,-0.1) {影响：高};
-
-    % 风险编号分布
-    \node[align=center,font=\scriptsize\bfseries,accentred] at (6.5,3.0) {极高风险\\R001};
-    \node[align=center,font=\scriptsize\bfseries,accentorange] at (3.9,3.0) {高风险\\R005, R009};
-    \node[align=center,font=\scriptsize\bfseries,accentred] at (6.5,1.8) {高风险\\R002, R003, R004\\R007, R010, R011};
-    \node[align=center,font=\scriptsize,tjublue] at (3.9,1.8) {中风险\\R006, R008, R012};
-  \end{tikzpicture}
-}
+  \resizebox{.88\linewidth}{!}{\input{figures/report/process/risk-matrix}}
   \caption{项目 12 项关键风险概率--影响评估矩阵图}\label{fig:risk-heatmap}
 \end{figure}
 
@@ -314,7 +174,7 @@ Sprint 3（7 天） & 36 点 & 36 点 & 100\% & 管理治理、多模态 AI、�
 
 \subsection{风险跟踪与闭环}
 
-我们把课上讲的风险缓解、监控和管理（RMMM）用在同一张台账里。能提前降低影响的，先定预案；正在发生变化的，留下检查结果；触发后怎么处理，也用原编号记录。交付时，逐项核对 12 项风险的工程处置或持续监控状态，见表~\ref{tab:risk-closure}。
+课上讲的风险缓解、监控与管理（RMMM）在这里落到同一张台账。每项风险沿用一个编号，依次记录预案、监控结果和触发后的处置。交付时，我们逐项核对 12 项风险的处置结果或持续监控状态，见表~\ref{tab:risk-closure}。
 
 \Needspace{.56\textheight}
 \subsection{重点风险的处理与复查}
