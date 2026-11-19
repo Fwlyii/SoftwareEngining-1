@@ -15,9 +15,9 @@
 \bottomrule
 \endfoot
 结构化智能助手（问答与订单咨询） & \code{/api/v1/assistant/messages}\newline\code{StructuredAssistant}\allowbreak\code{ServiceImpl} & 接入 DeepSeek（\code{deepseek-chat}）。无 Key 或触发熔断时，自动回退至本地帮助问答与\mbox{订单查询。} \\
-条件智能推荐（关联真实菜单） & \code{/api/ai/chat/recommendations}\newline\code{RuleBasedRecommendationAdapter} & 查询 MySQL 真实在售有库存菜品，结合用户偏好与历史订单返回结构化候选商品卡片，支持一键加购。 \\
+条件智能推荐（关联真实菜单） & \code{/api/ai/chat/recommendations}\newline\mbox{\code{RuleBased}}\allowbreak\mbox{\code{RecommendationAdapter}} & 查询 MySQL 中在售且有库存的菜品，结合用户偏好与历史订单生成候选卡片。顾客可在卡片确认加购。 \\
 多轮对话与\mbox{历史管理} & \code{/api/ai/chat/**}\newline\code{AiChatServiceImpl} & 按 \code{session_id} 持久化至 \code{ai_chat_history}，支持会话查询、单条删除与\mbox{保留最新 N 条清理。} \\
-图片识菜与\mbox{菜品匹配} & \code{/api/v1/dish-recognitions}\newline\code{DashScopeImageRecognitionAdapter} & 接入 DashScope 视觉模型（默认 \code{qwen-vl-plus}）。限制图片 5~MB 内。未配置凭证返回 503 提示。 \\
+图片识菜与\mbox{菜品匹配} & \code{/api/v1/dish-recognitions}\newline\mbox{\code{DashScopeImage}}\allowbreak\mbox{\code{RecognitionAdapter}} & 接入 DashScope 视觉模型（默认 \code{qwen-vl-plus}）。图片大小上限为 5~MB。未配置凭证时返回 503。 \\
 语音点菜\mbox{草稿生成} & \code{/api/v1/voice-order-drafts}\newline\code{DashScopeSpeechAdapter} & 接入 DashScope 语音识别（默认 \code{qwen3-asr-flash}）。关闭抽屉主动释放麦克风流。支持文本兜底。 \\
 \end{longtable}
 

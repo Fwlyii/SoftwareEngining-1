@@ -17,12 +17,12 @@
 \endfoot
 200 OK & \code{OK} & 业务执行成功，读取 \code{data} 渲染视图。 \\
 400 Bad Request & \code{PARAM_VERIFIED_FAILED}、\code{PARAM_NOT_MATCHED}、\code{PARAM_NOT_MATCHED_GET}、\code{PARAM_NOT_MATCHED_POST} & 字段校验失败、类型错误或缺少必填参数，按失败原因更正输入。 \\
-401 Unauthorized & \code{AUTHENTICATION_FAILED} 等认证错误 & 登录凭证无效或请求缺少有效凭证，前端引导登录。 \\
+401 Unauthorized & \code{AUTHENTICATION_FAILED} 等认证错误 & 登录凭证缺失或无效时，前端引导登录。 \\
 403 Forbidden & \code{UNAUTHORIZED}、\code{NOT_ENOUGH_PERMISSION}、\code{USER_DENIED}、\code{ACCOUNT_DISABLED} & 授权失败、资源归属不符，或\mbox{账号已停用。} \\
 404 Not Found & \code{NOT_FOUND}、\code{BUSINESS_MISSED}、\code{ORDER_MISSED}、\code{FOOD_MISSED} & 目标店铺、菜品、地址或订单 ID 不存在或已被逻辑删除。 \\
 409 Conflict & \code{WITHOUT_ERROR_CODE}（订单/任务状态冲突） & 并发抢单已被他人抢走、重复支付或订单处于不可取消阶段。 \\
 422 Unprocessable & \code{QUANTITY_ILLEGAL}、\code{CART_EMPTY}、\code{ORDER_SUBMIT_FAILED} & 校验未通过的业务请求，例如商品数量不符合规则或待结算购物车为空。 \\
-503 Unavailable & \code{FEATURE_UNAVAILABLE} & 未配置外部高德地图或 DashScope 多模态密钥，前端进入降级模式。 \\
+503 Unavailable & \code{FEATURE_UNAVAILABLE} & DashScope 识菜或语音服务缺少配置时，前端提示服务不可用。地图配置接口另以 \code{enabled=false} 指示界面保留手填地址。 \\
 \end{longtable}
 
 \section{联调用例速查}

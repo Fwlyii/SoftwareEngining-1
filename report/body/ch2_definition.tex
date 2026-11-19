@@ -1,4 +1,4 @@
-\chapter{定义项目}
+\chapter{定义项目}\label{chap:definition}
 
 \newcommand{\chapterfigureprose}[1]{%
   \begin{minipage}{\linewidth}
@@ -18,7 +18,7 @@
   \end{tikzpicture}%
 }
 
-我们从一笔校园外卖订单开始讨论。顾客要知道钱算得对不对、餐送到了哪儿。商家要知道什么时候该备餐，骑手要知道哪一单已经可以取。如果送不下去，还得有人处理。我们先把这些问题写进用例，再沿订单拆页面、接口和数据。最后的数据库包含 23 张业务表，接口清单覆盖 24 个控制器的 135 个映射。
+我们从一笔校园外卖订单梳理四端的分工。顾客查看实付金额和配送进度，商家确认备餐，骑手确认取餐，管理员处理履约异常。我们把这些操作写进用例，沿订单确定页面、接口和数据的职责。数据库包含 23 张业务表，接口清单覆盖 24 个控制器的 135 个映射。
 
 \section{产品愿景与敏捷规划}
 
@@ -39,7 +39,7 @@
 文字问答、智能推荐、图片识菜、语音点餐草稿和高德选址是后续增量。地图还用于估算直线距离及送达时间。我们按 Scrum 把功能分到三轮，借鉴 CMM 已定义级的做法记录需求、计划和验证结果。每轮都回归已经能走通的订单，给最后的集成和验收留出时间。
 
 \begin{longtable}{L{.175\linewidth}L{.245\linewidth}L{.54\linewidth}}
-\caption{项目 TQCS 工程目标与量化验收基准表}\label{tab:tqcs-goals}\\
+\caption{项目 TQCS 目标与验收依据}\label{tab:tqcs-goals}\\
 \toprule
 \textbf{TQCS 维度} & \textbf{核心管理目标} & \textbf{量化验收标准} \\
 \midrule
@@ -52,8 +52,8 @@
 \bottomrule
 \endfoot
 Time（进度） & 三大 Scrum 短周期迭代按期收敛 & 9 月 1 日至 9 月 19 日完成全部 P0/P1 主流程与扩展功能，核心演示版本准时封板。 \\
-\mbox{Quality（质量）} & 高覆盖自动化回归与零高危越权缺陷 & 后端 53 个测试类（340 项）与前端 28 个测试文件（235 项）100\% 通过，高危越权与并发\mbox{问题清零。} \\
-Cost（成本） & 4 人跨职能协同与外部依赖可控降级 & 总实际工时控制在 238~h（偏差 +3.48\%），未配置外部 AI/地图密钥时基础主链路零成本阻塞。 \\
+\mbox{Quality（质量）} & 覆盖交易、权限和并发的自动化回归 & 后端 53 个测试类共 340 项、前端 28 个测试文件共 235 项均通过，覆盖认证、越权与并发回归。 \\
+Cost（成本） & 4 人协作与外部服务不可用时的处理 & 计划 230~h，实际 238~h，偏差 +3.48\%。缺少 AI 或地图配置时，可手填地址并使用本地筛选。 \\
 Scope（范围） & 聚焦四端闭环与特色\mbox{增值能力} & 严格执行 MoSCoW 分级，将真实支付清算与高频 GPS 轨迹明确划出本期基线，防止范围蔓延。 \\
 \end{longtable}
 
@@ -64,15 +64,16 @@ Scope（范围） & 聚焦四端闭环与特色\mbox{增值能力} & 严格执�
 
 \subsubsection{核心功能定位与目标用户}
 
-顾客主要是校园及周边消费者。游客可先浏览店铺和菜单，登录后再管理偏好、地址和购物车。下单支持部分勾选、外送或自取和多种优惠，订单结束后还可以评价、点赞或收藏。AI 入口为选菜提供帮助。
-
-商家主要是校内食堂档口及周边餐饮商户。开店后可以维护菜品分类、价格、库存、限购、上架状态和店铺满减。接单、拒单和出餐在同一工作台完成，评价回复、经营看板和报表导出用于日常经营。
-
-骑手实名申请入驻，按配送工具登记资料。获批后可上线抢单，在途中确认到店、取餐和送达，必要时上报异常。工作台同时提供高德外部导航、里程统计和预计收益。管理员则负责商家、店铺及骑手准入，处理账号启停和角色分配，治理违规评价，并通过看板跟踪平台交易。
+\begin{reportpoints}
+  \item \textbf{顾客}主要是校园及周边消费者。游客可以浏览店铺和菜单，登录后可管理偏好、地址和购物车。下单支持部分勾选、外送或自取及多种优惠。订单结束后还可以评价、点赞或收藏，选菜时可使用 AI 助手。
+  \item \textbf{商家}主要是校内食堂档口及周边餐饮商户。开店后维护菜品分类、价格、库存、限购、上架状态和店铺满减，在工作台接单、拒单或出餐。日常经营还可回复评价、查看看板和导出报表。
+  \item \textbf{骑手}实名申请入驻并登记配送工具，获批后上线抢单。配送途中确认到店、取餐和送达，必要时上报异常。工作台提供高德外部导航、里程统计和预计收益。
+  \item \textbf{管理员}负责商家、店铺及骑手准入，处理账号启停和角色分配，治理违规评价，并通过看板跟踪平台交易。
+\end{reportpoints}
 
 \subsection{迭代周期与 Scrum 机制}
 
-Sprint 1 先画需求模型，把顾客下单做出来。Sprint 2 再接商家履约、骑手配送和资产，顾客下的单可以接着往下走。Sprint 3 加上治理、AI 和高德地图，再集中回归、跨组验收并归档文档。每轮有一个可试用的增量，上一轮留下的问题也可以带回下一次规划。
+Sprint 1 先画需求模型，把顾客下单做出来。Sprint 2 再接商家履约、骑手配送和资产，顾客下的单可以接着往下走。Sprint 3 加上治理、AI 和高德地图，再集中回归、跨组验收并归档文档。每轮有一个可试用的增量，上一轮留下的问题也可以\mbox{带回下一次规划}。
 
 每轮开始，我们在规划会上拆 Sprint Backlog，先说清哪个角色用、调用哪些字段、遇到异常怎么办。开发中在飞书和短会上同步，收尾时把功能演示出来，再谈哪些做法需要调整。采用 TDD 的任务按红--绿--重构推进，自动化测试通过并经 SM 审查合并后更新飞书。就绪和完成的条件见表~\ref{tab:dor-dod}。
 
@@ -80,7 +81,7 @@ Sprint 1 先画需求模型，把顾客下单做出来。Sprint 2 再接商家�
 
 \subsection{项目范围界定}
 
-定范围时，我们先问系统从谁手里接收信息、做完后把结果交给谁。图~\ref{fig:def-context} 画平台与外部服务的交界，图~\ref{fig:def-actors} 再画各个角色能发起的动作。前端 SPA、Spring Boot 业务服务和 MySQL 8 归平台维护。DeepSeek、DashScope 的视觉和语音识别、高德地图与对象存储由外部服务提供。表~\ref{tab:scope-boundary} 写清这些环境条件、要处理的数据和本期能交付的功能。钱包充值和结算先模拟，真实清算和实时轨迹另留给后续，给四端履约的联调和回归留足时间。
+图~\ref{fig:def-context} 说明系统与外部服务的交界，图~\ref{fig:def-actors} 说明各角色能发起的操作。平台维护前端 SPA、Spring Boot 业务服务和 MySQL 8。上传的图片写入后端本地目录，通过 \code{/uploads/} 访问。文字问答接入 DeepSeek，视觉和语音识别接入 DashScope，选址由高德地图提供。表~\ref{tab:scope-boundary} 列出本期范围和外部配置条件。钱包充值与结算采用模拟流程，支付清算和实时轨迹列入后续范围。
 
 \Needspace{.34\textheight}
 \begin{longtable}{L{.16\linewidth}L{.38\linewidth}L{.37\linewidth}}
@@ -96,10 +97,10 @@ Sprint 1 先画需求模型，把顾客下单做出来。Sprint 2 再接商家�
 \endhead
 \bottomrule
 \endfoot
-认证与权限域 & 统一账号注册/登录、BCrypt 加密、JWT 无状态鉴权、商家/骑手入驻审批与角色路由隔离 & 第三方微信/QQ OAuth 授权登录、短信真实验证码付费通道（演示环境保留本地校验） \\
+认证与权限域 & 统一账号注册与登录、BCrypt 密码散列、JWT 无状态鉴权、商家和骑手入驻审批与角色路由隔离 & 第三方微信或 QQ OAuth 登录、短信验证码渠道 \\
 顾客点餐域 & 分类搜索、店铺详情、限购与库存校验、跨店购物车、外送/自取双模结算、订单跟踪与评价 & 跨商家合并拆单支付、拼单外卖、复杂预售定时排期 \\
 资金与资产域 & 服务端权威算价、模拟钱包充值、模拟支付、新人/领券核销、积分累计与抵扣、只增不改流水账本 & 真实微信支付/支付宝商户号清算、银行卡提现打款与发票税控 \\
-配送与地图域 & 骑手入驻审核、在线接单池、乐观锁并发抢单、到店/取餐/送达、异常仲裁、高德选址与距离估算 & 商业级智能路径派单调度算法、骑手实时高频 WebSocket GPS \mbox{轨迹推流} \\
+配送与地图域 & 骑手入驻审核、在线接单池、并发抢单的条件更新、到店/取餐/送达、异常仲裁、高德选址与距离估算 & 智能路径派单调度、骑手实时高频 WebSocket GPS \mbox{轨迹推流} \\
 智能与管理域 & 结构化菜单筛选、DeepSeek 问答、DashScope 识菜与语音草稿（含未配置降级）、四端看板与导出 & 大规模向量知识库 RAG 集群、单用户精细化商业计费配额系统 \\
 \end{longtable}
 
@@ -117,7 +118,7 @@ Sprint 1 先画需求模型，把顾客下单做出来。Sprint 2 再接商家�
 
 \subsection{Product Backlog}
 
-我们把《软件需求规格说明书》（SRS）里的用例分成 22 项用户故事（\code{US001}--\code{US022}，共 118 点），逐项保留 \code{UC-COM/CUS/MER/RID/ADM/AI/MKT/PER} 中的来源编号。MoSCoW 分级给这些故事排了次序。P0 是必须完成的交易和履约，P1 加入资产、评价等增强，P2 则在条件允许时加入识菜、语音草稿等功能。这些故事合在一起就是 Product Backlog。优先级和故事点见表~\ref{tab:backlog-summary}，每个故事怎么验收可以到附录~\ref{app:project} 的表~\ref{tab:product-backlog} 查。
+我们把《软件需求规格说明书》（SRS）里的用例整理为 22 项用户故事（\code{US001}--\code{US022}），保留各项在 \code{UC-COM/CUS/MER/RID/ADM/AI/MKT/PER} 中的来源编号。P0 优先处理交易和履约，P1 包括资产、评价等增量，P2 为图片识菜和语音草稿。表~\ref{tab:backlog-summary} 按附录表~\ref{tab:product-backlog} 的明细汇总，共 113 点。第 4 章的 118 点来自三轮 Sprint 的过程计划。
 
 \Needspace{.21\textheight}
 \begin{longtable}{C{.146\linewidth}L{.301\linewidth}C{.105\linewidth}C{.18\linewidth}L{.205\linewidth}}
@@ -125,11 +126,11 @@ Sprint 1 先画需求模型，把顾客下单做出来。Sprint 2 再接商家�
 \toprule
 \textbf{优先级} & \textbf{MoSCoW 业务定位} & \textbf{故事数量} & \textbf{故事点合计} & \textbf{主要覆盖迭代} \\
 \midrule
-P0（Must） & 核心交易、四端履约与\mbox{安全闭环}（MVP 基线） & 14 项 & 78 点（66.1\%） & \mbox{Sprint 1 -- Sprint 2} \\
-P1（Should） & 资产优惠、评价通知、\mbox{看板}与结构化智能服务 & 6 项 & 31 点（26.3\%） & \mbox{Sprint 2 -- Sprint 3} \\
-P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动效增强 & 2 项 & 9 点（7.6\%） & Sprint~3 \\
+P0（Must） & 核心交易、四端履约、权限与\mbox{异常仲裁} & 15 项 & 78 点（69.03\%） & \mbox{Sprint 1 -- Sprint 2} \\
+P1（Should） & 资产优惠、评价、偏好、看板及\mbox{结构化助手} & 6 项 & 30 点（26.55\%） & \mbox{Sprint 2 -- Sprint 3} \\
+P2（Could） & 图片识菜和语音点餐草稿 & 1 项 & 5 点（4.42\%） & Sprint~3 \\
 \midrule
-\textbf{合计} & \textbf{全平台四端及特色扩展需求} & \textbf{22 项} & \textbf{118 点（100\%）} & \textbf{\mbox{Sprint 1 -- Sprint 3}} \\
+\textbf{合计} & \textbf{四端业务与扩展需求} & \textbf{22 项} & \textbf{113 点（100\%）} & \textbf{\mbox{Sprint 1 -- Sprint 3}} \\
 \bottomrule
 \end{longtable}
 
@@ -197,7 +198,7 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
 
 \subsection{数据库概述}
 
-业务表使用 MySQL 8.0、\code{utf8mb4} 和 InnoDB。用户、店铺和菜品等基础实体按第三范式组织。拆表时还要考虑一项资料改了以后，过去的记录该怎么读。我们在订单明细和主表保留成交时的菜名、单价和收货地址（\code{food_name_snapshot}、\code{food_price} 与 \code{address_snapshot}）。商家能继续改菜单，顾客也能更换地址，查原有账单时就读订单里存下的那一份。
+业务表使用 MySQL 8.0、\code{utf8mb4} 和 InnoDB。用户、店铺和菜品等基础实体按第三范式组织。拆表时还要考虑一项资料改了以后，过去的记录该怎么读。我们在订单明细和主表保留成交时的菜名、单价和收货地址（\code{food_name_snapshot}、\code{food_price} 与 \code{address_snapshot}）。商家能继续改菜单，顾客也能更换地址，查原有账单时仍读取订单快照。
 
 \subsection{领域模型与数据表设计}
 
@@ -205,7 +206,7 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
 
 \begin{figure}[!htbp]
   \centering
-  \chapterfigureprose{图~\ref{fig:def-domain-core} 的主线从用户延伸到商家资料、店铺和商品。商家先在工作台选择店铺，再打开该店的菜单。保存菜品变更时，服务端同时根据当前账号、店铺和菜品判断能否写入。这样，同一套页面可供经营多家店的商家使用，价格和库存的修改仍对应到具体店铺。}
+  \chapterfigureprose{图~\ref{fig:def-domain-core} 的主线从用户延伸到商家资料、店铺和商品。商家先在工作台选择店铺，再打开该店的菜单。保存菜品变更时，服务端同时根据当前账号、店铺和菜品判断能否写入。这样，同一套页面可供经营多家店的商家使用，价格和库存的修改\mbox{仍对应到具体店铺}。}
   \resizebox{.96\linewidth}{!}{\input{figures/uml/core-domain}}
   \caption{系统核心交易与多端履约领域模型类图}\label{fig:def-domain-core}
   \par\smallskip
@@ -214,7 +215,7 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
 
 \begin{figure}[!htbp]
   \centering
-  \chapterfigureprose{图~\ref{fig:def-domain-assets} 把当前余额与每笔流水画成相连的对象。付款时可从账户查到扣款所用余额，核对历史记录时则看对应的扣款和后续退款条目。优惠券也有面向用户的持有记录，用来判断这一张是否已核销。偏好设置独立保存，用户换主题时无需改动任何一笔订单。}
+  \chapterfigureprose{图~\ref{fig:def-domain-assets} 把当前余额与每笔流水画成相连的对象。付款时可从账户查到扣款所用余额，核对历史记录时则看对应的扣款和后续退款条目。优惠券也有面向用户的持有记录，用来判断这一张是否已核销。偏好设置独立保存，切换主题时\mbox{无需改动已有订单}。}
   \resizebox{.96\linewidth}{!}{\input{figures/uml/assets-preference}}
   \caption{用户资产、优惠券、偏好与 AI 会话领域模型类图}\label{fig:def-domain-assets}
   \par\smallskip
@@ -257,7 +258,7 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
   场景 & 读取位置 & 关键字段与用途 \\
   \midrule
   浏览当前菜单 & \code{food} & 名称、价格、库存及上架状态，用于当次选菜 \\
-  查看历史菜品 & \code{orderdetailet} & 菜名快照、成交单价与数量，用于原单明细 \\
+  查看历史菜品 & \code{orderdetailet} & 菜名快照、成交单价与数量，\mbox{用于原单明细} \\
   核对外送信息 & \code{orders} & 地址与联系人快照，用于本次履约 \\
   查询资金变动 & \code{user_asset_ledger} & 订单关联编号以及余额、积分变化，用于核对扣款和冲正 \\
   \bottomrule
@@ -395,11 +396,19 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
 
 外送过程存在两份相关记录。订单控制顾客和商家看到的交易阶段，配送任务保存骑手的归属、时间及现场处理状态。接单、取餐、送达等动作在服务端检查订单和配送任务，形成前后对应的状态。顾客可以在同一个详情页查到当前进度和历史时间线，商家也能据此判断餐品已交给谁。
 
-骑手上报异常时，系统保存异常前的任务状态，管理员才能决定怎样继续。恢复时回到原有节点。改派时清除原归属，任务重新进入接单大厅。取消时关闭配送与订单，再按原订单办理库存、优惠券、积分和余额处理。图~\ref{fig:def-delivery-state} 用单独分支展示这些动作，所以在联调中可以分别查看任务状态、订单状态与异常处理记录。
+骑手上报异常时，系统保存异常前的任务状态。管理员依据该记录选择处理动作，分支见图~\ref{fig:def-delivery-state}。
+
+\begin{reportpoints}
+  \item \textbf{恢复}时，任务回到异常前的节点。
+  \item \textbf{改派}时，系统清除原骑手归属，任务重新进入接单大厅。
+  \item \textbf{取消}时，系统关闭配送与订单，并按原订单处理库存、优惠券、积分和余额。
+\end{reportpoints}
+
+联调时可分别核对任务状态、订单状态和异常处理记录。
 
 \begin{figure}[!htbp]
   \centering
-  \chapterfigureprose{图~\ref{fig:def-ai-seq} 中，语音和图片先经各自的识别路径转成文字或候选，文本输入则直接进入意图解析。这些信息用于查询平台菜单，返回给顾客的卡片包含可选择的菜品。顾客点选加购以后，购物车再用菜品编号处理数量和库存，完成从推荐结果到业务操作的交接。}
+  \chapterfigureprose{图~\ref{fig:def-ai-seq} 中，语音和图片先经各自的识别路径转成文字或候选，文本输入则直接进入意图解析。这些信息用于查询平台菜单，返回给顾客的卡片包含可选择的菜品。顾客点选加购以后，购物车再用菜品编号处理数量和库存，\mbox{完成从推荐到加购的交接}。}
   \includegraphics[width=.81\linewidth,height=.43\textheight,keepaspectratio]{figures/srs/08-ai-assistant-sequence.png}
   \caption{AI 智能客服与多模态点餐（问答/识菜/语音/推荐）交互时序图}\label{fig:def-ai-seq}
 \end{figure}
@@ -449,7 +458,7 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
   \end{tabularx}
 \end{table}
 
-这些检查对应不同的测试层次。\code{SecurityHardeningTest} 检查管理员接口和各角色入口的授权声明，还构造角色绑定凭证，确认解析出来的权限只对应所选入口。订单归属则依赖真实数据。订单快照测试准备两位顾客和两位商家，在调用订单查询时分别使用这些身份核对返回情况。凭证有效只能说明请求者是谁，资源记录才决定他能看到什么。
+这些检查对应不同的测试层次。\code{SecurityHardeningTest} 检查管理员接口和各角色入口的授权声明，还构造角色绑定凭证，确认解析出来的权限只对应所选入口。订单归属则依赖真实数据。订单快照测试准备两位顾客和两位商家，在调用订单查询时分别使用这些身份核对返回情况。凭证识别请求者，资源记录决定其可读取的订单。
 
 \subsection{从加购到付款的接口组合}\label{sec:def-api-order}
 
@@ -553,11 +562,11 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
 
 两套记录在联调时要回到同一个订单编号。在线时可检查消息出现后页面能否查看到新状态，退出页面后重新打开，则通过订单查询及持久化通知核对历史。对骑手端，收到任务更新后还要刷新当前列表。对顾客端，点击消息能回到原订单，时间线上的出餐、接单、送达应按实际动作依次出现。
 
-\section{用户界面 (UI) 设计}
+\section{用户界面设计}
 
 \subsection{用户角色与界面映射}
 
-前端共包含 33 个页面视图组件，并通过 \code{elmclient/src/router/index.js} 的路由元信息 \code{meta.role} 与 \code{meta.public} 实现四端访问隔离。除首页、分类列表、店铺详情、搜索与登录注册页允许游客访问外，其余页面均受路由守卫保护并在切换身份时清理上一角色的私有状态。图~\ref{fig:def-page-ia} 为四端页面信息架构图，附录~\ref{app:ui} 的表~\ref{tab:ui-mapping} 列出角色与全量页面路由映射。
+前端共包含 33 个页面视图组件，并通过 \code{elmclient/src/router/index.js} 的路由元信息 \code{meta.role} 与 \code{meta.public} 实现四端访问隔离。除首页、分类列表、店铺详情、搜索与登录注册页允许游客访问外，其余页面均受路由守卫保护并在切换身份时清理上一角色的私有状态。图~\ref{fig:def-page-ia} 为四端页面信息架构图，附录~\ref{app:ui} 的表~\ref{tab:ui-mapping} 列出\mbox{角色与全量页面路由映射}。
 
 \subsection{页面风格与布局}
 
@@ -623,7 +632,7 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
 
 \begin{figure}[H]
   \centering
-  \chapterfigureprose{从首页选餐有两条常用路径。有目标时可搜索店铺或菜名，尚未决定时可先按分类与推荐浏览。进入店铺以后，配送和自取切换留在顶部，菜单按店内分类展开。底部区域显示已选金额和当前结算条件，用户往下翻菜单时仍能看到本次选择有没有满足要求。}
+  \chapterfigureprose{从首页选餐有两条常用路径。有目标时可搜索店铺或菜名，尚未决定时可先按分类与推荐浏览。进入店铺以后，配送和自取切换留在顶部，菜单按店内分类展开。底部区域显示已选金额和当前结算条件，往下翻菜单时，用户仍能确认是否可以结算。}
   \chaptertwouipanel{figures/screenshots/ui-customer-home.png}{（a）顾客端首页分类、推荐与 AI 悬浮入口（\code{/index}）}{figures/screenshots/ui-customer-shop.png}{（b）店铺详情与实时库存菜单页（\code{/businessInfo}）}{顾客端首页发现与店铺选餐界面实景截图}{fig:def-ui-cust-browse}
   \par\medskip
   \chapterfigureprose{同样的一份菜，切成自取以后，页面底部的配送费和起送提示也得跟着变。顾客沿自取进结算时，仍然买的是刚才选的那份菜。店铺也可以从首页推荐和搜索结果进入，两个入口都要显示同一份店名、菜单和停售信息。}
@@ -654,7 +663,7 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
   \chaptertwouipanel{figures/screenshots/ui-customer-wallet.png}{（a）钱包余额、积分、红包与消费流水（\code{/assets}）}{figures/screenshots/ui-customer-preferences.png}{（b）薄荷青主题与点餐口味忌口偏好（\code{/preferences}）}{顾客端钱包资产中心与多主题偏好界面实景截图（\code{demo\_user} 演示数据）}{fig:def-ui-placeholders}
   \par\medskip
   \chapterfigureprose{选中薄荷青时，按钮和表单会一起变色。保存后离开页面再进来，还要看到之前选的主题和口味。此时切回钱包，对照这一次改主题前后同一账号的余额、积分和券面额，可以看出外观和资产各管各的。}
-  \chapterfigureprose{真正改变余额的是充值等资产操作。演示充值前记下原余额，操作完成后重新进入资产中心，对照余额的增量和最新一笔流水，核对是不是刚才那笔入账。}
+  \chapterfigureprose{充值前记录原余额，操作后重新进入资产中心。余额增量和最新一笔流水应与本次充值金额一致。}
 \end{figure}
 
 \begin{figure}[H]
@@ -677,7 +686,7 @@ P2（Could） & 多模态识菜/语音草稿、\mbox{高德定位}与视觉动�
 
 \begin{figure}[H]
   \centering
-  \chapterfigureprose{商家工作台呈现店铺状态、菜品库存、订单处理和评价回复。骑手在配送工作台上线、查看待抢任务、里程和收益。对应界面见图~\ref{fig:def-ui-merchant-biz} 至图~\ref{fig:def-ui-amap}。接单前的任务卡片提供取送地点和预估收入，联系人字段留到领取后显示。地址一侧保留地点文字，因此在地图选址服务暂不可用时，顾客仍能填写楼栋及具体门牌，配送时也有可查阅的地址。}
+  \chapterfigureprose{商家工作台呈现店铺状态、菜品库存、订单处理和评价回复。骑手在配送工作台上线、查看待抢任务、里程和收益。对应界面见图~\ref{fig:def-ui-merchant-biz} 至图~\ref{fig:def-ui-amap}。接单前的任务卡片提供取送地点和预估收入，联系人字段留到领取后显示。地址一侧保留地点文字，因此在地图选址服务暂不可用时，顾客仍可填写楼栋和门牌，骑手配送时可查阅。}
   \begin{minipage}[t]{.46\linewidth}
     \vspace{0pt}
     \centering

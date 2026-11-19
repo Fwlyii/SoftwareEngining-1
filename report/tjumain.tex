@@ -1,26 +1,19 @@
 \def\usewhat{xelatex}
 \PassOptionsToPackage{no-math}{fontspec}
 \documentclass[12pt,openany,oneside,fontset=none]{ctexbook}
-% 正文沿用数模参考稿的宋体与 Times New Roman。
-\IfFontExistsTF{Times New Roman}{%
-  \setmainfont{Times New Roman}
-  \setsansfont{Times New Roman}
-  \setmonofont{Times New Roman}
-}{%
-  \setmainfont{texgyretermes-regular.otf}[BoldFont=texgyretermes-bold.otf,ItalicFont=texgyretermes-italic.otf,BoldItalicFont=texgyretermes-bolditalic.otf]
-  \setsansfont{texgyretermes-regular.otf}[BoldFont=texgyretermes-bold.otf]
-  \setmonofont{texgyretermes-regular.otf}[BoldFont=texgyretermes-bold.otf]
-}
+% 正文采用《论文_关键词修订版》的宋体和 Times New Roman。
+\setmainfont[BoldFont={Times New Roman Bold}]{Times New Roman}
+\setsansfont[BoldFont={Times New Roman Bold}]{Times New Roman}
+\setmonofont[BoldFont={Times New Roman Bold}]{Times New Roman}
 \setCJKmainfont[AutoFakeBold=2.5]{FandolSong-Regular.otf}
 \setCJKsansfont[AutoFakeBold=2.5]{FandolSong-Regular.otf}
 \setCJKmonofont[AutoFakeBold=2.5,ItalicFont=FandolSong-Regular.otf]{FandolSong-Regular.otf}
 \setCJKfamilyfont{zhsong}[AutoFakeBold=2.5]{FandolSong-Regular.otf}
 \setCJKfamilyfont{zhkai}{FandolKai-Regular.otf}
 \setCJKfamilyfont{zhfs}{FandolFang-Regular.otf}
-% 封面继续使用原有字形。
-\newfontfamily\coverroman[BoldFont=lmroman12-bold.otf]{lmroman12-regular.otf}
 \setCJKfamilyfont{coversong}[BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
-\setCJKfamilyfont{coverhei}[BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
+\newCJKfontfamily\ReportTriangleListFont[BoldFont={Songti SC Bold},BoldFeatures={FakeBold=1.25}]{Songti SC}
+\AtBeginDocument{{\setbox0=\hbox{\ReportTriangleListFont 字}}}
 \xeCJKsetup{CheckSingle=true,WidowPenalty=10000}
 \input{setup/package}
 \DeclareSymbolFont{operators}{TU}{\rmdefault}{m}{n}
@@ -44,13 +37,12 @@
 
   \begingroup
     \renewcommand{\song}{\CJKfamily{coversong}}
-    \renewcommand{\hei}{\CJKfamily{coverhei}}
     \makecover
   \endgroup
   \input{setup/toc}
 
   \mainmatter\hypersetup{pageanchor=true}\defaultfont\raggedbottom
-  \tolerance=1800 \emergencystretch=1.8em
+  \tolerance=2000 \emergencystretch=2em
   \makeatletter
   \fancypagestyle{plain}{
     \fancyhf{}
@@ -60,7 +52,7 @@
     \renewcommand{\footrulewidth}{0pt}
   }
   \makeatother
-  \setcounter{page}{1}
+  \setcounter{page}{3}
 
   \input{body/ch1_team}
   \input{body/ch2_definition}

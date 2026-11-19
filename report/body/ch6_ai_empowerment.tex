@@ -1,4 +1,4 @@
-\chapter{AI 赋能专题}
+\chapter{AI 赋能专题}\label{chap:ai}
 \definecolor{researchBlue}{HTML}{25465D}
 \definecolor{researchTeal}{HTML}{287B78}
 \definecolor{researchBronze}{HTML}{B67E33}
@@ -77,7 +77,7 @@
   \item 候选菜品来自当前在售且有足够库存的菜单。加购由顾客在卡片上确认，金额仍由购物车和结算接口计算。
   \item 用户 ID 取自认证上下文。订单查询限定在当前用户，待查询的业务内容按数据处理，日志隐藏对话正文。
   \item 模型请求在数据库事务外完成，收到响应后再用短事务写入 \code{ai_chat_history}。
-  \item 外部调用受总超时、熔断和重试上限管理。重试上限默认为 3 次。缺少密钥或模型调用失败时，可使用本地帮助与推荐。
+  \item DeepSeek 和 DashScope 默认总超时均为 10 秒，重试上限分别为 3 次和 1 次。配置缺失或调用失败时，顾客可使用本地帮助和菜单筛选。
 \end{reportpoints}
 
 \begin{figure}[!htbp]
@@ -144,7 +144,7 @@
 
 图片里识别出的菜名先拿到平台菜单里匹配，遇到重复的候选就合并。语音转出来的文字则先整理成草稿，留给用户核对菜名和份数。我们在单元测试里给定识别结果。一例返回两份牛肉面，再查候选能不能对上。浏览器里的录音还得考虑人什么时候关闭抽屉。打开后马上关掉，权限回调即使晚到，音轨也要及时释放。
 
-为了单独检查外部调用要等多久，\code{DeepSeekDeadlineTest} 在本机起了一个模拟服务，让它等 3 秒才响应。客户端的总超时为 1 秒，重试上限为 3 次。测试看到调用在总限时内失败，模拟端只收到 1 次正式请求。它把超时后是否继续重试查清了，浏览器上的提示则用来确认用户遇到的是哪种情况。模型和端点配置见表~\ref{tab:runtime-ai-matrix}。
+\code{DeepSeekDeadlineTest} 使用延迟响应的模拟服务，配置 1 秒总超时和 3 次重试上限。测试断言调用在 3 秒内抛出异常，模拟服务只收到一次请求。模型和端点配置见表~\ref{tab:runtime-ai-matrix}。
 
 \Needspace{6\baselineskip}
 \subsection{演示环境验证}
@@ -166,13 +166,13 @@
     \includegraphics[width=\linewidth,height=.44\textheight,keepaspectratio]{figures/screenshots/ui-ai-assistant.png}\par\smallskip
     {\small （b）智能筛选本地规则推荐结果（真实在售菜单）}
   \end{minipage}
-  \caption{AI 智能客服与本地规则推荐界面实景截图（未调用外部大模型）}\label{fig:ai-qa-recommend}\label{fig:ai-runtime-placeholder}
+  \caption{智能客服与本地规则推荐界面}\label{fig:ai-qa-recommend}\label{fig:ai-runtime-placeholder}
 \end{figure}
 
 卡片显示店铺名与商品单价，预算筛选用的却是算上配送和优惠后的最低结算金额。复查时，我们从卡片回到具体店铺和菜品，再对照原来的推荐条件。点了加购之后，还能用购物车里的商品和数量核对下一步。
 
 \clearpage
-图~\ref{fig:ai-voice-media} 是语音与图片服务未配置时的页面。我们分别查了录音、文件选择和图片上传入口。这些入口也可以沿用到配置模型后的验收，用于核对浏览器权限和实际识别结果。
+图~\ref{fig:ai-voice-media} 是语音与图片服务未配置时的页面。我们分别查了录音、文件选择和图片上传入口。这些入口也可以沿用到配置模型后的验收，用于核对浏览器权限和\mbox{实际识别结果}。
 
 页面打开时先请求 \code{/api/v1/assistant/capabilities}。图左的录音和选择音频按钮下方提示语音模型未配置，图右也因缺少识菜模型关闭了图片入口。如果能读到能力状态，就把缺少的那项服务写清楚。如果能力请求本身失败，页面会让用户检查连接，并留出重试入口。
 
@@ -188,7 +188,7 @@
     \includegraphics[width=\linewidth,height=.44\textheight,keepaspectratio]{figures/screenshots/ui-ai-media-unconfigured.png}\par\smallskip
     {\small （b）图片识菜模型未配置时的禁用与提示（\code{/ai-chat/image}）}
   \end{minipage}
-  \caption{AI 语音点菜与图片识菜未配置降级界面实景截图}\label{fig:ai-voice-media}\label{fig:ai-media-unconfigured}
+  \caption{语音点菜与图片识菜服务未配置时的界面}\label{fig:ai-voice-media}\label{fig:ai-media-unconfigured}
 \end{figure}
 
 接通服务后，语音可以走浏览器授权录音，也可以选本地音频文件。转写出的菜名、份数和预算先放进草稿，顾客改过以后可以重新匹配。图片识菜取出关键词，再列出菜单里的候选。确认具体菜品后，顾客才把它加进购物车。后续验收会从这些动作和页面变化分别检查。
@@ -198,7 +198,7 @@
 
 \subsection{工程成效评估}
 
-我们用 AI 辅助准备代码样板、SQL 迁移草稿和回归用例。最后交付的是 33 个页面、23 张表和 135 个映射端点，575 项自动化测试均通过。对照历史与现有实现时，我们还找到了 8 项差异，包括订单阶段的叫法和计价顺序。需要继续处理的几项留在表~\ref{tab:gap-improvement}，以后改到相关模块可以回来看。
+我们用 AI 辅助准备代码样板、SQL 迁移草稿和回归用例。系统共包含 33 个页面、23 张表和 135 个接口映射，前后端 575 项自动化测试均通过。复核时，我们逐项对照订单阶段、计价步骤和外部服务配置。待完善的事项见表~\ref{tab:gap-improvement}。
 
 演示时，顾客在缺少外部模型配置的环境里仍能用本地菜单筛选商品。图片与语音入口依实际状态给出提示，顾客也能返回普通点餐。这是本次走查确认的结果，截图与回归用例分别留住了页面状态和业务判断。
 
@@ -206,7 +206,7 @@
 
 \subsection{核查暴露的问题与改进方向}
 
-以后再审阅 AI 草稿，我们会先从一次具体的请求开始。以结算为例，先确认是谁下的单，再看服务端取哪一份价格、最后写下哪些数据。课上讲到，工程师要对交付的结果负责。草稿由谁写并不会改变评审所需的依据，这些字段和断言要由负责该模块的组员核准。
+评审结算代码时，负责该模块的组员先确认请求所属用户，再核对服务端定价依据、写入字段和回归断言。AI 提供的草稿也经过这套检查。
 
 接入有效凭证后，我们计划补测 DeepSeek 对话、DashScope 图片识别和语音转写，记录不同输入的完成率与响应时间。并发时再看单用户 Token 预算、路由调用次数与熔断状态，检查异常请求有没有拖慢普通点餐。未配置画面和超时用例都已留存，可以作为复测的起点。
 

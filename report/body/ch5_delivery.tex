@@ -1,6 +1,6 @@
-\chapter{项目交付}
+\chapter{项目交付}\label{chap:delivery}
 
-交付前，我们从顾客下单开始，把同一个订单号带到商家、骑手和管理员的页面上。各端都能打开只是第一步。轮到谁处理、处理后另一端看到什么，才是这条流程要回答的问题。课上讲验证和确认，我们在这里用到了两种检查。先用自动化测试核对实现是否符合已经写下的规则，再到实机上走完整条路径，看角色能不能完成自己要做的事。交付还包括把环境交给别人，拿到仓库的同学要能照部署说明启动同一套系统。
+交付验收从顾客下单开始。我们用同一个订单号在商家、骑手和管理员页面核对状态、处理权限和后续动作。自动化测试核对库存、结算和权限规则，浏览器走查确认各端能完成实际操作。部署文档记录启动和复核步骤，接手者可按文档\mbox{复现同一套演示环境}。
 
 \section{项目测试文档}
 
@@ -14,7 +14,7 @@
   \item 后端使用 JUnit 5、Mockito、MockMvc 和 H2 验证权限、交易、库存、历史快照、配送状态，以及 AI 和地图适配。套件有 53 个测试类。
   \item 前端使用 Node Test Runner 运行 28 个测试文件，检查页面返回、结算校验、备注、主题等交互逻辑，以及与后端约定的字段。
   \item 联调中出现的回归问题用 TDD 处理。先提交能够复现问题的失败测试，再修复并重构相关逻辑。表~\ref{tab:tdd-trace} 保留了相应的提交记录。
-  \item 仲禹潼牵头组织四端人工走查，在台账中登记复现步骤、截图和修复状态。跨组验收按对方 SRS 功能编号执行，留存 24 张正常操作与边界检查截图。
+  \item 仲禹潼牵头组织四端走查，在台账中登记复现步骤、截图和修复状态。跨组验收按对方 SRS 编号执行，项目归档 25 张截图，其中 24 张纳入本报告素材。
 \end{reportpoints}
 
 游客反复跳回登录弹窗时，台账记下了“未登录、进入店铺、再返回”的顺序。后来复测的人起点一样，看到的结果也可以直接和原截图对比。我们把现象、模块、复现步骤、截图和修复状态放在一行，界面建议另记，先修会卡住操作的问题。
@@ -33,7 +33,7 @@
 
 \subsubsection{自动化测试执行结果汇总}
 
-我们在源码快照 \code{17f80ab2} 和 \code{6ddb219} 先后跑了全量测试，报告与后一次快照核对。2026 年 11 月 16 日复跑时，前端用 Node.js 22.16.0，后端用 OpenJDK 17.0.21 和 Maven Wrapper。表~\ref{tab:auto-test-summary} 汇总了结果。\textbf{前端 235 项、后端 340 项均通过}，失败、错误和跳过均为 0。
+我们在源码快照 \code{17f80ab2} 和 \code{6ddb219} 先后跑了全量测试，报告与后一次快照核对。2026 年 11 月 16 日复跑时，前端用 Node.js 22.16.0，后端用 OpenJDK 17.0.21 和 Maven Wrapper。表~\ref{tab:auto-test-summary} 汇总了结果。\textbf{前端 235 项、后端 340 项均通过}，\mbox{失败、错误和跳过均为 0}。
 
 \begin{table}[!htbp]
 \centering\small
@@ -50,7 +50,7 @@
 \end{tabular}
 \end{table}
 
-图~\ref{fig:test-terminal-placeholder} 保留了运行日志，图~\ref{fig:test-domain-dist} 把结果按检查的业务分开。课上讲到，度量之前先要想清楚要判断什么。这里我们关心能否按各端规则走完交易，所以除了记录通过数，还按导航、结算和权限这些问题查对应的用例。附录表~\ref{tab:all-backend-tests}、\ref{tab:all-frontend-tests} 收录了代表性套件。完整前端输出、后端日志摘要和 53 份 Surefire XML 的统计随版本留在 \code{report/evidence/2026-11-16/}，以后复跑也能查到使用的代码与环境。
+图~\ref{fig:test-terminal-placeholder} 摘录前后端测试日志，图~\ref{fig:test-domain-dist} 展示报告按业务域整理的用例分布。检查具体问题时，可在附录表~\ref{tab:all-backend-tests}、\ref{tab:all-frontend-tests} 查找代表性套件。\code{report/evidence/2026-11-16/} 保存完整前端输出、后端日志摘要和 53 份 Surefire XML 的统计，可据此\mbox{核对快照、环境和通过数}。
 
 \begin{figure}[!htbp]
   \centering
@@ -97,7 +97,7 @@
 
 例如返回路径出问题时，我们在 \code{navigation.test.mjs} 里找具体入口和返回目标。查历史订单则看快照回归的菜名断言。汇总数字里的一项通过，回到这里就能知道它究竟查了什么。
 
-\reportfig[0.86\linewidth]{figures/screenshots/test-terminal-results.png}{前后端测试真实日志摘要（浏览器排版展示）}{fig:test-terminal-placeholder}
+\reportfig[0.86\linewidth]{figures/screenshots/test-terminal-results.png}{前后端自动化测试日志摘录}{fig:test-terminal-placeholder}
 
 \subsubsection{从失败用例到回归保护}
 
@@ -120,7 +120,7 @@
 实机走查给了我们一项自动化结果之外的证据。比如没有配置地图时，接口告知功能不可用，到了顾客端还得能找到手填地址的入口并继续下单。所以我们把页面截图和测试日志一起留在记录里，下一次复测从同一个场景入手。
 
 \clearpage
-\subsubsection{对第 10 组项目的交叉测试}\label{app:cross-checks}
+\subsubsection{sep-elm 交叉验收}\label{app:cross-checks}
 
 2026 年 9 月 16 日，我们根据 \code{sep-elm} 的 \code{docs/SRS.md} 在本地执行交叉验收。用户 A 和 B 分别检查顾客功能，商家用户 C 检查店铺工作台。三类独立演示账号分别为 \code{13800000001}、\code{13800000002} 和 \code{13800000003}。验收时保留对应的需求编号，便于对方根据记录切换到同一个角色和页面。
 
@@ -215,7 +215,7 @@ FR-ORDER-01/04/05 & 订单创建、\mbox{取消与查询} & 验证生成新订�
 git clone --branch main https://github.com/Fwlyii/lightweight-takeout-platform.git
 cd lightweight-takeout-platform
 
-# 2. 生成本地 .env 并随机签发 64 位 JWT_SECRET（需 zsh 与 OpenSSL）
+# 2. 生成本地 .env，取 64 字节随机值作为 JWT_SECRET（需 zsh 与 OpenSSL）
 zsh scripts/ensure-demo-env.sh
 
 # 3. 构建镜像并启动 mysql、migrate、backend、frontend 服务
@@ -231,7 +231,7 @@ docker compose -f docker-compose.demo.yml ps -a
 
 店铺、骑手和管理员入口共用同一前端。我们测权限和数据隔离时为各角色单独开会话，免得前一次登录的令牌混进这次验收。默认访问入口与演示账号见附录表~\ref{tab:deploy-endpoints}，外部服务配置见表~\ref{tab:deploy-env}。
 
-默认映射端口只绑定本机。浏览器进入前端端口后，Nginx 从容器网络请求 \code{backend:8080}。后端的映射端口也能直接看 Swagger 文档，数据库端口供本机调试。机器上有另一套演示实例时，我们先核对占用的端口，再看浏览器正在访问的实例和它连接的库，确保记下的是这一次演示的页面和订单。
+默认映射端口只绑定本机。前端的 \code{/api} 由 Nginx 转发到 \code{backend:8080}。后端映射端口可访问 Swagger，数据库端口用于本机调试。并行运行多个实例时，先核对前端地址、后端端口和所连数据库，再记录页面和订单号。若在 Compose 环境启用高德选址，须把附录表~\ref{tab:deploy-env} 所列的三项 \code{AMAP_*} 配置传给后端容器。
 
 我们在启动说明里把停机恢复也写了进去。MySQL 第一次用空目录启动时才会执行建表和种子脚本，已有目录会继续使用之前的数据。临时停用时可用 \code{stop}，再用 \code{start} 启动原容器。重新创建容器前则保留数据库和 \code{runtime-uploads/} 的备份，恢复时回看以前的订单和图片，验证两个位置都接回来了。
 
@@ -244,7 +244,13 @@ docker compose -f docker-compose.demo.yml ps -a
 
 前端开发服务启动时读取 \mbox{\code{VUE_APP_API_BASE_URL}}。后端端口调整后，同步更新这个变量并重启前端。我们先从浏览器请求确认实际地址，再用本轮演示账号登录，核对店铺和订单是否来自预期的演示库。
 
-出错时，我们先看问题在哪一段出现。启动阶段读不到签名密钥，可以从配置脚本与环境变量传递查起。页面打开后请求仍报错，先看代理路径和访问地址，再检查浏览器里是否还留有旧令牌。若普通浏览和登录都正常，个别订单字段为空，则优先核对旧库迁移与查询依赖。按这个顺序排查，可以保留原有演示数据，集中检查受影响的环节。
+部署异常按出现的环节排查，以保留演示数据并缩小检查范围。
+
+\begin{reportpoints}
+  \item \textbf{启动阶段}读不到签名密钥时，核对配置脚本及环境变量向后端的传递过程。
+  \item \textbf{访问阶段}出现请求错误时，先核对代理路径和访问地址，再检查浏览器是否留有旧令牌。
+  \item \textbf{数据阶段}若浏览和登录正常、个别订单字段为空，则核对旧库迁移与查询依赖。
+\end{reportpoints}
 
 \begin{table}[!htbp]
 \centering
@@ -257,8 +263,8 @@ docker compose -f docker-compose.demo.yml ps -a
 \midrule
 后端启动报错 \mbox{\code{JWT_SECRET} 缺失} & 未执行 \code{ensure-demo-env.sh} 或环境变量未透传至容器 & 重新运行环境脚本生成 \code{.env}，检查 \code{docker compose config} 注入结果。 \\
 前端接口报 401 或 CORS 拦截 & \code{VUE_APP_API_BASE_URL} 跨端口未走同源反代或\mbox{密钥变化} & 确认 Nginx \code{/api} 代理指向或统一前端环境变量，清理浏览器旧 \code{localStorage}。 \\
-订单页面显示菜名或备注为空 & 既有旧库未执行增量迁移 \code{003} 或 \code{005} & 按序执行 \code{elm_bk/db/migrations/001--006} 幂等 SQL 脚本。 \\
-点击高德选址或识菜报不可用 & 未配置 \code{AMAP_*} 或 \code{DASHSCOPE_*} 密钥 & 临时使用文本地址或“智能筛选”。启用外部服务时，先配置密钥再重启。 \\
+订单页面显示\mbox{菜名或备注为空} & 旧库缺少快照或备注字段 & 核对字段后执行对应迁移。菜名快照用 \code{003}，备注用 \code{005}。 \\
+选址或识菜不可用 & 缺少地图配置或识菜凭证 & 手填地址或使用智能筛选。启用服务时，按附录表~\ref{tab:deploy-env} 配置后端并重启。 \\
 \bottomrule
 \end{tabular}
 \end{table}

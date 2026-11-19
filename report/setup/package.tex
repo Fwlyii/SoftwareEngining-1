@@ -1,5 +1,6 @@
 \usepackage{graphicx}
-\usepackage[a4paper,top=25.4mm, bottom=25.4mm, left=29mm, right=29mm, head=6true mm,headsep=6.5true mm,foot=17.5mm]{geometry}
+\usepackage{eso-pic}
+\usepackage[a4paper,margin=2.6cm,head=6mm,headsep=6.5mm,footskip=1.1cm]{geometry}
 \usepackage{titlesec}
 \usepackage{fancyhdr}
 \usepackage{color}
@@ -33,20 +34,28 @@
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \newcommand{\reporttablesize}{%
   \renewcommand{\baselinestretch}{1}%
-  \fontsize{10.5bp}{13.8bp}\selectfont%
-  \renewcommand{\arraystretch}{1.06}%
+  \fontsize{10.5bp}{12.6bp}\selectfont%
+  \renewcommand{\arraystretch}{1.08}%
 }
+\setlength{\heavyrulewidth}{0.65pt}
+\setlength{\lightrulewidth}{0.35pt}
+\setlength{\cmidrulewidth}{0.30pt}
+\setlength{\aboverulesep}{0.45ex}
+\setlength{\belowrulesep}{0.65ex}
+\setlength{\defaultaddspace}{0.45ex}
 \AtBeginEnvironment{longtable}{\reporttablesize}
 \setlength{\LTpre}{5pt}
 \setlength{\LTpost}{6pt}
-\DeclareCaptionFont{reportcaption}{\reporttablesize}
-\captionsetup{font=reportcaption,labelfont=bf,labelsep=quad,skip=5pt,justification=centering}
-\captionsetup[table]{position=top}
+\DeclareCaptionFont{reportcaption}{\renewcommand{\baselinestretch}{1}\fontsize{10.5bp}{12.6bp}\selectfont}
+\captionsetup{font=reportcaption,labelfont=bf,labelsep=quad,skip=6pt,justification=centering}
+\captionsetup[table]{position=top,skip=6pt}
+\captionsetup[figure]{position=bottom,skip=6pt}
 \setlength{\LTcapwidth}{\linewidth}
 
 \usepackage{hyperref}
 \hypersetup{
     unicode,
+    bookmarksdepth=2,
     pdfborder={0 0 0},
 }
 

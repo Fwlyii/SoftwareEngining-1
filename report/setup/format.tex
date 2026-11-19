@@ -58,7 +58,6 @@
   \let\@listi\@listI}
 \def\defaultfont{\renewcommand{\baselinestretch}{1.5}\normalsize\selectfont} % 设置行距
 
-\renewcommand{\CJKglue}{\hskip 0pt plus .045\baselineskip minus .025em} % 控制字间距，使每行 34 个汉字
 \makeatother
 
 %%%%%%%%%%%%% Contents %%%%%%%%%%%%%%%%%
@@ -68,17 +67,17 @@
 %%%%%%%%%% Chapter and Section %%%%%%%%%%%%%
 \setcounter{secnumdepth}{3}
 \setlength{\parindent}{2em}
-\setlength{\parskip}{1pt plus .5pt}
+\setlength{\parskip}{0pt plus 1pt}
 \clubpenalty=10000
 \widowpenalty=10000
 \displaywidowpenalty=10000
 
 \renewcommand{\chaptername}{\prechaptername\thechapter\postchaptername}
-\titleformat{\chapter}{\centering\hei\bfseries\fontsize{18bp}{21.6bp}\selectfont}{\chaptername}{1em}{}
-\titlespacing{\chapter}{0pt}{2pt}{14pt}
+\titleformat{\chapter}{\centering\hei\bfseries\fontsize{18bp}{21.6bp}\selectfont}{\zhnumber{\arabic{chapter}}、}{0pt}{}
+\titlespacing{\chapter}{0pt}{4pt}{9pt}
 
-\titleformat{\section}{\hei\bfseries\fontsize{15bp}{18bp}\selectfont}{\thesection}{.75em}{}
-\titlespacing{\section}{0pt}{11pt plus 2pt minus 2pt}{5pt}
+\titleformat{\section}{\hei\bfseries\fontsize{15bp}{18bp}\selectfont}{\thesection}{1em}{}
+\titlespacing{\section}{0pt}{8pt plus 2pt minus 1pt}{5pt}
 \titleformat{\subsection}{\hei\bfseries\fontsize{12bp}{14.4bp}\selectfont}{\thesubsection}{.75em}{}
 \titlespacing{\subsection}{0pt}{8pt plus 2pt minus 1pt}{3pt}
 \titleformat{\subsubsection}{\hei\bfseries\normalsize}{\thesubsubsection}{.75em}{}
@@ -93,13 +92,18 @@
 \renewcommand{\thetable}{\arabic{chapter}-\arabic{table}}         % 使表编号为 7-1 的格式
 \renewcommand{\theequation}{\arabic{chapter}-\arabic{equation}}   % 使公式编号为 7-1 的格式
 
-\setlength{\textfloatsep}{12pt plus 3pt minus 3pt}
-\setlength{\floatsep}{10pt plus 3pt minus 2pt}
-\setlength{\intextsep}{10pt plus 3pt minus 2pt}
-\renewcommand{\topfraction}{.91}
-\renewcommand{\bottomfraction}{.80}
-\renewcommand{\textfraction}{.08}
-\renewcommand{\floatpagefraction}{.62}
+\setlength{\textfloatsep}{11pt plus 2pt minus 2pt}
+\setlength{\floatsep}{9pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+\renewcommand{\topfraction}{.92}
+\renewcommand{\bottomfraction}{.85}
+\renewcommand{\textfraction}{.12}
+\renewcommand{\floatpagefraction}{.72}
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{11pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
 \setcounter{topnumber}{4}
 \setcounter{bottomnumber}{3}
 \setcounter{totalnumber}{5}
@@ -178,50 +182,31 @@
   \fancyhf{}
   \fancyhead[C]{\song\wuhao \@cheading}  % 页眉显示天津大学 20XX 届本科生毕业论文
   \fancyfoot[C]{\song\xiaowu ~\thepage~}
-\newlength{\@title@width}
-
-% 定义封面
-\def\makecover{
-%\cleardoublepage%
-   \phantomsection
-    \pdfbookmark[-1]{\@ccovertitle~\@ctitle}{ctitle}
-
-    \begin{titlepage}
-      \coverroman
-      \vspace*{10pt}
-      \begin{center}
-
-      {\hei\yihao\textbf{天津大学}}\\[3pt]
-      {\coverroman\sanhao\textbf{TIANJIN UNIVERSITY}}\\[15pt]
-      \hei\erhao{\textbf{\@ccovertitle}} \\[22pt]
-      \hei\erhao{\textbf{\@ctitle}} \\[18pt]
-      {\song\sanhao\textbf{\@cproject}}
-      \vspace*{24pt}
-
-      \begin{figure}[h]
-      \centering
-      \includegraphics[width=0.3\textwidth]{figures/Tjulogo}
-      \end{figure}
-
-      \vspace*{34pt}
-      \renewcommand\arraystretch{1.55}
-      \setlength{\@title@width}{8cm}
-      {
-        \xiaosi\song{
-          \begin{tabular}{lc}
-            \textbf{学\qquad 院}  &  \underline{\makebox[\@title@width][c]{\textbf{\@caffil}}} \\
-            \textbf{专\qquad 业}  &  \underline{\makebox[\@title@width][c]{\textbf{\@csubject}}} \\
-            \textbf{年\qquad 级}  &  \underline{\makebox[\@title@width][c]{\textbf{\@cgrade}}}\\
-          \end{tabular}
-        }
-      }
-
-      \vspace{10pt}
-      {\xiaosi\song\membertable}
-
-    \vspace*{20pt}
-
-    \song\sanhao{\textbf{\@cdate}}
-    \end{center}
-    \end{titlepage}
+% 各字段坐标与课程报告模板的五列表格一致，单位为 PDF bp。
+\newcommand{\covermember}[3]{%
+  \put(143.06,\numexpr 242-32*#1\relax){\makebox(0,0)[b]{\song\fontsize{13pt}{16pt}\selectfont #2}}%
+  \put(231.71,\numexpr 242-32*#1\relax){\makebox(0,0)[b]{\song\fontsize{13pt}{16pt}\selectfont #3}}%
+  \put(306.23,\numexpr 242-32*#1\relax){\makebox(0,0)[b]{\song\fontsize{13pt}{16pt}\selectfont\@csubject}}%
+  \put(405.13,\numexpr 242-32*#1\relax){\makebox(0,0)[b]{\song\fontsize{13pt}{16pt}\selectfont\@caffil}}%
+  \put(501.16,\numexpr 242-32*#1\relax){\makebox(0,0)[b]{\song\fontsize{12pt}{16pt}\selectfont\@cgrade}}%
+}
+\def\makecover{%
+  {\setbox0=\hbox{\song\fontsize{13pt}{16pt}\selectfont 字}}%
+  {\setbox0=\hbox{\song\bfseries\fontsize{16pt}{20pt}\selectfont 字}}%
+  \phantomsection
+  \pdfbookmark[-1]{\@ccovertitle~\@ctitle}{ctitle}
+  \begin{titlepage}
+    \thispagestyle{empty}
+    \AddToShipoutPictureFG*{\AtPageLowerLeft{%
+      \setlength{\unitlength}{1bp}%
+      \put(0,0){\includegraphics[width=\paperwidth,height=\paperheight]{figures/template/cover-background.pdf}}%
+      \put(309.82,647){\makebox(0,0)[b]{\song\bfseries\fontsize{21bp}{25bp}\selectfont\@ccovertitle}}%
+      \put(309.82,610){\makebox(0,0)[b]{\song\fontsize{15bp}{21bp}\selectfont\@cproject}}%
+      \put(192.62,338){\makebox(0,0)[b]{\song\fontsize{14bp}{18bp}\selectfont\@ctitle}}%
+      \membertable
+      \put(395.26,83.7){\makebox(0,0)[b]{\song\bfseries\fontsize{16pt}{20pt}\selectfont 时间}}%
+      \put(420,83.7){\makebox(0,0)[lb]{\song\fontsize{12bp}{15bp}\selectfont\@cdate}}%
+    }}%
+    \null
+  \end{titlepage}
 }
